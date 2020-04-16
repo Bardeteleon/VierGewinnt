@@ -489,7 +489,7 @@ public class GUIVierGewinnt extends JFrame
 		expAni.setPosition(pFrame.x - wh * .5, pFrame.y - wh * .5);
 		expAni.reset();
 		glassAni.addAnimation(expAni);
-		glassAni.start();
+		glassAni.resume();
 		playingFieldModel.delayAnimationHandler(expAni.getDelay() * (expAni.getLoopTo() - expAni.getLoopFrom() - 2));
 		Vector<Point> points = playingFieldModel.getChipPositionsOver(column, row);
 		for (Point p : points)
@@ -503,14 +503,14 @@ public class GUIVierGewinnt extends JFrame
 	{
 		winnerAni.reset();
 		glassAni.addAnimation(winnerAni);
-		glassAni.start();
+		glassAni.resumeAfter(1200);
 	}
 
 	public void doLooserAnimation()
 	{
 		gameOverAni.reset();
 		glassAni.addAnimation(gameOverAni);
-		glassAni.start();
+		glassAni.resumeAfter(1200);
 	}
 
 	public void setUserTable(Vector<String> connections, String... filters)

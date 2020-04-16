@@ -1,6 +1,7 @@
 package vierGewinnt.client;
 
 import java.awt.Point;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -203,7 +204,7 @@ public class GameTableModel extends AbstractTableModel
 				setIconAt(pos2, column, i + 1);
 				waitingFor(animationDelay);
 			}
-			aniHandler.setColumnCheck(column, true);
+			aniHandler.setColumnReadyForAnimation(column, true);
 		}
 
 		public boolean isOutdated()
@@ -219,7 +220,7 @@ public class GameTableModel extends AbstractTableModel
 
 	private class AnimationHandler extends Thread
 	{
-		volatile boolean[] columnCheck;
+		volatile boolean[] columnReady;
 		boolean stop = false;
 		Stopuhr s;
 		volatile long delay = 0;
@@ -227,11 +228,8 @@ public class GameTableModel extends AbstractTableModel
 		public AnimationHandler(int columns, int row)
 		{
 			setName("AnimationHandler");
-			columnCheck = new boolean[columns];
-			for (int i = 0; i < columnCheck.length; i++)
-			{
-				columnCheck[i] = true;
-			}
+			columnReady = new boolean[columns];
+			Arrays.fill(columnReady, true);
 			setDaemon(true);
 			start();
 		}
@@ -246,9 +244,9 @@ public class GameTableModel extends AbstractTableModel
 					for (int i = 0; i < animations.size(); i++)
 					{
 						Animation a = animations.get(i);
-						if (columnCheck[a.column] && getFreeRow(a.column) == a.toRow)
+						if (columnReady[a.column] && getFreeRow(a.column) == a.toRow)
 						{
-							setColumnCheck(a.column, false);
+							setColumnReadyForAnimation(a.column, false);
 							animations.remove(i);
 							a.start();
 						} else if (a.isOutdated())
@@ -302,9 +300,9 @@ public class GameTableModel extends AbstractTableModel
 			s = new Stopuhr();
 		}
 
-		public void setColumnCheck(int column, boolean b)
+		public void setColumnReadyForAnimation(int column, boolean b)
 		{
-			columnCheck[column] = b;
+			columnReady[column] = b;
 		}
 	}
 

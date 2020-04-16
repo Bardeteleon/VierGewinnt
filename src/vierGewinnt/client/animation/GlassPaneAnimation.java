@@ -19,11 +19,13 @@ public class GlassPaneAnimation extends JPanel implements Runnable
 	private Vector<Sprite> actors;
 	private Vector<Sprite> painter;
 
-	private boolean stopped = false;
+	private boolean paused = false;
 	private boolean relativeResizing = false;
 	private boolean relativePositioning = false;
 	private Dimension lastPanelDimension;
 
+	private int resumeAfterMS = 0;
+	
 	public GlassPaneAnimation()
 	{
 		actors = new Vector<Sprite>();
@@ -33,7 +35,7 @@ public class GlassPaneAnimation extends JPanel implements Runnable
 		thread = new Thread(this);
 		thread.setDaemon(true);
 		thread.start();
-		stop();
+		pause();
 	}
 
 	protected void paintComponent(Graphics g)
@@ -45,7 +47,7 @@ public class GlassPaneAnimation extends JPanel implements Runnable
 		if (!lastPanelDimension.equals(getSize()))
 			doRelativeSprites();
 
-		if (!stopped)
+		if (!paused)
 		{
 			// g.setColor(Color.BLACK);
 			// g.fillRect(0, 0, getWidth(), 30);
@@ -65,13 +67,13 @@ public class GlassPaneAnimation extends JPanel implements Runnable
 		while (true)
 		{
 			if (actors.size() == 0)
-				stop();
+				pause();
 
 			computeDelta();
 
 			if (actors.size() <= 0)
-				stop();
-			if (!stopped)
+				pause();
+			if (!paused)
 			{
 				cloneVectors();
 				updateSprites();
@@ -82,8 +84,11 @@ public class GlassPaneAnimation extends JPanel implements Runnable
 				{
 					try
 					{
+						painter = new Vector<Sprite>();
 						repaint();
 						wait();
+						wait(resumeAfterMS);
+						resumeAfterMS = 0;
 					} catch (InterruptedException e)
 					{
 						e.printStackTrace();
@@ -123,7 +128,7 @@ public class GlassPaneAnimation extends JPanel implements Runnable
 	public void addAnimation(Sprite s)
 	{
 		actors.add(s);
-		start();
+//		start();
 	}
 
 	public void removeAniamtion(Sprite s)
@@ -131,15 +136,22 @@ public class GlassPaneAnimation extends JPanel implements Runnable
 		actors.remove(s);
 	}
 
-	public synchronized void start()
+	
+	public void resumeAfter(int afterMS)
 	{
-		stopped = false;
+		resumeAfterMS = afterMS;
+		resume();
+	}
+	
+	public synchronized void resume()
+	{
+		paused = false;
 		notify();
 	}
 
-	public void stop()
+	public void pause()
 	{
-		stopped = true;
+		paused = true;
 	}
 
 	public void setRelativeSpriteResizing(boolean onOff)
