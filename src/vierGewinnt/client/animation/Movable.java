@@ -1,4 +1,4 @@
-package vierGewinnt.client;
+package vierGewinnt.client.animation;
 
 
 public interface Movable {

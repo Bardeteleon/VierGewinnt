@@ -1,7 +1,6 @@
-package vierGewinnt.net;
+package net;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.Socket;
 
 
@@ -20,15 +19,15 @@ public abstract class Client implements ConnectionControl
 	{
 		try
 		{
-			if (myConnection == null)
-			{
-				myConnection = new Connection(this, new Socket(_IP, _port));
-			}
-			else
-			{
+			Socket _mySocket = new Socket(_IP, _port);
+//			System.out.println("Client new Connection - keepAlive=" + _mySocket.getKeepAlive());
+//			_mySocket.setKeepAlive(true);
+//			System.out.println("Client new Connection - keepAlive=" + _mySocket.getKeepAlive());
+			
+			if (myConnection != null)
 				close();
-				myConnection = new Connection(this, new Socket(_IP, _port));
-			}
+			
+			myConnection = new Connection(this, _mySocket);
 			connectionAdded(_IP);
 		}
 		catch (IOException e)

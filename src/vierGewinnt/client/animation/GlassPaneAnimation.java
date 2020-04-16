@@ -1,4 +1,4 @@
-package vierGewinnt.client;
+package vierGewinnt.client.animation;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -108,7 +108,7 @@ public class GlassPaneAnimation extends JPanel implements Runnable
 			// System.out.println("Update currentpic: "+s.currentpic);
 			s.doLogic(delta);
 
-			if (s.remove)
+			if (s.doRemove())
 			{
 				actors.remove(s);
 			}

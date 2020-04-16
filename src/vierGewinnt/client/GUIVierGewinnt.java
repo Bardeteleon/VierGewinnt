@@ -13,7 +13,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Point;
-import java.awt.SplashScreen;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -24,7 +23,6 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Vector;
 
 import javax.swing.AbstractAction;
@@ -43,12 +41,13 @@ import javax.swing.JTextPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 import javax.swing.text.BadLocationException;
 
 import useful.GUI;
-import useful.GUI.SplashProgress;
+import vierGewinnt.client.animation.Explosion;
+import vierGewinnt.client.animation.GlassPaneAnimation;
+import vierGewinnt.client.animation.OnePicAnimation;
+import vierGewinnt.client.animation.Sprite;
 
 /*
  * Vereinheitlichung x-y-koordinaten und Row-Column-System
@@ -73,7 +72,7 @@ public class GUIVierGewinnt extends JFrame
 	private Container c;
 	private GridBagLayout gbl;
 	protected GameTableModel playingFieldModel;
-	private GameRenderer playingFieldRenderer;
+	private GameCellRenderer playingFieldRenderer;
 	protected GUILobby guiLobby;
 	protected ClientVierGewinnt client;
 	private GlassPaneAnimation glassAni;
@@ -147,7 +146,7 @@ public class GUIVierGewinnt extends JFrame
 		panBuffPlayingField.setPreferredSize(new Dimension(10, 10));
 		panBuffPlayingField.add(tbPlayingField);
 		panBuffPlayingField.setBackground(Color.WHITE);
-		playingFieldRenderer = new GameRenderer(panBuffPlayingField);
+		playingFieldRenderer = new GameCellRenderer(panBuffPlayingField);
 		tbPlayingField.setDefaultRenderer(Icon.class, playingFieldRenderer);
 
 		tpLog = new JTextPane()
@@ -490,7 +489,7 @@ public class GUIVierGewinnt extends JFrame
 		expAni.reset();
 		glassAni.addAnimation(expAni);
 		glassAni.start();
-		playingFieldModel.delayAnimationHandler(expAni.delay * (expAni.loop_to - expAni.loop_from - 2));
+		playingFieldModel.delayAnimationHandler(expAni.getDelay() * (expAni.getLoopTo() - expAni.getLoopFrom() - 2));
 		Vector<Point> points = playingFieldModel.getChipPositionsOver(column, row);
 		for (Point p : points)
 		{
@@ -567,39 +566,5 @@ public class GUIVierGewinnt extends JFrame
 		resetPlayingFieldGUI();
 		resetLogChat();
 		guiLobby.tpOutput.setText("");
-	}
-
-	public static void main(String[] args)
-	{
-		new SplashProgress(SplashScreen.getSplashScreen());
-		try
-		{
-			SwingUtilities.invokeAndWait(new Runnable()
-			{
-				@Override
-				public void run()
-				{
-					try
-					{
-						UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-					} catch (Exception e)
-					{
-						e.printStackTrace();
-					}
-					GUIVierGewinnt wnd = new GUIVierGewinnt("VierGewinnt");
-					wnd.setSize(740, 700);
-					wnd.setMinimumSize(new Dimension(365, 570));
-					wnd.setLocationRelativeTo(null);
-					wnd.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-					wnd.setVisible(true);
-				}
-			});
-		} catch (InvocationTargetException e)
-		{
-			e.printStackTrace();
-		} catch (InterruptedException e)
-		{
-			e.printStackTrace();
-		}
 	}
 }

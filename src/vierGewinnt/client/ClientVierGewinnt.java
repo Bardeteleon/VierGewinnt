@@ -5,15 +5,15 @@ import java.util.Vector;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
+import net.Client;
 import useful.GUI;
-import vierGewinnt.DataPackage;
-import vierGewinnt.MessageGenerator;
-import vierGewinnt.Parser;
-import vierGewinnt.net.Client;
+import vierGewinnt.common.Message;
+import vierGewinnt.common.MessageGenerator;
+import vierGewinnt.common.MessageParser;
 
 public class ClientVierGewinnt extends Client
 {
-	private Parser parser = new Parser();
+	private MessageParser parser = new MessageParser();
 	private GUIVierGewinnt gui;
 	protected int color = 0;
 	protected String teammate = null;
@@ -69,7 +69,7 @@ public class ClientVierGewinnt extends Client
 	public void messageReceived(String absenderIP, int absenderPort, String message)
 	{
 		System.out.println("Received: " + message);
-		final DataPackage myData = parser.parse(message);
+		final Message myData = parser.parse(message);
 		/*
 		 * WIRD VOM INPUTLISTENER THREAD AUFGERUFEN; DER KEINE REFERENZ AUF
 		 * OBJEKTE DES EDT HAT
@@ -84,32 +84,32 @@ public class ClientVierGewinnt extends Client
 		});
 	}
 
-	private void messageReaction(DataPackage myData)
+	private void messageReaction(Message myData)
 	{
-		switch (myData.messageType)
+		switch (myData.type)
 		{
-			case Parser.GAME :
+			case MessageParser.GAME :
 				reactionGame(myData);
 				break;
-			case Parser.LOBBY :
+			case MessageParser.LOBBY :
 				reactionLobby(myData);
 				break;
-			case Parser.CHAT :
+			case MessageParser.CHAT :
 				reactionChat(myData);
 				break;
-			case Parser.ERROR :
+			case MessageParser.ERROR :
 				reactionError(myData);
 		}
 	}
 
-	private void reactionGame(DataPackage myData)
+	private void reactionGame(Message myData)
 	{
 		switch (myData.command)
 		{
-			case Parser.INSERT :
+			case MessageParser.INSERT :
 				gui.setChipAt(Integer.parseInt(myData.arguments.get(0)), Integer.parseInt(myData.arguments.get(3)), Integer.parseInt(myData.arguments.get(1)), Integer.parseInt(myData.arguments.get(2)), true);
 				break;
-			case Parser.INSERTSTATUS :
+			case MessageParser.INSERTSTATUS :
 
 				if (Boolean.parseBoolean(myData.arguments.get(0)))
 				{
@@ -120,7 +120,7 @@ public class ClientVierGewinnt extends Client
 					gui.setChooseChip(false, color);
 				}
 				break;
-			case Parser.GAMESTART :
+			case MessageParser.GAMESTART :
 				teammate = myData.arguments.get(0);
 				color = Integer.parseInt(myData.arguments.get(3));
 				gui.playingFieldModel.stopAnimationHandler();
@@ -131,7 +131,7 @@ public class ClientVierGewinnt extends Client
 				gui.guiLobby.guiConnection.setVisible(false);
 				gui.guiLobby.guiGameConfig.setVisible(false);
 				break;
-			case Parser.GAMEEND :
+			case MessageParser.GAMEEND :
 				teammate = null;
 				if (myData.arguments.get(0).equals(" "))
 				{
@@ -144,32 +144,32 @@ public class ClientVierGewinnt extends Client
 						gui.doLooserAnimation();
 				}
 				break;
-			case Parser.LOG :
+			case MessageParser.LOG :
 				gui.insertLogMessage(myData.arguments.get(0));
 				break;
 
-			case Parser.EXPLOSION :
+			case MessageParser.EXPLOSION :
 				gui.doSmallExplosion(Integer.parseInt(myData.arguments.get(0)), Integer.parseInt(myData.arguments.get(1)));
 		}
 	}
 
-	private void reactionLobby(DataPackage myData)
+	private void reactionLobby(Message myData)
 	{
 		// INVITE
-		if (myData.command == Parser.INVITE)
+		if (myData.command == MessageParser.INVITE)
 		{
 			sendMessage(MessageGenerator.clientSendInvitationAnswer(myData.arguments.get(0), gui.askForGame(myData.arguments.get(0), myData.arguments.get(1), myData.arguments.get(2), myData.arguments.get(3),myData.arguments.get(4),myData.arguments.get(5))));
 		}
 		// USERTABLE
-		if (myData.command == Parser.USERTABLE)
+		if (myData.command == MessageParser.USERTABLE)
 		{
 			gui.setUserTable(myData.arguments, nick);
 		}
 	}
 
-	private void reactionChat(DataPackage myData)
+	private void reactionChat(Message myData)
 	{
-		if (myData.command == Parser.WHISPER)
+		if (myData.command == MessageParser.WHISPER)
 		{
 			if (myData.arguments.size() == 3 && ((myData.arguments.get(1).equals(nick) && myData.arguments.get(2).equals(teammate)) || (myData.arguments.get(2).equals(nick) && myData.arguments.get(1).equals(teammate))))
 			{
@@ -188,7 +188,7 @@ public class ClientVierGewinnt extends Client
 		}
 	}
 
-	private void reactionError(DataPackage myData)
+	private void reactionError(Message myData)
 	{
 		if (myData.arguments.size() > 0)
 			gui.showErrorMessage(myData.arguments.get(0));

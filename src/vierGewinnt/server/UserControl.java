@@ -1,7 +1,7 @@
 package vierGewinnt.server;
 import java.util.Vector;
 
-import vierGewinnt.MessageGenerator;
+import vierGewinnt.common.MessageGenerator;
 
 public class UserControl
 {

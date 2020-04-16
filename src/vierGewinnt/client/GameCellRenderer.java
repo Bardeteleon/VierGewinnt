@@ -12,7 +12,7 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
-public class GameRenderer extends JLabel implements TableCellRenderer
+public class GameCellRenderer extends JLabel implements TableCellRenderer
 {
 
 	private JTable table;
@@ -25,7 +25,7 @@ public class GameRenderer extends JLabel implements TableCellRenderer
 	double height;
 	double widthHeightCell;
 
-	public GameRenderer(JPanel panBuffSpielFeld)
+	public GameCellRenderer(JPanel panBuffSpielFeld)
 	{
 		panBuff = panBuffSpielFeld;
 	}

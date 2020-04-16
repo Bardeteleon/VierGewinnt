@@ -1,6 +1,6 @@
 package vierGewinnt.server;
 
-import vierGewinnt.MessageGenerator;
+import vierGewinnt.common.MessageGenerator;
 
 
 public class GameControl

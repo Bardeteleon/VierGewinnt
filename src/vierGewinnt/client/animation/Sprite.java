@@ -1,4 +1,4 @@
-package vierGewinnt.client;
+package vierGewinnt.client.animation;
 
 import java.awt.Graphics;
 import java.awt.geom.Rectangle2D;
@@ -60,7 +60,7 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 	{
 
 		animation += (delta / 1000000);
-		if (animation > delay)
+		if (animation > getDelay())
 		{
 			animation = 0;
 			computeAnimation();
@@ -73,9 +73,9 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 
 		currentpic++;
 
-		if (currentpic > loop_to)
+		if (currentpic > getLoopTo())
 		{
-			currentpic = loop_from;
+			currentpic = getLoopFrom();
 		}
 
 	}
@@ -163,6 +163,22 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 		}
 
 		return anim;
+	}
+
+	public long getDelay() {
+		return delay;
+	}
+
+	public int getLoopTo() {
+		return loop_to;
+	}
+
+	public int getLoopFrom() {
+		return loop_from;
+	}
+
+	public boolean doRemove() {
+		return remove;
 	}
 
 }

@@ -1,6 +1,7 @@
-package vierGewinnt.net;
+package net;
 
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.Vector;
 
 /*
@@ -62,6 +63,16 @@ public abstract class Server implements ConnectionControl
 	// Wird vom Connector angesteuert
 	public void addNewConnection(Socket _mySocket)
 	{
+//		try
+//		{
+//			System.out.println("Server new Connection - keepAlive=" + _mySocket.getKeepAlive());
+//			_mySocket.setKeepAlive(true);
+//			System.out.println("Server new Connection - keepAlive=" + _mySocket.getKeepAlive());
+//		} catch (SocketException e)
+//		{
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		String IP = _mySocket.getInetAddress().toString();
 		IP = IP.substring(1, IP.length());
 
@@ -126,7 +137,7 @@ public abstract class Server implements ConnectionControl
 		{
 			if (myConnectionCollection.get(i).getIP().equals(_empfaengerIP) && myConnectionCollection.get(i).getPort() == _empfaengerPort)
 			{
-				System.out.println("Send (to " + _empfaengerIP + "): " + _message);// TODO
+				System.out.println("Send (to " + _empfaengerIP + ":" + _empfaengerPort + "): " + _message);// TODO
 																					// löschen
 				myConnectionCollection.get(i).sendMessage(_message);
 				return;

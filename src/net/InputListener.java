@@ -1,4 +1,4 @@
-package vierGewinnt.net;
+package net;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,6 +26,7 @@ public class InputListener extends Thread
 			while (connected)
 			{
 				message = myBuffReader.readLine();
+				System.out.println("InputListener read a line (from " + myConnection.IP + ":" + myConnection.port + "): " + message);
 				if (message != null)
 				{
 					if (connected)
@@ -43,6 +44,8 @@ public class InputListener extends Thread
 		}
 		catch (IOException e)
 		{
+			System.out.println("InputListener exception (from " + myConnection.IP + ":" + myConnection.port + "): ");
+			e.printStackTrace();
 			cutConnection();
 		}
 	}

@@ -1,8 +1,8 @@
-package vierGewinnt;
+package vierGewinnt.common;
 
 
 
-public class Parser
+public class MessageParser
 {
 
 	// messageTypes:
@@ -29,10 +29,10 @@ public class Parser
 	public static final int WHISPER = 5;
 	
 
-	private static DataPackage errorOutput(String errMessage)
+	private static Message errorOutput(String errMessage)
 	{
-		DataPackage messageData = new DataPackage();
-		messageData.messageType = ERROR;
+		Message messageData = new Message();
+		messageData.type = ERROR;
 		messageData.arguments.add(errMessage);
 		return messageData;
 	}
@@ -88,7 +88,7 @@ public class Parser
 		return ERROR;
 	}
 
-	private static DataPackage getArguments(DataPackage pMessageData, String pMessage)
+	private static Message getArguments(Message pMessageData, String pMessage)
 	{
 		for (int counter = 0; pMessage.contains("§"); counter++)
 		{
@@ -99,39 +99,39 @@ public class Parser
 		return pMessageData;
 	}
 
-	public static DataPackage parse(String pMessage)
+	public static Message parse(String pMessage)
 	{
 		if(pMessage == null)
 		{
 			return errorOutput("pMessage == null");
 		}
-		DataPackage messageData = new DataPackage();
+		Message message = new Message();
 		
 		// server Message with IP at the front
 		if (!pMessage.substring(0, 1).equals("["))
 		{
-			messageData.ip = pMessage.substring(0, pMessage.indexOf("["));
+			message.ip = pMessage.substring(0, pMessage.indexOf("["));
 		}
 		
-		messageData.messageType = getMessageType(pMessage.substring(pMessage.indexOf("[")+1, pMessage.indexOf("]")));
-		if (messageData.messageType == ERROR)
+		message.type = getMessageType(pMessage.substring(pMessage.indexOf("[")+1, pMessage.indexOf("]")));
+		if (message.type == ERROR)
 		{
 			return errorOutput("messageType Error 2");
 		}
 
 		// command:
 		pMessage = pMessage.substring(pMessage.indexOf("]") + 1);
-		if (messageData.messageType != CHAT || pMessage.contains(MessageGenerator.WHISPER))
+		if (message.type != CHAT || pMessage.contains(MessageGenerator.WHISPER))
 		{
 			if (!pMessage.contains("§"))
 			{
 				return errorOutput("commend Error");
 			}
-			messageData.command = getCommand(pMessage.substring(0, pMessage.indexOf("§")));
+			message.command = getCommand(pMessage.substring(0, pMessage.indexOf("§")));
 		} else
 		{
-			messageData.arguments.add(pMessage);
-			return messageData;
+			message.arguments.add(pMessage);
+			return message;
 		}
 
 		// parameters:
@@ -140,9 +140,9 @@ public class Parser
 		{
 			return errorOutput("Missing parameters");
 		}
-		messageData = getArguments(messageData, pMessage);
+		message = getArguments(message, pMessage);
 
-		return messageData;
+		return message;
 	}
 
 }

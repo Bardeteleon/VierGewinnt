@@ -1,4 +1,4 @@
-package vierGewinnt;
+package vierGewinnt.common;
 
 
 
@@ -8,7 +8,7 @@ import vierGewinnt.server.User;
 
 public class MessageGenerator 
 {
-	//messageTypes:
+	//types:
 	public static final String GAME = "[GAME]";
 	public static final String LOBBY = "[LOBBY]";
 	public static final String CHAT = "[CHAT]";

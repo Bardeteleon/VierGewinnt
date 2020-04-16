@@ -1,4 +1,4 @@
-package vierGewinnt.net;
+package net;
 
 public interface ConnectionControl
 {

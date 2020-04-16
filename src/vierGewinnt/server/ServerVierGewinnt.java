@@ -2,10 +2,10 @@ package vierGewinnt.server;
 
 import java.util.Vector;
 
-import vierGewinnt.DataPackage;
-import vierGewinnt.MessageGenerator;
-import vierGewinnt.Parser;
-import vierGewinnt.net.Server;
+import net.Server;
+import vierGewinnt.common.Message;
+import vierGewinnt.common.MessageGenerator;
+import vierGewinnt.common.MessageParser;
 
 public class ServerVierGewinnt extends Server
 {
@@ -47,14 +47,14 @@ public class ServerVierGewinnt extends Server
 		}
 
 		myUserControl.deleteUser(new User(_IP, _port));
-		System.out.println("(" + _IP + "): Verbindung unterbrochen");
+		System.out.println("(" + _IP + ":" + _port + "): Verbindung unterbrochen");
 	}
 
 	public void messageReceived(String _absenderIP, int _absenderPort, String _message)
 	{
 		System.out.println("    <---EMPFANGEN VON (" + _absenderIP + "): " + _message);
-		DataPackage dp;
-		dp = Parser.parse(_message);
+		Message dp;
+		dp = MessageParser.parse(_message);
 		User absender = new User(_absenderIP, _absenderPort);
 		messageReaction(dp, absender);
 	}
@@ -109,12 +109,12 @@ public class ServerVierGewinnt extends Server
 		System.out.println(fehler);
 	}
 
-	private void messageReaction(DataPackage pMessageData, User pAbsender)
+	private void messageReaction(Message pMessageData, User pAbsender)
 	{
-		switch (pMessageData.messageType)
+		switch (pMessageData.type)
 		{
-		case Parser.GAME:
-			if (pMessageData.command == Parser.INSERT)
+		case MessageParser.GAME:
+			if (pMessageData.command == MessageParser.INSERT)
 			{
 				try
 				{
@@ -136,7 +136,7 @@ public class ServerVierGewinnt extends Server
 					// Einlesefehler
 					fehler("messageReaction.Insert: Einlesefehler");
 				}
-			} else if (pMessageData.command == Parser.EXPLOSION)
+			} else if (pMessageData.command == MessageParser.EXPLOSION)
 			{
 				try
 				{
@@ -176,11 +176,11 @@ public class ServerVierGewinnt extends Server
 			}
 			break;
 
-		case Parser.LOBBY:
+		case MessageParser.LOBBY:
 			switch (pMessageData.command)
 			{
 
-			case Parser.INVITE:
+			case MessageParser.INVITE:
 				User sender = myUserControl.getUser(pAbsender);
 				if (sender != null)
 				{
@@ -262,7 +262,7 @@ public class ServerVierGewinnt extends Server
 				// myMessGenerator.serverSendInvitation(/*Nick des Senders*/));
 				break;
 
-			case Parser.INVITATIONANSWER: // WICHTIG: ARG(0): IP DES EINLADENDEN
+			case MessageParser.INVITATIONANSWER: // WICHTIG: ARG(0): IP DES EINLADENDEN
 											// | ARG(1): TRUE ODER FALSE
 				User eingeladener = myUserControl.getUser(pAbsender);
 				if (eingeladener != null)
@@ -312,7 +312,7 @@ public class ServerVierGewinnt extends Server
 				// Wenn Einladung eingenommen
 				break;
 
-			case Parser.USERTABLE:
+			case MessageParser.USERTABLE:
 				User myUser = myUserControl.getUser(pAbsender);
 				if (myUser != null)
 				{
@@ -336,8 +336,8 @@ public class ServerVierGewinnt extends Server
 			}
 			break;
 
-		case Parser.CHAT:
-			if (pMessageData.command == Parser.WHISPER)
+		case MessageParser.CHAT:
+			if (pMessageData.command == MessageParser.WHISPER)
 			{
 				String message = pMessageData.arguments.get(0);
 
@@ -413,7 +413,7 @@ public class ServerVierGewinnt extends Server
 
 			break;
 
-		case Parser.ERROR:
+		case MessageParser.ERROR:
 			fehler("messageReaction: (" + pAbsender + "): Unbekannter Befehl");
 		}
 	}
