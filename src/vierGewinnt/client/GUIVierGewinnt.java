@@ -427,7 +427,6 @@ public class GUIVierGewinnt extends JFrame
 		try
 		{
 			tpLog.getDocument().insertString(tpLog.getDocument().getLength(), m + "\n", tpLog.getStyle(GUI.BLACKSTYLE));
-			GUI.insertSmileys(tpLog.getStyledDocument(), 0, m.length());
 		} catch (BadLocationException e)
 		{
 			e.printStackTrace();
@@ -438,8 +437,9 @@ public class GUIVierGewinnt extends JFrame
 	{
 		try
 		{
-			guiLobby.tpOutput.getDocument().insertString(guiLobby.tpOutput.getDocument().getLength(), m + "\n", guiLobby.tpOutput.getStyle(type));
-			GUI.insertSmileys(guiLobby.tpOutput.getStyledDocument(), 0, m.length());
+			int docLength = guiLobby.tpOutput.getDocument().getLength();
+			guiLobby.tpOutput.getDocument().insertString(docLength, m + "\n", guiLobby.tpOutput.getStyle(type));
+			GUI.insertSmileys(guiLobby.tpOutput.getStyledDocument(), docLength);
 		} catch (BadLocationException e)
 		{
 			e.printStackTrace();
@@ -450,8 +450,9 @@ public class GUIVierGewinnt extends JFrame
 	{
 		try
 		{
-			tpChat.getDocument().insertString(tpChat.getDocument().getLength(), m + "\n", tpChat.getStyle(type));
-			GUI.insertSmileys(tpChat.getStyledDocument(), 0, m.length());
+			int docLength = tpChat.getDocument().getLength();
+			tpChat.getDocument().insertString(docLength, m + "\n", tpChat.getStyle(type));
+			GUI.insertSmileys(tpChat.getStyledDocument(), docLength);
 		} catch (BadLocationException e)
 		{
 			e.printStackTrace();

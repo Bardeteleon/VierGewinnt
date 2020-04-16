@@ -189,9 +189,9 @@ public class GUI
 		return doc;
 	}
 
-	public static void insertSmileys(StyledDocument sdoc, int offset, int length)
+	public static void insertSmileys(StyledDocument sdoc, int offset)
 	{
-		for (int i = offset; i < length - 1; i++)
+		for (int i = offset; i < sdoc.getLength(); i++)
 		{
 			String element;
 			try
@@ -202,18 +202,22 @@ public class GUI
 				{
 					sdoc.remove(i, 2);
 					sdoc.insertString(i, " ", sdoc.getStyle(LOUGHSMILEY));
+					sdoc.insertString(i+1, " ", sdoc.getStyle(BLACKSTYLE));
 				} else if (element.equals(SADSMILEY))
 				{
 					sdoc.remove(i, 2);
 					sdoc.insertString(i, " ", sdoc.getStyle(SADSMILEY));
+					sdoc.insertString(i+1, " ", sdoc.getStyle(BLACKSTYLE));
 				} else if (element.equals(GRINSMILEY))
 				{
 					sdoc.remove(i, 2);
 					sdoc.insertString(i, " ", sdoc.getStyle(GRINSMILEY));
+					sdoc.insertString(i+1, " ", sdoc.getStyle(BLACKSTYLE));
 				} else if (element.equals(TOUNGESMILEY))
 				{
 					sdoc.remove(i, 2);
 					sdoc.insertString(i, " ", sdoc.getStyle(TOUNGESMILEY));
+					sdoc.insertString(i+1, " ", sdoc.getStyle(BLACKSTYLE));
 				}
 
 			} catch (BadLocationException e)

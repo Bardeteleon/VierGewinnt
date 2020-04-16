@@ -107,14 +107,13 @@ public class GUIConnection extends JDialog
 				if (cmd.equals("Verbinden"))
 				{
 					int port = 1000;
-					String ip = tfIP.getText();// TODO UTIL IP regex Check
+					String ip = "localhost";
 
-					if(ip.equalsIgnoreCase("konstantin-pc"))
+					if(!tfIP.getText().isEmpty())
 					{
-//						ip = "77.176.125.113";
-						ip = "fe80::317d:ea0e:1a3a:8e4b%11";
-						port = 4662;
+						ip = tfIP.getText(); // TODO UTIL IP regex Check
 					}
+					
 					try
 					{
 						port = Integer.parseInt(tfPort.getText());
@@ -122,13 +121,16 @@ public class GUIConnection extends JDialog
 					{
 						tfPort.setText(""+port);
 					}
+					
 					String nick = tfNick.getText();
 					if (nick.contains(" ") || nick.matches("\\s*"))
 					{
 						tfNick.setText("Error (Bitte neu eingeben)");
 						return;
 					}
+					
 					parent.client = new ClientVierGewinnt(ip, port, nick, parent);
+					
 					if (parent.client.myConnection != null && parent.client.myConnection.getConnected())
 					{
 						tfIP.setEnabled(false);
@@ -136,7 +138,10 @@ public class GUIConnection extends JDialog
 						tfNick.setEnabled(false);
 						bnVerbinden.setText("Trennen");
 						setVisible(false);
-					}else JOptionPane.showMessageDialog(GUIConnection.this, "Fehler beim Verbinden!", "Error", JOptionPane.ERROR_MESSAGE);
+					}else 
+					{
+						JOptionPane.showMessageDialog(GUIConnection.this, "Fehler beim Verbinden!", "Error", JOptionPane.ERROR_MESSAGE);
+					}
 				}
 				if (cmd.equals("Trennen"))
 				{
