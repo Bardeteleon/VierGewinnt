@@ -12,6 +12,8 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
+import vierGewinnt.common.Chip;
+
 public class GameCellRenderer extends JLabel implements TableCellRenderer
 {
 
@@ -39,7 +41,8 @@ public class GameCellRenderer extends JLabel implements TableCellRenderer
 			rows = model.getRowCount();
 			columns = model.getColumnCount();
 		}
-		if (hasFocus && model.isBombPosition(column, row))
+		if (   hasFocus 
+			&& model.getChipTypeAt(column, row) == Chip.EXPLOSIVE)
 		{
 			setBorder(BorderFactory.createLineBorder(Color.ORANGE));
 		} else

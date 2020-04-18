@@ -47,9 +47,9 @@ public class MessageGenerator
 		return CHAT + WHISPER + message + "§" + names;
 	}
 	
-	public static String clientSendInsert(int pXCoord, int chipType)
+	public static String clientSendInsert(int pXCoord, Chip chip)
 	{
-		return GAME + INSERT + pXCoord + "§" + chipType;
+		return GAME + INSERT + pXCoord + "§" + chip.getValue();
 	}
 	
 	public static String clientSendNickNameIntroduction(String pNickName)
@@ -74,9 +74,9 @@ public class MessageGenerator
 		}
 	}
 	
-	public static String serverSendInsert(User _teammate, int farbe, int pXCoord, int pYCoord, int chipType)
+	public static String serverSendInsert(User _teammate, int farbe, int pXCoord, int pYCoord, Chip chip)
 	{
-		return _teammate.getIP() + ":" + _teammate.getPort() + GAME + INSERT + farbe + "§" + pXCoord + "§" + pYCoord + "§" + chipType;
+		return _teammate.getIP() + ":" + _teammate.getPort() + GAME + INSERT + farbe + "§" + pXCoord + "§" + pYCoord + "§" + chip.getValue();
 	}
 	
 	public static String serverSendUserTable(Vector<String> pUserList)

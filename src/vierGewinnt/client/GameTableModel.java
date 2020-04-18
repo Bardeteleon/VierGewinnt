@@ -12,6 +12,7 @@ import javax.swing.table.AbstractTableModel;
 
 import useful.GUI;
 import useful.Stopuhr;
+import vierGewinnt.common.Chip;
 import vierGewinnt.server.GameControl;
 
 public class GameTableModel extends AbstractTableModel
@@ -124,25 +125,22 @@ public class GameTableModel extends AbstractTableModel
 		update();
 	}
 
-	public void setChipAnimatedAt(int spieler, boolean bomb, int column, int fromRow, int toRow)
+	public void setChipAnimatedAt(int spieler, Chip chip, int column, int fromRow, int toRow)
 	{
-		animations.add(new Animation(spieler, bomb, column, fromRow, toRow, false));
+		animations.add(new Animation(spieler, chip, column, fromRow, toRow, false));
 		aniHandler.waikUp();
 	}
 
-	public void setChipAnimatedAt(int spieler, boolean bomb, int column, int row)
+	public void setChipAnimatedAt(int spieler, Chip chip, int column, int row)
 	{
-		if (bomb)
+		if (   Chip.EXPLOSIVE == chip 
+			&& ownColor == spieler 
+			&& bombs > 0)
 		{
-			if (spieler == ownColor)
-				if (bombs > 0)
-				{
-					bombs--;
-					setChooserChipToBomb(false);
-				} else
-					bomb = false;
+			bombs--;
+			setChooserChipToBomb(false);
 		}
-		animations.add(new Animation(spieler, bomb, column, 0, row, true));
+		animations.add(new Animation(spieler, chip, column, 0, row, true));
 		aniHandler.waikUp();
 	}
 
@@ -153,31 +151,31 @@ public class GameTableModel extends AbstractTableModel
 		int toRow;
 		int spieler;
 		boolean first;
-		boolean bomb;
+		Chip chip;
 		Stopuhr s;
 		long deleteAfter = 10000;
 
-		public Animation(int spieler, boolean bomb, int column, int fromRow, int toRow, boolean first)
+		public Animation(int spieler, Chip chip, int column, int fromRow, int toRow, boolean first)
 		{
-			setName("Animation: Column " + column + " fromRow: " + fromRow + " toRow: " + toRow + " Spieler: " + spieler + " Bomb: " + bomb + " First: " + first);
+			setName("Animation: Column " + column + " fromRow: " + fromRow + " toRow: " + toRow + " Spieler: " + spieler + " ChipType: " + chip + " First: " + first);
 			this.column = column;
 			this.fromRow = fromRow;
 			this.toRow = toRow;
 			this.spieler = spieler;
 			this.first = first;
-			this.bomb = bomb;
+			this.chip = chip;
 			s = new Stopuhr();
 		}
 		@Override
 		public void run()
 		{
 			if (spieler == GUIVierGewinnt.RED)
-				if (bomb)
+				if (chip == Chip.EXPLOSIVE)
 					animate(RED_1, RED_B, RED_3, RED_O_2);
 				else
 					animate(RED_1, RED_2, RED_3, RED_O_2);
 			else if (spieler == GUIVierGewinnt.YEL)
-				if (bomb)
+				if (chip == Chip.EXPLOSIVE)
 					animate(YEL_1, YEL_B, YEL_3, YEL_O_2);
 				else
 					animate(YEL_1, YEL_2, YEL_3, YEL_O_2);
@@ -214,7 +212,7 @@ public class GameTableModel extends AbstractTableModel
 		@Override
 		public String toString()
 		{
-			return "Animation: Column " + column + " fromRow: " + fromRow + " toRow: " + toRow + " Spieler: " + spieler + " Bomb: " + bomb + " First: " + first;
+			return "Animation: Column " + column + " fromRow: " + fromRow + " toRow: " + toRow + " Spieler: " + spieler + " ChipType: " + chip + " First: " + first;
 		}
 	}
 
@@ -329,25 +327,24 @@ public class GameTableModel extends AbstractTableModel
 		}
 	}
 
-	public void setChipAt(int spieler, boolean bomb, int columnIndex, int rowIndex)
+	public void setChipAt(int spieler, Chip chip, int columnIndex, int rowIndex)
 	{
-		if (bomb)
+		if (Chip.EXPLOSIVE == chip)
 		{
 			if (spieler == ownColor)
 				if (bombs > 0)
 				{
 					bombs--;
 					setChooserChipToBomb(false);
-				} else
-					bomb = false;
+				}
 		}
 		if (spieler == GUIVierGewinnt.RED)
-			if (bomb)
+			if (Chip.EXPLOSIVE == chip)
 				setIconAt(RED_B, columnIndex, rowIndex);
 			else
 				setIconAt(RED_2, columnIndex, rowIndex);
 		else if (spieler == GUIVierGewinnt.YEL)
-			if (bomb)
+			if (Chip.EXPLOSIVE == chip)
 				setIconAt(YEL_B, columnIndex, rowIndex);
 			else
 				setIconAt(YEL_2, columnIndex, rowIndex);
@@ -441,18 +438,21 @@ public class GameTableModel extends AbstractTableModel
 		return chipPos;
 	}
 
-	public boolean isBombChoosingChip()
+	public Chip getChoosingChipType()
 	{
-		return bomb;
+		if(bomb)
+			return Chip.EXPLOSIVE;
+		else
+			return Chip.NORMAL;
 	}
 
-	public boolean isBombPosition(int column, int row)
+	public Chip getChipTypeAt(int column, int row)
 	{
 		if (icons.get(RED_B).equals(playingField[row][column]) || icons.get(YEL_B).equals(playingField[row][column]))
 		{
-			return true;
+			return Chip.EXPLOSIVE;
 		} else
-			return false;
+			return Chip.NORMAL;
 	}
 
 	public void setChooserChipToBomb(boolean enable)
@@ -502,20 +502,7 @@ public class GameTableModel extends AbstractTableModel
 		aniHandler.delay(millis);
 	}
 
-	public static int bombToChipType(boolean bomb)
-	{
-		if (bomb)
-			return GameControl.EXPLOSIVCHIP;
-		else
-			return GameControl.NORMALCHIP;
-	}
-
-	public static boolean chipTypeToBomb(int chipType)
-	{
-		if (chipType == GameControl.EXPLOSIVCHIP)
-			return true;
-		else
-			return false;
-
+	public int getNumberOfBombs() {
+		return bombs;
 	}
 }

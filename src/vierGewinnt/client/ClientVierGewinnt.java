@@ -7,6 +7,7 @@ import javax.swing.SwingUtilities;
 
 import net.Client;
 import useful.GUI;
+import vierGewinnt.common.Chip;
 import vierGewinnt.common.Message;
 import vierGewinnt.common.MessageGenerator;
 import vierGewinnt.common.MessageParser;
@@ -34,9 +35,9 @@ public class ClientVierGewinnt extends Client
 		gui = pGui;
 	}
 
-	public void playRequest(int column, boolean bomb)
+	public void playRequest(int column, Chip chip)
 	{
-		sendMessage(MessageGenerator.clientSendInsert(column, GameTableModel.bombToChipType(bomb)));
+		sendMessage(MessageGenerator.clientSendInsert(column, chip));
 	}
 
 	public void gameRequest(String teammate, int rows, int columns, boolean expChipsZaehlenFuerSieg, boolean expChipZaehltAlsZug, int bombs)
@@ -107,26 +108,40 @@ public class ClientVierGewinnt extends Client
 		switch (myData.command)
 		{
 			case MessageParser.INSERT :
-				gui.setChipAt(Integer.parseInt(myData.arguments.get(0)), Integer.parseInt(myData.arguments.get(3)), Integer.parseInt(myData.arguments.get(1)), Integer.parseInt(myData.arguments.get(2)), true);
+				Chip chip = Chip.valueOf(Integer.parseInt(myData.arguments.get(3)));
+				gui.setChipAt(Integer.parseInt(myData.arguments.get(0)), 
+											   chip, 
+											   Integer.parseInt(myData.arguments.get(1)), 
+											   Integer.parseInt(myData.arguments.get(2)));
+				if(chip == Chip.EXPLOSIVE)
+					gui.getStatusBar().setBombInfo(gui.getPlayingFieldModel().getNumberOfBombs());
 				break;
 			case MessageParser.INSERTSTATUS :
 
 				if (Boolean.parseBoolean(myData.arguments.get(0)))
 				{
 					gui.setChooseChip(true, color);
-					gui.tbPlayingField.requestFocus();
+					gui.getPlayingField().requestFocus();
+					gui.getStatusBar().setYourTurn();
 				} else
 				{
 					gui.setChooseChip(false, color);
+					if(teammate != null)
+						gui.getStatusBar().setOpponentsTurn(teammate);
 				}
 				break;
 			case MessageParser.GAMESTART :
 				teammate = myData.arguments.get(0);
 				color = Integer.parseInt(myData.arguments.get(3));
-				gui.playingFieldModel.stopAnimationHandler();
-				gui.playingFieldModel = new GameTableModel(Integer.parseInt(myData.arguments.get(2)), Integer.parseInt(myData.arguments.get(1)), Integer.parseInt(myData.arguments.get(4)), color);
-				gui.resetLogChat();
-				gui.tbPlayingField.setModel(gui.playingFieldModel);
+				gui.getPlayingFieldModel().stopAnimationHandler();
+				gui.setPlayingFieldModel(new GameTableModel(Integer.parseInt(myData.arguments.get(2)), 
+															Integer.parseInt(myData.arguments.get(1)), 
+															Integer.parseInt(myData.arguments.get(4)), 
+															color));
+				gui.getStatusBar().setPlayers(nick, color, teammate);
+				if(gui.getPlayingFieldModel().getNumberOfBombs() > 0)
+					gui.getStatusBar().setBombInfo(gui.getPlayingFieldModel().getNumberOfBombs());
+				gui.resetChat();
 				gui.guiLobby.setVisible(false);
 				gui.guiLobby.guiConnection.setVisible(false);
 				gui.guiLobby.guiGameConfig.setVisible(false);
@@ -143,9 +158,10 @@ public class ClientVierGewinnt extends Client
 					else
 						gui.doLooserAnimation();
 				}
+				gui.getStatusBar().clear();
 				break;
 			case MessageParser.LOG :
-				gui.insertLogMessage(myData.arguments.get(0));
+				// TODO reroute remaining log to whipser chat as soon as Lobbz/Game Chat are merged
 				break;
 
 			case MessageParser.EXPLOSION :

@@ -1,14 +1,11 @@
 package vierGewinnt.server;
 
+import vierGewinnt.common.Chip;
 import vierGewinnt.common.MessageGenerator;
 
 
 public class GameControl
-{
-	public static final int NORMALCHIP = 1;
-	public static final int EXPLOSIVCHIP = 2;
-	
-	
+{	
 	ServerVierGewinnt myServer;
 	
 	Feld[][] spielfeld; //0: leer | 1: von Sp1 belegt | 2: von Sp2 belegt
@@ -23,8 +20,6 @@ public class GameControl
 	
 	int[] explosivchipsVonSp = {0, 0, 0};
 	
-	//String sp1IP;
-	//String sp2IP;
 	private User sp1, sp2;
 	
 	public GameControl(ServerVierGewinnt _myServer, int _spalten, int _zeilen, User _sp1, User _sp2, boolean _expChipsZahlenFuerSieg, boolean _explosionZahltAlsZug, int _anzahlExpChips)
@@ -239,7 +234,7 @@ public class GameControl
 		
 	}
 	
-	public void neuerEinwurf(int _spalte, User _spieler, int chipType)
+	public void neuerEinwurf(int _spalte, User _spieler, Chip chipType)
 	{
 		int spieler = 0;
 		if (_spieler.equals(sp1))
@@ -272,13 +267,13 @@ public class GameControl
 							{
 								if (spielfeld[_spalte][i].getType() == Feld.LEER)
 								{
-									if (chipType == NORMALCHIP)
+									if (chipType == Chip.NORMAL)
 									{
 										spielfeld[_spalte][i].setSpieler(spieler);
 										spielfeld[_spalte][i].setType(Feld.NORMAL);
 										einwurfGetaetigt(_spalte, i, spieler, chipType);
 									}
-									else if (chipType == EXPLOSIVCHIP)
+									else if (chipType == Chip.EXPLOSIVE)
 									{
 										if (explosivchipsVonSp[amZug] > 0)
 										{
@@ -335,11 +330,11 @@ public class GameControl
 	}
 	
 	
-	private void einwurfGetaetigt(int _spalte, int _zeile, int _spieler, int chipType)
+	private void einwurfGetaetigt(int _spalte, int _zeile, int _spieler, Chip chip)
 	{
 		//System.out.println("Spieler " + " hat in die Spalte " + _spalte + " eingeworfen (Höhe: " + _zeile + ")");
-		myServer.sendMessage(sp1, MessageGenerator.serverSendInsert(sp2, _spieler, _spalte, _zeile, chipType));
-		myServer.sendMessage(sp2, MessageGenerator.serverSendInsert(sp1, _spieler, _spalte, _zeile, chipType));
+		myServer.sendMessage(sp1, MessageGenerator.serverSendInsert(sp2, _spieler, _spalte, _zeile, chip));
+		myServer.sendMessage(sp2, MessageGenerator.serverSendInsert(sp1, _spieler, _spalte, _zeile, chip));
 		
 		//visualisieren();
 		spielerwechsel();

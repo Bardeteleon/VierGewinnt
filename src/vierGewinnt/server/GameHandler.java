@@ -1,6 +1,8 @@
 package vierGewinnt.server;
 import java.util.Vector;
 
+import vierGewinnt.common.Chip;
+
 
 public class GameHandler
 {
@@ -17,7 +19,7 @@ public class GameHandler
 		myGames.add(new GameControl(myServer, _spalten, _zeilen, _sp1, _sp2, _expChipsZahlenFuerSieg, _explosionZahltAlsZug, _anzahlExpChips));
 	}
 	
-	public void einwurf(int _spalte, User _spieler, int _chipType)
+	public void einwurf(int _spalte, User _spieler, Chip _chipType)
 	{
 		for (int i = 0 ; i < myGames.size() ; i++)
 		{

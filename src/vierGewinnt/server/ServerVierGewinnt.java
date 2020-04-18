@@ -3,6 +3,7 @@ package vierGewinnt.server;
 import java.util.Vector;
 
 import net.Server;
+import vierGewinnt.common.Chip;
 import vierGewinnt.common.Message;
 import vierGewinnt.common.MessageGenerator;
 import vierGewinnt.common.MessageParser;
@@ -121,8 +122,8 @@ public class ServerVierGewinnt extends Server
 					int spalte;
 					spalte = Integer.parseInt(pMessageData.arguments.get(0));
 
-					int chipType = Integer.parseInt(pMessageData.arguments.get(1));
-					if (chipType == GameControl.NORMALCHIP || chipType == GameControl.EXPLOSIVCHIP)
+					Chip chipType = Chip.valueOf(Integer.parseInt(pMessageData.arguments.get(1)));
+					if (chipType == Chip.NORMAL || chipType == Chip.EXPLOSIVE)
 					{
 						myGameHandler.einwurf(spalte, pAbsender, chipType);
 					} else
