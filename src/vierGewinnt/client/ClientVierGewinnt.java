@@ -47,7 +47,7 @@ public class ClientVierGewinnt extends Client
 
 	public void explosionRequest(int splate, int zeile)
 	{
-		sendMessage(MessageGenerator.explosion(null, splate, zeile));
+		sendMessage(MessageGenerator.explosion(splate, zeile));
 	}
 
 	public void sendChatMessage(String message)
@@ -89,16 +89,16 @@ public class ClientVierGewinnt extends Client
 	{
 		switch (myData.type)
 		{
-			case MessageParser.GAME :
+			case GAME :
 				reactionGame(myData);
 				break;
-			case MessageParser.LOBBY :
+			case LOBBY :
 				reactionLobby(myData);
 				break;
-			case MessageParser.CHAT :
+			case CHAT :
 				reactionChat(myData);
 				break;
-			case MessageParser.ERROR :
+			case ERROR :
 				reactionError(myData);
 		}
 	}
@@ -107,7 +107,7 @@ public class ClientVierGewinnt extends Client
 	{
 		switch (myData.command)
 		{
-			case MessageParser.INSERT :
+			case INSERT :
 				Chip chip = Chip.valueOf(Integer.parseInt(myData.arguments.get(3)));
 				gui.setChipAt(Integer.parseInt(myData.arguments.get(0)), 
 											   chip, 
@@ -116,7 +116,8 @@ public class ClientVierGewinnt extends Client
 				if(chip == Chip.EXPLOSIVE)
 					gui.getStatusBar().setBombInfo(gui.getPlayingFieldModel().getNumberOfBombs());
 				break;
-			case MessageParser.INSERTSTATUS :
+				
+			case INSERTSTATUS :
 
 				if (Boolean.parseBoolean(myData.arguments.get(0)))
 				{
@@ -130,7 +131,8 @@ public class ClientVierGewinnt extends Client
 						gui.getStatusBar().setOpponentsTurn(teammate);
 				}
 				break;
-			case MessageParser.GAMESTART :
+				
+			case GAMESTART :
 				teammate = myData.arguments.get(0);
 				color = Integer.parseInt(myData.arguments.get(3));
 				gui.getPlayingFieldModel().stopAnimationHandler();
@@ -146,7 +148,8 @@ public class ClientVierGewinnt extends Client
 				gui.guiLobby.guiConnection.setVisible(false);
 				gui.guiLobby.guiGameConfig.setVisible(false);
 				break;
-			case MessageParser.GAMEEND :
+				
+			case GAMEEND :
 				teammate = null;
 				if (myData.arguments.get(0).equals(" "))
 				{
@@ -160,47 +163,57 @@ public class ClientVierGewinnt extends Client
 				}
 				gui.getStatusBar().clear();
 				break;
-			case MessageParser.LOG :
+				
+			case LOG :
 				// TODO reroute remaining log to whipser chat as soon as Lobbz/Game Chat are merged
 				break;
 
-			case MessageParser.EXPLOSION :
+			case EXPLOSION :
 				gui.doSmallExplosion(Integer.parseInt(myData.arguments.get(0)), Integer.parseInt(myData.arguments.get(1)));
 		}
 	}
 
 	private void reactionLobby(Message myData)
 	{
-		// INVITE
-		if (myData.command == MessageParser.INVITE)
+		switch(myData.command)
 		{
-			sendMessage(MessageGenerator.clientSendInvitationAnswer(myData.arguments.get(0), gui.askForGame(myData.arguments.get(0), myData.arguments.get(1), myData.arguments.get(2), myData.arguments.get(3),myData.arguments.get(4),myData.arguments.get(5))));
-		}
-		// USERTABLE
-		if (myData.command == MessageParser.USERTABLE)
-		{
-			gui.setUserTable(myData.arguments, nick);
+			case INVITE:
+				sendMessage(MessageGenerator.clientSendInvitationAnswer(myData.arguments.get(0), 
+																		gui.askForGame(myData.arguments.get(0), 
+																		myData.arguments.get(1), 
+																		myData.arguments.get(2), 
+																		myData.arguments.get(3),
+																		myData.arguments.get(4),
+																		myData.arguments.get(5))));
+				break;
+		
+			case USERTABLE:
+				gui.setUserTable(myData.arguments, nick);
+				break;
 		}
 	}
 
 	private void reactionChat(Message myData)
 	{
-		if (myData.command == MessageParser.WHISPER)
+		switch(myData.command)
 		{
-			if (myData.arguments.size() == 3 && ((myData.arguments.get(1).equals(nick) && myData.arguments.get(2).equals(teammate)) || (myData.arguments.get(2).equals(nick) && myData.arguments.get(1).equals(teammate))))
-			{
-				gui.insertGameChatMessage(myData.arguments.get(1) + ": " + myData.arguments.get(0), GUI.BLACKSTYLE);
-			} else
-			{
-				String empfaenger = "";
-				for (int i = 2; i < myData.arguments.size(); i++)
-					empfaenger += myData.arguments.get(i) + ",";
-				empfaenger = empfaenger.substring(0, empfaenger.length() - 1);
-				gui.insertChatMessage(myData.arguments.get(1) + "@" + empfaenger + ": " + myData.arguments.get(0), GUI.GREENSTYLE);
-			}
-		} else
-		{
-			gui.insertChatMessage(myData.arguments.get(0), GUI.BLACKSTYLE);
+			case WHISPER:
+				if (myData.arguments.size() == 3 && ((myData.arguments.get(1).equals(nick) && myData.arguments.get(2).equals(teammate)) || (myData.arguments.get(2).equals(nick) && myData.arguments.get(1).equals(teammate))))
+				{
+					gui.insertGameChatMessage(myData.arguments.get(1) + ": " + myData.arguments.get(0), GUI.BLACKSTYLE);
+				} else
+				{
+					String empfaenger = "";
+					for (int i = 2; i < myData.arguments.size(); i++)
+						empfaenger += myData.arguments.get(i) + ",";
+					empfaenger = empfaenger.substring(0, empfaenger.length() - 1);
+					gui.insertChatMessage(myData.arguments.get(1) + "@" + empfaenger + ": " + myData.arguments.get(0), GUI.GREENSTYLE);
+				}
+				break;
+				
+			case ALL:
+				gui.insertChatMessage(myData.arguments.get(0), GUI.BLACKSTYLE);
+				break;
 		}
 	}
 

@@ -1,127 +1,97 @@
 package vierGewinnt.common;
 
-
-
 import java.util.Vector;
-
-import vierGewinnt.server.User;
+import static vierGewinnt.common.Message.*;
 
 public class MessageGenerator 
 {
-	//types:
-	public static final String GAME = "[GAME]";
-	public static final String LOBBY = "[LOBBY]";
-	public static final String CHAT = "[CHAT]";
 	
-	//commands:
-	//Game
-	public static final String INSERT = "INSERT§";
-	public static final String INSERTSTATUS = "INSERTSTATUS§";
-	public static final String GAMESTART = "GAMESTART§";
-	public static final String GAMEEND = "GAMEEND§";
-	public static final String LOG = "LOG§";
-	public static final String EXPLOSION = "EXPLOSION§";
-	//Lobby
-	public static final String USERTABLE = "USERTABLE§";
-	public static final String INVITE = "INVITE§";
-	public static final String INVITATIONANSWER = "INVITATIONANSWER§";
-	//Chat
-	public static final String WHISPER = "WHISPER§";
-	
-	public static String sendChatMessage(String pMessage)
+	/*
+	 * CHAT
+	 */
+	public static String sendChatMessage(String message)
 	{
-		return CHAT + pMessage;
+		return CHAT + SEP + ALL + SEP + message;
 	}
 	
 	public static String sendWhisperMessage(String message, Vector<String> nicks)
 	{
-		String names = "";
-		for(String s : nicks)
-		{
-			names  += s + "§";
-		}
-		if (!names.equals(""))
-		{
-			names = names.substring(0, names.length()-1);
-		}
-		return CHAT + WHISPER + message + "§" + names;
+		return CHAT + SEP + WHISPER + SEP + message + SEP + convertToArgList(nicks);
 	}
 	
-	public static String clientSendInsert(int pXCoord, Chip chip)
+	/*
+	 * LOBBY
+	 */
+	public static String clientSendNickNameIntroduction(String nick)
 	{
-		return GAME + INSERT + pXCoord + "§" + chip.getValue();
+		return LOBBY + SEP + USERTABLE + SEP + nick;
 	}
 	
-	public static String clientSendNickNameIntroduction(String pNickName)
+	public static String sendInvitation(String nick, int rows, int columns, boolean expChipsZahlenFuerSieg, boolean explosionZahltAlsZug, int anzahlExpChips)
 	{
-		return LOBBY + USERTABLE + pNickName;
+		return LOBBY + SEP + INVITE + SEP + nick + SEP + rows + SEP + columns + SEP + expChipsZahlenFuerSieg + SEP + explosionZahltAlsZug + SEP + anzahlExpChips;
 	}
 	
-	public static String sendInvitation(String pNickName, int rows, int columns, boolean _expChipsZahlenFuerSieg, boolean _explosionZahltAlsZug, int _anzahlExpChips)
+	public static String clientSendInvitationAnswer(String nick, boolean acceptInvitation)
 	{
-		return LOBBY + INVITE + pNickName + "§" + rows + "§" + columns + "§" + _expChipsZahlenFuerSieg + "§" + _explosionZahltAlsZug + "§" + _anzahlExpChips;
+		return LOBBY + SEP + INVITATIONANSWER + SEP + nick + SEP + acceptInvitation;
 	}
 	
-	public static String clientSendInvitationAnswer(String nick, boolean pAcceptInvitation)
+	public static String serverSendUserTable(Vector<String> userList)
 	{
-		if(pAcceptInvitation)
-		{
-			return LOBBY + INVITATIONANSWER + nick + "§" + "TRUE";
-		}
-		else
-		{
-			return LOBBY + INVITATIONANSWER + nick + "§" + "FALSE";
-		}
+		return LOBBY + SEP + USERTABLE + SEP + convertToArgList(userList);
 	}
 	
-	public static String serverSendInsert(User _teammate, int farbe, int pXCoord, int pYCoord, Chip chip)
+	/*
+	 * GAME
+	 */
+	public static String clientSendInsert(int xCoord, Chip chip)
 	{
-		return _teammate.getIP() + ":" + _teammate.getPort() + GAME + INSERT + farbe + "§" + pXCoord + "§" + pYCoord + "§" + chip.getValue();
+		return GAME + SEP + INSERT + SEP + xCoord + SEP + chip.getValue();
 	}
 	
-	public static String serverSendUserTable(Vector<String> pUserList)
+	public static String serverSendInsert(int farbe, int xCoord, int pYCoord, Chip chip)
 	{
-		String names = "";
-		for(String s : pUserList)
-		{
-			names  += s + "§";
-		}
-		if (!names.equals(""))
-		{
-			names = names.substring(0, names.length()-1);
-		}
-		return LOBBY + USERTABLE + names;
+		return GAME + SEP + INSERT + SEP + farbe + SEP + xCoord + SEP + pYCoord + SEP + chip.getValue();
 	}
 	
-	public static String serverSendInsertStatus(User _teammate, boolean b)
+	public static String serverSendInsertStatus(boolean insert)
 	{
-		return _teammate.getIP() + ":" + _teammate.getPort() + GAME + INSERTSTATUS + b;
+		return GAME + SEP + INSERTSTATUS + SEP + insert;
 	}
 	
-	public static String serverSendGameStart(User _teammate, int _spalten, int _zeilen, int _color, int _anzahlExpChips)
+	public static String serverSendGameStart(String teammate, int spalten, int zeilen, int color, int anzahlExpChips)
 	{
-		return _teammate.getIP() + ":" + _teammate.getPort() + GAME + GAMESTART + _teammate.getNick() + "§" + _zeilen + "§" + _spalten + "§" + _color + "§" + _anzahlExpChips;
+		return GAME + SEP + GAMESTART + SEP + teammate + SEP + zeilen + SEP + spalten + SEP + color + SEP + anzahlExpChips;
 	}
 	
-	public static String serverSendGameEnd(User _teammate, String _winner)
+	public static String serverSendGameEnd(String winner)
 	{
-		return _teammate.getIP() + ":" + _teammate.getPort() + GAME + GAMEEND + _winner;
+		return GAME + SEP + GAMEEND + SEP + winner;
 	}
 	
-	public static String serverSendLogMessage(User _teammate, String _message)
+	public static String serverSendLogMessage(String message)
 	{
-		return _teammate.getIP() + ":" + _teammate.getPort() + GAME + LOG + _message;
+		return GAME + SEP + LOG + SEP + message;
 	}
 	
-	public static String explosion(User _teammate, int _spalte, int _zeile)
+	public static String explosion(int spalte, int zeile)
+	{		
+		return GAME + SEP + EXPLOSION + SEP + spalte + SEP + zeile;		
+	}
+	
+	private static String convertToArgList(Vector<String> list)
 	{
-		String mate;
-		if(_teammate == null)
-			 mate = "null:null";
-		else
-			mate = _teammate.getIP() + ":" + _teammate.getPort();
+		String result = "";
 		
-		return mate + GAME + EXPLOSION + _spalte + "§" + _zeile;		
+		for(String s : list)
+			result  += s + SEP;
+		
+		if (!result.equals(""))
+			result = result.substring(0, result.length()-1);
+		
+		return result;
 	}
+	
 	
 }

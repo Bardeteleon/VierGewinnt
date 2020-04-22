@@ -14,7 +14,15 @@ import vierGewinnt.client.GUIVierGewinnt;
 public class StartClient {
 
 	public static void main(String[] args) {
+		
 		new SplashProgress(SplashScreen.getSplashScreen());
+		
+//		Logger log = Logger.getLogger(StartClient.class.getName());
+//		log.severe("Severe");
+//		log.warning("warning");
+//		log.info("info");
+//		log.config("config");
+		
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				@Override

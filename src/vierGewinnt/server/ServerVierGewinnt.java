@@ -5,8 +5,10 @@ import java.util.Vector;
 import net.Server;
 import vierGewinnt.common.Chip;
 import vierGewinnt.common.Message;
+import vierGewinnt.common.MessageCommand;
 import vierGewinnt.common.MessageGenerator;
 import vierGewinnt.common.MessageParser;
+import vierGewinnt.common.MessageType;
 
 public class ServerVierGewinnt extends Server
 {
@@ -39,10 +41,10 @@ public class ServerVierGewinnt extends Server
 		{
 			if (gc.getUser1().equals(new User(_IP, _port)))
 			{
-				sendMessage(gc.getUser2(), MessageGenerator.serverSendLogMessage(gc.getUser1(), "Die Verbindung vom Partner wurde unterbrochen"));
+				sendMessage(gc.getUser2(), MessageGenerator.serverSendLogMessage("Die Verbindung vom Partner wurde unterbrochen"));
 			} else if (gc.getUser2().equals(new User(_IP, _port)))
 			{
-				sendMessage(gc.getUser1(), MessageGenerator.serverSendLogMessage(gc.getUser2(), "Die Verbindung vom Partner wurde unterbrochen"));
+				sendMessage(gc.getUser1(), MessageGenerator.serverSendLogMessage("Die Verbindung vom Partner wurde unterbrochen"));
 			}
 			spielBeendet(new User(_IP, _port));
 		}
@@ -114,8 +116,8 @@ public class ServerVierGewinnt extends Server
 	{
 		switch (pMessageData.type)
 		{
-		case MessageParser.GAME:
-			if (pMessageData.command == MessageParser.INSERT)
+		case GAME:
+			if (pMessageData.command == MessageCommand.INSERT)
 			{
 				try
 				{
@@ -137,7 +139,7 @@ public class ServerVierGewinnt extends Server
 					// Einlesefehler
 					fehler("messageReaction.Insert: Einlesefehler");
 				}
-			} else if (pMessageData.command == MessageParser.EXPLOSION)
+			} else if (pMessageData.command == MessageCommand.EXPLOSION)
 			{
 				try
 				{
@@ -177,11 +179,11 @@ public class ServerVierGewinnt extends Server
 			}
 			break;
 
-		case MessageParser.LOBBY:
+		case LOBBY:
 			switch (pMessageData.command)
 			{
 
-			case MessageParser.INVITE:
+			case INVITE:
 				User sender = myUserControl.getUser(pAbsender);
 				if (sender != null)
 				{
@@ -234,7 +236,7 @@ public class ServerVierGewinnt extends Server
 								{
 									// Eingeladener User befindet sich nicht in
 									// der Lobby
-									sendMessage(sender, MessageGenerator.serverSendLogMessage(sender, eingeladen.getNick() + " spielt bereits!"));
+									sendMessage(sender, MessageGenerator.serverSendLogMessage(eingeladen.getNick() + " spielt bereits!"));
 									fehler("messageReaction.Invite: Eingeladen (" + eingeladen.getIP() + ") befindet sich nicht in der Lobby");
 								}
 							} else
@@ -263,7 +265,7 @@ public class ServerVierGewinnt extends Server
 				// myMessGenerator.serverSendInvitation(/*Nick des Senders*/));
 				break;
 
-			case MessageParser.INVITATIONANSWER: // WICHTIG: ARG(0): IP DES EINLADENDEN
+			case INVITATIONANSWER: // WICHTIG: ARG(0): IP DES EINLADENDEN
 											// | ARG(1): TRUE ODER FALSE
 				User eingeladener = myUserControl.getUser(pAbsender);
 				if (eingeladener != null)
@@ -275,7 +277,7 @@ public class ServerVierGewinnt extends Server
 						// if (eingeladener.invitedBy(einladender.getIP()))
 						if (inv != null)
 						{
-							if (pMessageData.arguments.get(1).equals("TRUE"))
+							if (pMessageData.arguments.get(1).equals("true"))
 							{
 								System.out.println("(" + eingeladener.getIP() + ") nimmt die Einladung von (" + einladender.getIP() + ") an");
 								einladender.removeInvitations();
@@ -286,10 +288,10 @@ public class ServerVierGewinnt extends Server
 								eingeladener.setStatus(User.IN_GAME);
 								myGameHandler.newGame(einladender, eingeladener, inv.getSpalten(), inv.getZeilen(), inv.getExpChipsZahlenFuerSieg(), inv.getExplosionZahltAlsZug(),
 										inv.getAnzahlExpChips());
-							} else if (pMessageData.arguments.get(1).equals("FALSE"))
+							} else if (pMessageData.arguments.get(1).equals("false"))
 							{
 								eingeladener.deleteSingleInvitation(einladender);
-								sendMessage(einladender, MessageGenerator.serverSendLogMessage(einladender, eingeladener.getNick() + " lehnt die Einladung ab!"));
+								sendMessage(einladender, MessageGenerator.serverSendLogMessage(eingeladener.getNick() + " lehnt die Einladung ab!"));
 								System.out.println("(" + eingeladener.getIP() + ") lehnt die Einladung von (" + einladender.getIP() + ") ab");
 							}
 						} else
@@ -313,7 +315,7 @@ public class ServerVierGewinnt extends Server
 				// Wenn Einladung eingenommen
 				break;
 
-			case MessageParser.USERTABLE:
+			case USERTABLE:
 				User myUser = myUserControl.getUser(pAbsender);
 				if (myUser != null)
 				{
@@ -337,8 +339,8 @@ public class ServerVierGewinnt extends Server
 			}
 			break;
 
-		case MessageParser.CHAT:
-			if (pMessageData.command == MessageParser.WHISPER)
+		case CHAT:
+			if (pMessageData.command == MessageCommand.WHISPER)
 			{
 				String message = pMessageData.arguments.get(0);
 
@@ -414,7 +416,7 @@ public class ServerVierGewinnt extends Server
 
 			break;
 
-		case MessageParser.ERROR:
+		case ERROR:
 			fehler("messageReaction: (" + pAbsender + "): Unbekannter Befehl");
 		}
 	}

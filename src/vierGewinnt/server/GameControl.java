@@ -74,11 +74,11 @@ public class GameControl
 		
 		anfangsspielerAuslosen();
 
-		myServer.sendMessage(getUserAmZug(), MessageGenerator.serverSendGameStart(getUserNichtAmZug(), spalten, zeilen, amZug, explosivchipsVonSp[1]));
-		myServer.sendMessage(getUserNichtAmZug(), MessageGenerator.serverSendGameStart(getUserAmZug(), spalten, zeilen, getNichtAmZug(), explosivchipsVonSp[1]));
+		myServer.sendMessage(getUserAmZug(), MessageGenerator.serverSendGameStart(getUserNichtAmZug().getNick(), spalten, zeilen, amZug, explosivchipsVonSp[1]));
+		myServer.sendMessage(getUserNichtAmZug(), MessageGenerator.serverSendGameStart(getUserAmZug().getNick(), spalten, zeilen, getNichtAmZug(), explosivchipsVonSp[1]));
 
-		myServer.sendMessage(getUserAmZug(), MessageGenerator.serverSendInsertStatus(getUserNichtAmZug(), true));
-		myServer.sendMessage(getUserNichtAmZug(), MessageGenerator.serverSendInsertStatus(getUserAmZug(), false));
+		myServer.sendMessage(getUserAmZug(), MessageGenerator.serverSendInsertStatus(true));
+		myServer.sendMessage(getUserNichtAmZug(), MessageGenerator.serverSendInsertStatus(false));
 		
 		beendet = false;
 		info("Neues Spiel gestartet");
@@ -157,8 +157,8 @@ public class GameControl
 	
 	private void execSprengung(int _spalte, int _zeile)
 	{
-		myServer.sendMessage(sp1, MessageGenerator.explosion(sp2, _spalte, _zeile));
-		myServer.sendMessage(sp2, MessageGenerator.explosion(sp1, _spalte, _zeile));
+		myServer.sendMessage(sp1, MessageGenerator.explosion(_spalte, _zeile));
+		myServer.sendMessage(sp2, MessageGenerator.explosion(_spalte, _zeile));
 		
 		//Entfenen des Sprengchips
 		spielfeld[_spalte][_zeile].setSpieler(0);
@@ -333,8 +333,8 @@ public class GameControl
 	private void einwurfGetaetigt(int _spalte, int _zeile, int _spieler, Chip chip)
 	{
 		//System.out.println("Spieler " + " hat in die Spalte " + _spalte + " eingeworfen (Höhe: " + _zeile + ")");
-		myServer.sendMessage(sp1, MessageGenerator.serverSendInsert(sp2, _spieler, _spalte, _zeile, chip));
-		myServer.sendMessage(sp2, MessageGenerator.serverSendInsert(sp1, _spieler, _spalte, _zeile, chip));
+		myServer.sendMessage(sp1, MessageGenerator.serverSendInsert(_spieler, _spalte, _zeile, chip));
+		myServer.sendMessage(sp2, MessageGenerator.serverSendInsert(_spieler, _spalte, _zeile, chip));
 		
 		//visualisieren();
 		spielerwechsel();
@@ -356,11 +356,11 @@ public class GameControl
 	private void spielerHatGewonnen(int _sieger)
 	{
 		beendet = true;
-		myServer.sendMessage(sp1, MessageGenerator.serverSendGameEnd(sp2, getUser(_sieger).getNick()));
-		myServer.sendMessage(sp2, MessageGenerator.serverSendGameEnd(sp1, getUser(_sieger).getNick()));
+		myServer.sendMessage(sp1, MessageGenerator.serverSendGameEnd(getUser(_sieger).getNick()));
+		myServer.sendMessage(sp2, MessageGenerator.serverSendGameEnd(getUser(_sieger).getNick()));
 		//System.out.println("Sieger: " + sieger);
-		myServer.sendMessage(sp1, MessageGenerator.serverSendInsertStatus(sp2, false));
-		myServer.sendMessage(sp2, MessageGenerator.serverSendInsertStatus(sp1, false));
+		myServer.sendMessage(sp1, MessageGenerator.serverSendInsertStatus(false));
+		myServer.sendMessage(sp2, MessageGenerator.serverSendInsertStatus(false));
 		info(getUser(_sieger).getNick() + " hat gewonnen");
 		myServer.spielBeendet(sp1);
 	}
@@ -386,11 +386,11 @@ public class GameControl
 	private void spielEndetUnentschieden()
 	{
 		beendet = true;
-		myServer.sendMessage(sp1, MessageGenerator.serverSendGameEnd(sp2, " "));
-		myServer.sendMessage(sp2, MessageGenerator.serverSendGameEnd(sp1, " "));
+		myServer.sendMessage(sp1, MessageGenerator.serverSendGameEnd(" "));
+		myServer.sendMessage(sp2, MessageGenerator.serverSendGameEnd(" "));
 		//System.out.println("Unentschieden");
-		myServer.sendMessage(sp1, MessageGenerator.serverSendInsertStatus(sp2, false));
-		myServer.sendMessage(sp2, MessageGenerator.serverSendInsertStatus(sp1, false));
+		myServer.sendMessage(sp1, MessageGenerator.serverSendInsertStatus(false));
+		myServer.sendMessage(sp2, MessageGenerator.serverSendInsertStatus(false));
 		info("Das Spiel endet Unentschieden");
 		myServer.spielBeendet(sp1);
 	}
@@ -658,8 +658,8 @@ public class GameControl
 			amZug = 1;
 		}
 		info(getUserAmZug().getNick() + " ist am Zug");
-		myServer.sendMessage(getUserAmZug(), MessageGenerator.serverSendInsertStatus(getUserNichtAmZug(), true));
-		myServer.sendMessage(getUserNichtAmZug(), MessageGenerator.serverSendInsertStatus(getUserAmZug(), false));
+		myServer.sendMessage(getUserAmZug(), MessageGenerator.serverSendInsertStatus(true));
+		myServer.sendMessage(getUserNichtAmZug(), MessageGenerator.serverSendInsertStatus(false));
 	}
 	
 	private void anfangsspielerAuslosen()
@@ -693,8 +693,8 @@ public class GameControl
 	{
 		String info = _info;
 		//System.out.println(info);
-		myServer.sendMessage(sp1, MessageGenerator.serverSendLogMessage(sp2, info));
-		myServer.sendMessage(sp2, MessageGenerator.serverSendLogMessage(sp1, info));
+		myServer.sendMessage(sp1, MessageGenerator.serverSendLogMessage(info));
+		myServer.sendMessage(sp2, MessageGenerator.serverSendLogMessage(info));
 	}
 	
 	private User getUserAmZug()
