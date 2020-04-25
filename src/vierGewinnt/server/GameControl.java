@@ -106,38 +106,32 @@ public class GameControl
 							}
 							else
 							{
-								//Das Feld gehört nicht zu diesem Spieler
-								fehler("SP6");
+								System.out.println("ERROR: Das Feld gehört nicht zu diesem Spieler");
 							}
 						}
 						else
 						{
-							//Angegebener Chip ist kein Explosivfeld
-							fehler("SP5");
+							System.out.println("ERROR: Angegebener Chip ist kein Explosivfeld");
 						}
 					}
 					else
 					{
-						//Angegebene Zeile liegt außerhalb das gültigen Bereichs
-						fehler("SP4");
+						System.out.println("ERROR: Angegebene Zeile liegt außerhalb das gültigen Bereichs");
 					}
 				}
 				else
 				{
-					//Angegebene Spalte liegt außerhalb das gültigen Bereichs
-					fehler("SP3");
+					System.out.println("ERROR: Angegebene Spalte liegt außerhalb das gültigen Bereichs");
 				}
 			}
 			else
 			{
-				//Spieler nicht gefunden oder nicht am Zug
-				fehler("SP2");
+				System.out.println("ERROR: Spieler nicht gefunden oder nicht am Zug");
 			}
 		}
 		else
 		{
-			//Das Spiel ist bereits beendet
-			fehler("SP1");
+			System.out.println("ERROR: Das Spiel ist bereits beendet");
 		}
 	}
 	
@@ -253,14 +247,12 @@ public class GameControl
 									}
 									else
 									{
-										//Der Spieler hat keine Explosivchips mehr
-										fehler("NE8");
+										System.out.println("ERROR: Der Spieler hat keine Explosivchips mehr");
 									}
 								}
 								else
 								{
-									//Ungültiger Chiptype
-									fehler("NE7");
+									System.out.println("ERROR: Ungültiger Chiptype");
 								}
 								break;
 							}
@@ -268,26 +260,22 @@ public class GameControl
 					}
 					else
 					{
-						//Spalte ist bereits voll
-						fehler("NE5");
+						System.out.println("ERROR: Spalte ist bereits voll");
 					}
 				}
 				else
 				{
-					//Angegebene spalte liegt außerhalb des verfügbaren Bereiches
-					fehler("NE3");
+					System.out.println("ERROR: Angegebene spalte liegt außerhalb des verfügbaren Bereiches");
 				}
 			}
 			else
 			{
-				//Spieler ist nicht am Zug
-				fehler("NE1");
+				System.out.println("ERROR: Spieler ist nicht am Zug");
 			}
 		}
 		else
 		{
-			//Spiel ist bereits beendet
-			fehler("NE2");
+			System.out.println("ERROR: Spiel ist bereits beendet");
 		}
 	}
 	
@@ -630,7 +618,7 @@ public class GameControl
 				amZug = Player.YELLOW;
 				break;
 			default:
-				System.out.println("Fehler beim Anfangsspieler auslosen");
+				System.out.println("System.out.println beim Anfangsspieler auslosen");
 		}
 	}
 	
@@ -646,13 +634,6 @@ public class GameControl
 			System.out.println();
 		}
 		System.out.println("--------------------------");
-	}
-	
-	private void fehler(String _fehlercode)
-	{
-		String fehlercode = "fehlercode:" + _fehlercode;
-		//HIER KANN GGF. DER FEHLERCODE WEITERGEGEBEN UND DORT INTERPRETIERT WERDEN (Verwendung nicht unbedingt erforderlich)
-		System.out.println(fehlercode);
 	}
 	
 	private void info(String _info)
