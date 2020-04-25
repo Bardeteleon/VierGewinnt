@@ -20,6 +20,7 @@ import javax.swing.SwingConstants;
 import com.sun.xml.internal.ws.api.Component;
 
 import useful.GUI;
+import vierGewinnt.common.Player;
 
 public class GameStatusBar extends JPanel{
 
@@ -146,12 +147,12 @@ public class GameStatusBar extends JPanel{
 		add(pnLowerBar);
 	}
 	
-	public void setPlayers(String player1, int player1Color, String player2)
+	public void setPlayers(String player1Nick, Player player1Color, String player2Nick)
 	{
 		int iconSize = 12;
 		
-		lbWhosPlaying.setText(player1 + " vs " + player2);
-		if(player1Color == GUIVierGewinnt.YEL)
+		lbWhosPlaying.setText(player1Nick + " vs " + player2Nick);
+		if(player1Color == Player.YELLOW)
 		{
 			lbPlayer1Color.setIcon(new ImageIcon(iconYellow.getImage().getScaledInstance(iconSize, iconSize, Image.SCALE_FAST)));
 			lbPlayer2Color.setIcon(new ImageIcon(iconRed.getImage().getScaledInstance(iconSize, iconSize, Image.SCALE_FAST)));

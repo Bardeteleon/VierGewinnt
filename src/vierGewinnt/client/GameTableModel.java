@@ -13,7 +13,7 @@ import javax.swing.table.AbstractTableModel;
 import useful.GUI;
 import useful.Stopuhr;
 import vierGewinnt.common.Chip;
-import vierGewinnt.server.GameControl;
+import vierGewinnt.common.Player;
 
 public class GameTableModel extends AbstractTableModel
 {
@@ -40,12 +40,12 @@ public class GameTableModel extends AbstractTableModel
 	private static final String YEL_3 = "yel3";
 
 	private int chipPos = -1;
-	private int choosingChipColor;
+	private Player choosingChipColor;
 	private boolean bomb = false;
 	private int bombs = 0;
-	private int ownColor = 0;
+	private Player ownColor;
 
-	public GameTableModel(int column, int row, int bombs, int ownColor)
+	public GameTableModel(int column, int row, int bombs, Player ownColor)
 	{
 		this.bombs = bombs;
 		this.ownColor = ownColor;
@@ -125,13 +125,13 @@ public class GameTableModel extends AbstractTableModel
 		update();
 	}
 
-	public void setChipAnimatedAt(int spieler, Chip chip, int column, int fromRow, int toRow)
+	public void setChipAnimatedAt(Player spieler, Chip chip, int column, int fromRow, int toRow)
 	{
 		animations.add(new Animation(spieler, chip, column, fromRow, toRow, false));
 		aniHandler.waikUp();
 	}
 
-	public void setChipAnimatedAt(int spieler, Chip chip, int column, int row)
+	public void setChipAnimatedAt(Player spieler, Chip chip, int column, int row)
 	{
 		if (   Chip.EXPLOSIVE == chip 
 			&& ownColor == spieler 
@@ -149,13 +149,13 @@ public class GameTableModel extends AbstractTableModel
 		int column;
 		int fromRow;
 		int toRow;
-		int spieler;
+		Player spieler;
 		boolean first;
 		Chip chip;
 		Stopuhr s;
 		long deleteAfter = 10000;
 
-		public Animation(int spieler, Chip chip, int column, int fromRow, int toRow, boolean first)
+		public Animation(Player spieler, Chip chip, int column, int fromRow, int toRow, boolean first)
 		{
 			setName("Animation: Column " + column + " fromRow: " + fromRow + " toRow: " + toRow + " Spieler: " + spieler + " ChipType: " + chip + " First: " + first);
 			this.column = column;
@@ -169,12 +169,12 @@ public class GameTableModel extends AbstractTableModel
 		@Override
 		public void run()
 		{
-			if (spieler == GUIVierGewinnt.RED)
+			if (spieler == Player.RED)
 				if (chip == Chip.EXPLOSIVE)
 					animate(RED_1, RED_B, RED_3, RED_O_2);
 				else
 					animate(RED_1, RED_2, RED_3, RED_O_2);
-			else if (spieler == GUIVierGewinnt.YEL)
+			else if (spieler == Player.YELLOW)
 				if (chip == Chip.EXPLOSIVE)
 					animate(YEL_1, YEL_B, YEL_3, YEL_O_2);
 				else
@@ -327,7 +327,7 @@ public class GameTableModel extends AbstractTableModel
 		}
 	}
 
-	public void setChipAt(int spieler, Chip chip, int columnIndex, int rowIndex)
+	public void setChipAt(Player spieler, Chip chip, int columnIndex, int rowIndex)
 	{
 		if (Chip.EXPLOSIVE == chip)
 		{
@@ -338,12 +338,12 @@ public class GameTableModel extends AbstractTableModel
 					setChooserChipToBomb(false);
 				}
 		}
-		if (spieler == GUIVierGewinnt.RED)
+		if (spieler == Player.RED)
 			if (Chip.EXPLOSIVE == chip)
 				setIconAt(RED_B, columnIndex, rowIndex);
 			else
 				setIconAt(RED_2, columnIndex, rowIndex);
-		else if (spieler == GUIVierGewinnt.YEL)
+		else if (spieler == Player.YELLOW)
 			if (Chip.EXPLOSIVE == chip)
 				setIconAt(YEL_B, columnIndex, rowIndex);
 			else
@@ -382,12 +382,12 @@ public class GameTableModel extends AbstractTableModel
 	private void setChooseChipAt(int column)
 	{
 		clearChoosingField();
-		if (choosingChipColor == GUIVierGewinnt.RED)
+		if (choosingChipColor == Player.RED)
 			if (bomb)
 				playingField[0][column] = icons.get(RED_O_B);
 			else
 				playingField[0][column] = icons.get(RED_O_1);
-		else if (choosingChipColor == GUIVierGewinnt.YEL)
+		else if (choosingChipColor == Player.YELLOW)
 			if (bomb)
 				playingField[0][column] = icons.get(YEL_O_B);
 			else
@@ -395,20 +395,20 @@ public class GameTableModel extends AbstractTableModel
 		update();
 	}
 
-	public void setChooseChipEnable(boolean b, int color)
+	public void setChooseChipEnable(boolean b, Player player)
 	{
 		if (b)
 		{
 			if (chipPos < 0)
 			{
 				chipPos = 0;
-				choosingChipColor = color;
+				choosingChipColor = player;
 				setChooseChipAt(chipPos);
 			}
 		} else
 		{
 			chipPos = -1;
-			choosingChipColor = 0;
+			choosingChipColor = Player.NONE;
 			clearChoosingField();
 		}
 	}
@@ -482,13 +482,13 @@ public class GameTableModel extends AbstractTableModel
 		return points;
 	}
 
-	public int getSpielerColorAt(int column, int row)
+	public Player getPlayerAt(int column, int row)
 	{
 		if (playingField[row + 1][column].equals(icons.get(RED_2)) || playingField[row + 1][column].equals(icons.get(RED_B)))
-			return GUIVierGewinnt.RED;
+			return Player.RED;
 		else if (playingField[row + 1][column].equals(icons.get(YEL_2)) || playingField[row + 1][column].equals(icons.get(YEL_B)))
-			return GUIVierGewinnt.YEL;
-		return -1;
+			return Player.YELLOW;
+		return Player.NONE;
 	}
 
 	public void stopAnimationHandler()

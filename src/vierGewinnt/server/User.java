@@ -1,12 +1,18 @@
 package vierGewinnt.server;
 import java.util.Vector;
 
+import vierGewinnt.common.Player;
+
 
 public class User
 {
 	private String IP;
 	private int port;
 	private String nick;
+	
+	private Player player;
+	
+	private int explosiveCount;
 	
 	private int status; //1: Kein Nick | 2: InLobby | 3: InGame
 	
@@ -21,6 +27,10 @@ public class User
 		status = KEIN_NICK;
 		IP = _IP;
 		port = _port;
+		
+		// TODO refactor to seperate class UserVG, so that User stays generic
+		player = Player.NONE;
+		explosiveCount = -1;
 	}
 	
 	public void setNick(String _nick)
@@ -56,6 +66,31 @@ public class User
 	public void setStatus(int _status)
 	{
 		status = _status;
+	}
+	
+	public void setPlayer(Player player)
+	{
+		this.player = player;
+	}
+	
+	public Player getPlayer()
+	{
+		return this.player;
+	}
+	
+	public void setExplosiveCount(int count)
+	{
+		this.explosiveCount = count;
+	}
+	
+	public int getExplosiveCount()
+	{
+		return this.explosiveCount;
+	}
+	
+	public void removeOneExplosive()
+	{
+		this.explosiveCount--;
 	}
 	
 	public void newInvitation(User u, int _spalten, int _zeilen, boolean _expChipsZahlenFuerSieg, boolean _explosionZahltAlsZug, int _anzahlExpChips)

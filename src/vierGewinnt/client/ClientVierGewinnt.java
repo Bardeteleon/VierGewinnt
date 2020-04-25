@@ -11,12 +11,13 @@ import vierGewinnt.common.Chip;
 import vierGewinnt.common.Message;
 import vierGewinnt.common.MessageGenerator;
 import vierGewinnt.common.MessageParser;
+import vierGewinnt.common.Player;
 
 public class ClientVierGewinnt extends Client
 {
 	private MessageParser parser = new MessageParser();
 	private GUIVierGewinnt gui;
-	protected int color = 0;
+	protected Player myPlayer = Player.NONE;
 	protected String teammate = null;
 	protected String nick = null;
 
@@ -107,8 +108,8 @@ public class ClientVierGewinnt extends Client
 		switch (myData.command)
 		{
 			case INSERT :
-				Chip chip = Chip.valueOf(Integer.parseInt(myData.arguments.get(3)));
-				gui.setChipAt(Integer.parseInt(myData.arguments.get(0)), 
+				Chip chip = Chip.valueOf(myData.arguments.get(3));
+				gui.setChipAt(Player.valueOf(myData.arguments.get(0)), 
 											   chip, 
 											   Integer.parseInt(myData.arguments.get(1)), 
 											   Integer.parseInt(myData.arguments.get(2)));
@@ -120,12 +121,12 @@ public class ClientVierGewinnt extends Client
 
 				if (Boolean.parseBoolean(myData.arguments.get(0)))
 				{
-					gui.setChooseChip(true, color);
+					gui.setChooseChip(true, myPlayer);
 					gui.getPlayingField().requestFocus();
 					gui.getStatusBar().setYourTurn();
 				} else
 				{
-					gui.setChooseChip(false, color);
+					gui.setChooseChip(false, myPlayer);
 					if(teammate != null)
 						gui.getStatusBar().setOpponentsTurn(teammate);
 				}
@@ -133,13 +134,13 @@ public class ClientVierGewinnt extends Client
 				
 			case GAMESTART :
 				teammate = myData.arguments.get(0);
-				color = Integer.parseInt(myData.arguments.get(3));
+				myPlayer = Player.valueOf(myData.arguments.get(3));
 				gui.getPlayingFieldModel().stopAnimationHandler();
 				gui.setPlayingFieldModel(new GameTableModel(Integer.parseInt(myData.arguments.get(2)), 
 															Integer.parseInt(myData.arguments.get(1)), 
 															Integer.parseInt(myData.arguments.get(4)), 
-															color));
-				gui.getStatusBar().setPlayers(nick, color, teammate);
+															myPlayer));
+				gui.getStatusBar().setPlayers(nick, myPlayer, teammate);
 				if(gui.getPlayingFieldModel().getNumberOfBombs() > 0)
 					gui.getStatusBar().setBombInfo(gui.getPlayingFieldModel().getNumberOfBombs());
 				gui.resetChat();

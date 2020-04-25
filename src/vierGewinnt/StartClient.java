@@ -10,6 +10,7 @@ import javax.swing.UIManager;
 
 import useful.GUI.SplashProgress;
 import vierGewinnt.client.GUIVierGewinnt;
+import vierGewinnt.common.Player;
 
 public class StartClient {
 
@@ -22,7 +23,7 @@ public class StartClient {
 //		log.warning("warning");
 //		log.info("info");
 //		log.config("config");
-		
+				
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				@Override

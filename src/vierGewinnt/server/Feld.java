@@ -1,36 +1,35 @@
 package vierGewinnt.server;
 
+import vierGewinnt.common.Chip;
+import vierGewinnt.common.Player;
+
 public class Feld
 {
-	private int spieler;
-	private int type;
-	
-	public static final int LEER = 0;
-	public static final int NORMAL = 1;
-	public static final int EXPLOSIV = 2;
+	private Player spieler;
+	private Chip type;
 	
 	public Feld()
 	{
-		spieler = 0;
-		type = LEER;
+		spieler = Player.NONE;
+		type = Chip.EMPTY;
 	}
 	
-	public void setSpieler(int _spieler)
+	public void setSpieler(Player _spieler)
 	{
 		spieler = _spieler;
 	}
 	
-	public void setType(int _type)
+	public void setType(Chip _type)
 	{
 		type = _type;
 	}
 	
-	public int getSpieler()
+	public Player getSpieler()
 	{
 		return spieler;
 	}
 	
-	public int getType()
+	public Chip getType()
 	{
 		return type;
 	}

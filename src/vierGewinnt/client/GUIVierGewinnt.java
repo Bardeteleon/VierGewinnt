@@ -31,7 +31,6 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -49,6 +48,7 @@ import vierGewinnt.client.animation.GlassPaneAnimation;
 import vierGewinnt.client.animation.OnePicAnimation;
 import vierGewinnt.client.animation.Sprite;
 import vierGewinnt.common.Chip;
+import vierGewinnt.common.Player;
 
 /*
  * Vereinheitlichung x-y-koordinaten und Row-Column-System
@@ -57,9 +57,6 @@ import vierGewinnt.common.Chip;
  */
 public class GUIVierGewinnt extends JFrame
 {
-	public static final int RED = 1;
-	public static final int YEL = 2;
-
 	private JToolBar tobButtons;
 	private JButton bnLobby, bnFullScreen, bnHelp, bnPaneVisibility;
 	private JTable tbPlayingField;
@@ -140,7 +137,7 @@ public class GUIVierGewinnt extends JFrame
 		tbPlayingField.setRowHeight(64);
 		tbPlayingField.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		tbPlayingField.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
-		playingFieldModel = new GameTableModel(7, 6, 0, 0);
+		playingFieldModel = new GameTableModel(7, 6, 0, Player.NONE);
 		tbPlayingField.setModel(playingFieldModel);
 		panBuffPlayingField = new JPanel();
 		panBuffPlayingField.setPreferredSize(new Dimension(10, 10));
@@ -403,7 +400,7 @@ public class GUIVierGewinnt extends JFrame
 					if (   client != null 
 						&& client.teammate != null 
 						&& Chip.EXPLOSIVE == playingFieldModel.getChipTypeAt(pField.x, pField.y + 1) 
-						&& playingFieldModel.getSpielerColorAt(pField.x, pField.y) == client.color)
+						&& playingFieldModel.getPlayerAt(pField.x, pField.y) == client.myPlayer)
 					{
 						client.explosionRequest(pField.x, pField.y);
 					}
@@ -448,7 +445,7 @@ public class GUIVierGewinnt extends JFrame
 		}
 	}
 
-	public void setChipAt(int spieler, Chip chipType, int x, int y)
+	public void setChipAt(Player spieler, Chip chipType, int x, int y)
 	{
 		// Anpassung der y Koordinate wegen unterschiedlichen Systemen
 		int maxY = playingFieldModel.getRowCount() - 2;
@@ -485,7 +482,7 @@ public class GUIVierGewinnt extends JFrame
 		Vector<Point> points = playingFieldModel.getChipPositionsOver(column, row);
 		for (Point p : points)
 		{
-			playingFieldModel.setChipAnimatedAt(playingFieldModel.getSpielerColorAt(p.x, p.y), playingFieldModel.getChipTypeAt(p.x, p.y + 1), column, p.y, row);
+			playingFieldModel.setChipAnimatedAt(playingFieldModel.getPlayerAt(p.x, p.y), playingFieldModel.getChipTypeAt(p.x, p.y + 1), column, p.y, row);
 			row--;
 		}
 	}
@@ -530,7 +527,7 @@ public class GUIVierGewinnt extends JFrame
 			return true;
 	}
 
-	public void setChooseChip(boolean enable, int color)
+	public void setChooseChip(boolean enable, Player color)
 	{
 		playingFieldModel.setChooseChipEnable(enable, color);
 	}
@@ -544,7 +541,7 @@ public class GUIVierGewinnt extends JFrame
 	{
 		playingFieldModel.clearPlayingField();
 		playingFieldModel.stopAnimationHandler();
-		playingFieldModel.setChooseChipEnable(false, 0);
+		playingFieldModel.setChooseChipEnable(false, Player.NONE);
 	}
 
 	public void resetChat()

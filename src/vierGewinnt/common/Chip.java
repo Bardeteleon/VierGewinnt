@@ -5,7 +5,7 @@ import java.util.Map;
 
 public enum Chip {
 
-	NORMAL(1), EXPLOSIVE(2);
+	NORMAL(1), EXPLOSIVE(2), EMPTY(3);
 
     private int value;
     private static Map<Integer, Chip> map = new HashMap<>();

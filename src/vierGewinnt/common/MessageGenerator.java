@@ -47,12 +47,12 @@ public class MessageGenerator
 	 */
 	public static String clientSendInsert(int xCoord, Chip chip)
 	{
-		return GAME + SEP + INSERT + SEP + xCoord + SEP + chip.getValue();
+		return GAME + SEP + INSERT + SEP + xCoord + SEP + chip;
 	}
 	
-	public static String serverSendInsert(int farbe, int xCoord, int pYCoord, Chip chip)
+	public static String serverSendInsert(Player player, int xCoord, int pYCoord, Chip chip)
 	{
-		return GAME + SEP + INSERT + SEP + farbe + SEP + xCoord + SEP + pYCoord + SEP + chip.getValue();
+		return GAME + SEP + INSERT + SEP + player + SEP + xCoord + SEP + pYCoord + SEP + chip;
 	}
 	
 	public static String serverSendInsertStatus(boolean insert)
@@ -60,9 +60,9 @@ public class MessageGenerator
 		return GAME + SEP + INSERTSTATUS + SEP + insert;
 	}
 	
-	public static String serverSendGameStart(String teammate, int spalten, int zeilen, int color, int anzahlExpChips)
+	public static String serverSendGameStart(String teammate, int spalten, int zeilen, Player player, int anzahlExpChips)
 	{
-		return GAME + SEP + GAMESTART + SEP + teammate + SEP + zeilen + SEP + spalten + SEP + color + SEP + anzahlExpChips;
+		return GAME + SEP + GAMESTART + SEP + teammate + SEP + zeilen + SEP + spalten + SEP + player + SEP + anzahlExpChips;
 	}
 	
 	public static String serverSendGameEnd(String winner)

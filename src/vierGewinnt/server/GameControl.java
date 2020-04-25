@@ -2,23 +2,22 @@ package vierGewinnt.server;
 
 import vierGewinnt.common.Chip;
 import vierGewinnt.common.MessageGenerator;
+import vierGewinnt.common.Player;
 
 
 public class GameControl
 {	
 	ServerVierGewinnt myServer;
 	
-	Feld[][] spielfeld; //0: leer | 1: von Sp1 belegt | 2: von Sp2 belegt
+	Feld[][] spielfeld;
 	int spalten; //in Feldern
 	int zeilen;
 	int anzahlFelderFuerSieg;
-	int amZug; //1: Sp1 am Zug | 2: Sp2 am Zug
+	Player amZug;
 	boolean beendet;
 	
 	boolean ruleExplosiveChipsZaehlenFuerSieg = false;
 	boolean ruleExplosionZaehltAlsZug = true;
-	
-	int[] explosivchipsVonSp = {0, 0, 0};
 	
 	private User sp1, sp2;
 	
@@ -62,20 +61,23 @@ public class GameControl
 		ruleExplosiveChipsZaehlenFuerSieg = _expChipsZahlenFuerSieg;
 		ruleExplosionZaehltAlsZug = _explosionZahltAlsZug;
 		
-		explosivchipsVonSp[1] = _anzahlExpChips;
-		explosivchipsVonSp[2] = _anzahlExpChips;
+		sp1.setExplosiveCount(_anzahlExpChips);
+		sp2.setExplosiveCount(_anzahlExpChips);
 		
 		neuesSpiel();
 	}
 	
 	private void neuesSpiel()
 	{
-		System.out.println("Spiel beginnt (" + sp1 + " & " + sp2 + " | Spielfeldgröße: " + spalten + "x" + zeilen + " | expChipsZahlenFuerSieg: " + ruleExplosiveChipsZaehlenFuerSieg + " | explosionZahltAlsZug: " + ruleExplosionZaehltAlsZug + " | anzahlExpChips: " + explosivchipsVonSp[1] + ")");
+		System.out.println("Spiel beginnt (" + sp1 + " & " + sp2 + " | Spielfeldgröße: " + spalten + "x" + zeilen + " | expChipsZahlenFuerSieg: " + ruleExplosiveChipsZaehlenFuerSieg + " | explosionZahltAlsZug: " + ruleExplosionZaehltAlsZug + " | anzahlExpChips: " + sp1.getExplosiveCount() + ")");
 		
 		anfangsspielerAuslosen();
+		
+		sp1.setPlayer(Player.RED);
+		sp2.setPlayer(Player.YELLOW);
 
-		myServer.sendMessage(getUserAmZug(), MessageGenerator.serverSendGameStart(getUserNichtAmZug().getNick(), spalten, zeilen, amZug, explosivchipsVonSp[1]));
-		myServer.sendMessage(getUserNichtAmZug(), MessageGenerator.serverSendGameStart(getUserAmZug().getNick(), spalten, zeilen, getNichtAmZug(), explosivchipsVonSp[1]));
+		myServer.sendMessage(getUserAmZug(), MessageGenerator.serverSendGameStart(getUserNichtAmZug().getNick(), spalten, zeilen, getAmZug(), getUserAmZug().getExplosiveCount()));
+		myServer.sendMessage(getUserNichtAmZug(), MessageGenerator.serverSendGameStart(getUserAmZug().getNick(), spalten, zeilen, getNichtAmZug(), getUserNichtAmZug().getExplosiveCount()));
 
 		myServer.sendMessage(getUserAmZug(), MessageGenerator.serverSendInsertStatus(true));
 		myServer.sendMessage(getUserNichtAmZug(), MessageGenerator.serverSendInsertStatus(false));
@@ -86,35 +88,19 @@ public class GameControl
 	}
 	
 	
-	public void sprengen(int _spalte, int _zeile, User u)
+	public void sprengen(int _spalte, int _zeile, User user)
 	{
-		int spieler = 0;
-		if (u.equals(sp1))
-		{
-			spieler = 1;
-		}
-		else if(u.equals(sp2))
-		{
-			spieler = 2;
-		}
-		else
-		{
-			//IP passt nicht
-			fehler("SP6");
-			return;
-		}
-		
 		if (!beendet)
 		{
-			if (u.equals(getUserAmZug()))
+			if (user.equals(getUserAmZug()))
 			{
 				if (_spalte >= 0 && _spalte < spalten)
 				{
 					if (_zeile >= 0 && _zeile < zeilen)
 					{
-						if (spielfeld[_spalte][_zeile].getType() == Feld.EXPLOSIV)
+						if (spielfeld[_spalte][_zeile].getType() == Chip.EXPLOSIVE)
 						{
-							if (spielfeld[_spalte][_zeile].getSpieler() == spieler)
+							if (spielfeld[_spalte][_zeile].getSpieler() == user.getPlayer())
 							{
 								execSprengung(_spalte, _zeile);
 							}
@@ -161,17 +147,17 @@ public class GameControl
 		myServer.sendMessage(sp2, MessageGenerator.explosion(_spalte, _zeile));
 		
 		//Entfenen des Sprengchips
-		spielfeld[_spalte][_zeile].setSpieler(0);
-		spielfeld[_spalte][_zeile].setType(Feld.LEER);
+		spielfeld[_spalte][_zeile].setSpieler(Player.NONE);
+		spielfeld[_spalte][_zeile].setType(Chip.EMPTY);
 		//Nachrutschen der anderen Chips
 		for (int i = _zeile + 1 ; i < zeilen ; i++)
 		{
-			if (spielfeld[_spalte][i].getType() != Feld.LEER)
+			if (spielfeld[_spalte][i].getType() != Chip.EMPTY)
 			{
 				spielfeld[_spalte][i - 1].setType(spielfeld[_spalte][i].getType());
 				spielfeld[_spalte][i - 1].setSpieler(spielfeld[_spalte][i].getSpieler());
-				spielfeld[_spalte][i].setType(0);
-				spielfeld[_spalte][i].setSpieler(0);
+				spielfeld[_spalte][i].setType(Chip.EMPTY);
+				spielfeld[_spalte][i].setSpieler(Player.NONE);
 			}
 			else
 			{
@@ -199,20 +185,20 @@ public class GameControl
 		}
 		
 		//Endgamechecks
-		int sieger = 0;
+		Player sieger = Player.NONE;
 		for (int i = 0 ; i < zeilen ; i++)
 		{
-			if (spielfeld[_spalte][i].getType() == Feld.LEER)
+			if (spielfeld[_spalte][i].getType() == Chip.EMPTY)
 			{
 				break;
 			}
 			else
 			{
-				int temp = localEndGameCheck(_spalte, i);
+				Player temp = localEndGameCheck(_spalte, i);
 				
-				if (temp != 0)
+				if (temp != Player.NONE)
 				{
-					if (sieger == 0)
+					if (sieger == Player.NONE)
 					{
 						sieger = temp;
 					}
@@ -227,99 +213,75 @@ public class GameControl
 				}
 			}
 		}
-		if (sieger != 0)
+		if (sieger != Player.NONE)
 		{
 			spielerHatGewonnen(sieger);
 		}
 		
 	}
 	
-	public void neuerEinwurf(int _spalte, User _spieler, Chip chipType)
-	{
-		int spieler = 0;
-		if (_spieler.equals(sp1))
-		{
-			spieler = 1;
-		}
-		else if(_spieler.equals(sp2))
-		{
-			spieler = 2;
-		}
-		else
-		{
-			//IP passt nicht
-			fehler("NE6");
-			return;
-		}
-		
+	public void neuerEinwurf(int spalte, User user, Chip chipType)
+	{		
 		if (!beendet)
 		{
-			if (spieler == 1 || spieler == 2)
+			if (user.getPlayer() == amZug)
 			{
-				if (spieler == amZug)
+				if (spalte >= 0 && spalte < spalten)
 				{
-					if (_spalte >= 0 && _spalte < spalten)
+					
+					if (spielfeld[spalte][zeilen - 1].getType() == Chip.EMPTY)
 					{
-						
-						if (spielfeld[_spalte][zeilen - 1].getType() == Feld.LEER)
+						for (int i = 0 ; i < zeilen ; i++)
 						{
-							for (int i = 0 ; i < zeilen ; i++)
+							if (spielfeld[spalte][i].getType() == Chip.EMPTY)
 							{
-								if (spielfeld[_spalte][i].getType() == Feld.LEER)
+								if (chipType == Chip.NORMAL)
 								{
-									if (chipType == Chip.NORMAL)
+									spielfeld[spalte][i].setSpieler(user.getPlayer());
+									spielfeld[spalte][i].setType(Chip.NORMAL);
+									einwurfGetaetigt(spalte, i, user.getPlayer(), chipType);
+								}
+								else if (chipType == Chip.EXPLOSIVE)
+								{
+									if (user.getExplosiveCount() > 0)
 									{
-										spielfeld[_spalte][i].setSpieler(spieler);
-										spielfeld[_spalte][i].setType(Feld.NORMAL);
-										einwurfGetaetigt(_spalte, i, spieler, chipType);
-									}
-									else if (chipType == Chip.EXPLOSIVE)
-									{
-										if (explosivchipsVonSp[amZug] > 0)
-										{
-											explosivchipsVonSp[amZug] = explosivchipsVonSp[amZug] - 1;
-											info(getUserAmZug().getNick()+" hat noch " + explosivchipsVonSp[amZug]+" Bomben");
-											spielfeld[_spalte][i].setSpieler(spieler);
-											spielfeld[_spalte][i].setType(Feld.EXPLOSIV);
-											einwurfGetaetigt(_spalte, i, spieler, chipType);
-										}
-										else
-										{
-											//Der Spieler hat keine Explosivchips mehr
-											fehler("NE8");
-										}
+										user.removeOneExplosive();
+										info(getUserAmZug().getNick()+" hat noch " + user.getExplosiveCount() +" Bomben");
+										spielfeld[spalte][i].setSpieler(user.getPlayer());
+										spielfeld[spalte][i].setType(Chip.EXPLOSIVE);
+										einwurfGetaetigt(spalte, i, user.getPlayer(), chipType);
 									}
 									else
 									{
-										//Ungültiger Chiptype
-										fehler("NE7");
+										//Der Spieler hat keine Explosivchips mehr
+										fehler("NE8");
 									}
-									break;
 								}
+								else
+								{
+									//Ungültiger Chiptype
+									fehler("NE7");
+								}
+								break;
 							}
-						}
-						else
-						{
-							//Spalte ist bereits voll
-							fehler("NE5");
 						}
 					}
 					else
 					{
-						//Angegebene spalte liegt außerhalb des verfügbaren Bereiches
-						fehler("NE3");
+						//Spalte ist bereits voll
+						fehler("NE5");
 					}
 				}
 				else
 				{
-					//Spieler ist nicht am Zug
-					fehler("NE1");
+					//Angegebene spalte liegt außerhalb des verfügbaren Bereiches
+					fehler("NE3");
 				}
 			}
 			else
 			{
-				//Spieler gibt es nicht
-				fehler("NE4");
+				//Spieler ist nicht am Zug
+				fehler("NE1");
 			}
 		}
 		else
@@ -330,7 +292,7 @@ public class GameControl
 	}
 	
 	
-	private void einwurfGetaetigt(int _spalte, int _zeile, int _spieler, Chip chip)
+	private void einwurfGetaetigt(int _spalte, int _zeile, Player _spieler, Chip chip)
 	{
 		System.out.println("Spieler " + _spieler + " hat in die Spalte " + _spalte + " eingeworfen (Höhe: " + _zeile + ")");
 		myServer.sendMessage(sp1, MessageGenerator.serverSendInsert(_spieler, _spalte, _zeile, chip));
@@ -339,10 +301,10 @@ public class GameControl
 		//visualisieren();
 		spielerwechsel();
 		
-		int sieger = localEndGameCheck(_spalte, _zeile);
+		Player sieger = localEndGameCheck(_spalte, _zeile);
 		//int sieger = globalEndGameCheck();
 		
-		if (sieger != 0)
+		if (sieger != Player.NONE)
 		{
 			spielerHatGewonnen(sieger);
 		}
@@ -353,7 +315,7 @@ public class GameControl
 		
 	}
 
-	private void spielerHatGewonnen(int _sieger)
+	private void spielerHatGewonnen(Player _sieger)
 	{
 		beendet = true;
 		myServer.sendMessage(sp1, MessageGenerator.serverSendGameEnd(getUser(_sieger).getNick()));
@@ -369,7 +331,7 @@ public class GameControl
 		int volleSpalten = 0;
 		for (int i = 0 ; i < spalten ; i++)
 		{
-			if (spielfeld[i][zeilen - 1].getType() != Feld.LEER)
+			if (spielfeld[i][zeilen - 1].getType() != Chip.EMPTY)
 			{
 				volleSpalten = volleSpalten + 1;
 			}
@@ -397,13 +359,14 @@ public class GameControl
 	//------------------------------------------------------------------------------------------------------------
 	
 	
-	private int checkZeile(int _zeile)
+	private Player checkZeile(int _zeile)
 	{
 		int anzahlInReihe = 0;
-		int aktSpieler = 0;
+		Player aktSpieler = Player.NONE;
+		
 		for (int i = 0 ; i < spalten ; i++)
 		{
-			if (spielfeld[i][_zeile].getType() == Feld.NORMAL || (spielfeld[i][_zeile].getType() == Feld.EXPLOSIV && ruleExplosiveChipsZaehlenFuerSieg))
+			if (spielfeld[i][_zeile].getType() == Chip.NORMAL || (spielfeld[i][_zeile].getType() == Chip.EXPLOSIVE && ruleExplosiveChipsZaehlenFuerSieg))
 			{
 				if (spielfeld[i][_zeile].getSpieler() == aktSpieler)
 				{
@@ -421,21 +384,22 @@ public class GameControl
 			}
 			else
 			{
-				aktSpieler = 0;
+				aktSpieler = Player.NONE;
 				anzahlInReihe = 0;
 			}
 			
 		}
-		return 0;
+		return Player.NONE;
 	}
 	
-	private int checkSpalte(int _spalte)
+	private Player checkSpalte(int _spalte)
 	{
 		int anzahlInReihe = 0;
-		int aktSpieler = 0;
+		Player aktSpieler = Player.NONE;
+		
 		for (int i = 0 ; i < zeilen ; i++)
 		{
-			if (spielfeld[_spalte][i].getType() == Feld.NORMAL || (spielfeld[_spalte][i].getType() == Feld.EXPLOSIV && ruleExplosiveChipsZaehlenFuerSieg))
+			if (spielfeld[_spalte][i].getType() == Chip.NORMAL || (spielfeld[_spalte][i].getType() == Chip.EXPLOSIVE && ruleExplosiveChipsZaehlenFuerSieg))
 			{
 				if (spielfeld[_spalte][i].getSpieler() == aktSpieler)
 				{
@@ -453,20 +417,21 @@ public class GameControl
 			}
 			else
 			{
-				aktSpieler = 0;
+				aktSpieler = Player.NONE;
 				anzahlInReihe = 0;
 			}
 			
 		}
-		return 0;
+		return Player.NONE;
 	}
 	
-	private int checkQuerLiUntenReOben(int _reihenIndex)
+	private Player checkQuerLiUntenReOben(int _reihenIndex)
 	{
 		int weite;
 		int hoehe;
 		int anzahlInReihe = 0;
-		int aktSpieler = 0;
+		Player aktSpieler = Player.NONE;
+		
 		if (_reihenIndex >= 0)
 		{
 			weite = _reihenIndex;
@@ -479,7 +444,7 @@ public class GameControl
 		}
 		while (weite < spalten && hoehe < zeilen)
 		{
-			if (spielfeld[weite][hoehe].getType() == Feld.NORMAL || (spielfeld[weite][hoehe].getType() == Feld.EXPLOSIV && ruleExplosiveChipsZaehlenFuerSieg))
+			if (spielfeld[weite][hoehe].getType() == Chip.NORMAL || (spielfeld[weite][hoehe].getType() == Chip.EXPLOSIVE && ruleExplosiveChipsZaehlenFuerSieg))
 			{
 				if (spielfeld[weite][hoehe].getSpieler() == aktSpieler)
 				{
@@ -497,21 +462,22 @@ public class GameControl
 			}
 			else
 			{
-				aktSpieler = 0;
+				aktSpieler = Player.NONE;
 				anzahlInReihe = 0;
 			}
 			weite = weite + 1;
 			hoehe = hoehe + 1;
 		}
-		return 0;
+		return Player.NONE;
 	}
 	
-	private int checkQuerLiObenReUnten(int _reihenIndex)
+	private Player checkQuerLiObenReUnten(int _reihenIndex)
 	{
 		int weite;
 		int hoehe;
 		int anzahlInReihe = 0;
-		int aktSpieler = 0;
+		Player aktSpieler = Player.NONE;
+		
 		if (_reihenIndex >= 0)
 		{
 			weite = _reihenIndex;
@@ -524,7 +490,7 @@ public class GameControl
 		}
 		while (weite < spalten && hoehe >= 0)
 		{
-			if (spielfeld[weite][hoehe].getType() == Feld.NORMAL || (spielfeld[weite][hoehe].getType() == Feld.EXPLOSIV && ruleExplosiveChipsZaehlenFuerSieg))
+			if (spielfeld[weite][hoehe].getType() == Chip.NORMAL || (spielfeld[weite][hoehe].getType() == Chip.EXPLOSIVE && ruleExplosiveChipsZaehlenFuerSieg))
 			{
 				if (spielfeld[weite][hoehe].getSpieler() == aktSpieler)
 				{
@@ -542,29 +508,29 @@ public class GameControl
 			}
 			else
 			{
-				aktSpieler = 0;
+				aktSpieler = Player.NONE;
 				anzahlInReihe = 0;
 			}
 			weite = weite + 1;
 			hoehe = hoehe - 1;
 		}
-		return 0;
+		return Player.NONE;
 	}
 	
-	private int localEndGameCheck(int _spalte, int _zeile)
+	private Player localEndGameCheck(int _spalte, int _zeile)
 	{
-		int resultat = 0;
+		Player resultat = Player.NONE;
 		
 		//Horizontal Check
 		resultat = checkZeile(_zeile);
-		if (resultat != 0)
+		if (resultat != Player.NONE)
 		{
 			return resultat;
 		}
 		
 		//Vertical Check
 		resultat = checkSpalte(_spalte);
-		if (resultat != 0)
+		if (resultat != Player.NONE)
 		{
 			return resultat;
 		}
@@ -573,7 +539,7 @@ public class GameControl
 		if (_spalte - _zeile >= 0 - (zeilen - anzahlFelderFuerSieg) && _spalte - _zeile <= spalten - anzahlFelderFuerSieg)
 		{
 			resultat = checkQuerLiUntenReOben(_spalte - _zeile);
-			if (resultat != 0)
+			if (resultat != Player.NONE)
 			{
 				return resultat;
 			}
@@ -583,25 +549,25 @@ public class GameControl
 		if (_spalte - ((zeilen - 1) - _zeile) >= 0 - (zeilen - anzahlFelderFuerSieg) && _spalte - ((zeilen - 1) - _zeile) <= spalten - anzahlFelderFuerSieg)
 		{
 			resultat = checkQuerLiObenReUnten(_spalte - ((zeilen - 1) - _zeile));
-			if (resultat != 0)
+			if (resultat != Player.NONE)
 			{
 				return resultat;
 			}
 		}
 		
-		return 0;
+		return Player.NONE;
 	}
 	
 	//Gibt die SpielerID des Gewinners aus (oder 0 bei keinem Gewinner)
 	//Wird nicht angewendet, da localEndGameCheck(int, int) effizienter ist
-	private int globalEndGameCheck()
+	private Player globalEndGameCheck()
 	{
 		//Horizontal Check
 		for (int i = 0 ; i < zeilen ; i++)
 		{
-			int sieger = 0;
+			Player sieger = Player.NONE;
 			sieger = checkZeile(i);
-			if (sieger != 0)
+			if (sieger != Player.NONE)
 			{
 				return sieger;
 			}
@@ -610,9 +576,9 @@ public class GameControl
 		//Vertical Check
 		for (int i = 0 ; i < spalten ; i++)
 		{
-			int sieger = 0;
+			Player sieger = Player.NONE;
 			sieger = checkSpalte(i);
-			if (sieger != 0)
+			if (sieger != Player.NONE)
 			{
 				return sieger;
 			}
@@ -621,8 +587,8 @@ public class GameControl
 		//DiagonalCheck Links Unten - Rechts Oben 
 		for (int i = 0 - (zeilen - anzahlFelderFuerSieg) ; i <= spalten - anzahlFelderFuerSieg ; i++)
 		{
-			int sieger = checkQuerLiUntenReOben(i);
-			if (sieger != 0)
+			Player sieger = checkQuerLiUntenReOben(i);
+			if (sieger != Player.NONE)
 			{
 				return sieger;
 			}
@@ -631,14 +597,14 @@ public class GameControl
 		//DiagonalCheck Links Oben - Rechts Unten
 		for (int i = 0 - (zeilen - anzahlFelderFuerSieg) ; i <= spalten - anzahlFelderFuerSieg ; i++)
 		{
-			int sieger = checkQuerLiObenReUnten(i);
-			if (sieger != 0)
+			Player sieger = checkQuerLiObenReUnten(i);
+			if (sieger != Player.NONE)
 			{
 				return sieger;
 			}
 		}
 		
-		return 0;
+		return Player.NONE;
 		
 	}
 
@@ -647,14 +613,7 @@ public class GameControl
 	
 	private void spielerwechsel()
 	{
-		if (amZug == 1)
-		{
-			amZug = 2;
-		}
-		else
-		{
-			amZug = 1;
-		}
+		amZug = getNichtAmZug();
 		info(getUserAmZug().getNick() + " ist am Zug");
 		myServer.sendMessage(getUserAmZug(), MessageGenerator.serverSendInsertStatus(true));
 		myServer.sendMessage(getUserNichtAmZug(), MessageGenerator.serverSendInsertStatus(false));
@@ -662,8 +621,17 @@ public class GameControl
 	
 	private void anfangsspielerAuslosen()
 	{
-		int anfangsspieler = (int) Math.round(Math.random()) + 1;
-		amZug = anfangsspieler;
+		switch((int) Math.round(Math.random()))
+		{
+			case 0:
+				amZug = Player.RED;
+				break;
+			case 1:
+				amZug = Player.YELLOW;
+				break;
+			default:
+				System.out.println("Fehler beim Anfangsspieler auslosen");
+		}
 	}
 	
 	private void visualisieren()
@@ -694,61 +662,42 @@ public class GameControl
 		myServer.sendMessage(sp2, MessageGenerator.serverSendLogMessage(info));
 	}
 	
+	private User getUser(Player spieler)
+	{
+		if(sp1.getPlayer() == spieler)
+			return sp1;
+		else if(sp2.getPlayer() == spieler)
+			return sp2;
+		else
+			return null;
+	}
+	
 	private User getUserAmZug()
 	{
-		if (amZug == 1)
-		{
-			return sp1;
-		}
-		else if (amZug == 2)
-		{
-			return sp2;
-		}
-		else
-		{
-			return null;
-		}
+		return getUser(getAmZug());
 	}
 	
-	private User getUserNichtAmZug()
+	private User getUserNichtAmZug() 
 	{
-		if (amZug == 1)
-		{
-			return sp2;
-		}
-		else if (amZug == 2)
-		{
-			return sp1;
-		}
-		else
-		{
-			return null;
-		}
+		return getUser(getNichtAmZug());
 	}
 	
-	private int getNichtAmZug()
+	private Player getAmZug()
 	{
-		if (amZug == 1)
-		{
-			return 2;
-		}
-		else if (amZug == 2)
-		{
-			return 1;
-		}
-		else
-		{
-			return 0;
-		}
+		return amZug;
 	}
 	
-	public User getUser(int u)
+	private Player getNichtAmZug()
 	{
-		if(u == 1)
-			return sp1;
-		else if(u == 2)
-			return sp2;
-		else return null;
+		switch(getAmZug())
+		{
+			case RED:
+				return Player.YELLOW;
+			case YELLOW:
+				return Player.RED;
+			default:
+				return Player.NONE;
+		}
 	}
 	
 	public User getUser1()
