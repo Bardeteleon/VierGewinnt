@@ -332,7 +332,7 @@ public class GameControl
 	
 	private void einwurfGetaetigt(int _spalte, int _zeile, int _spieler, Chip chip)
 	{
-		//System.out.println("Spieler " + " hat in die Spalte " + _spalte + " eingeworfen (Höhe: " + _zeile + ")");
+		System.out.println("Spieler " + _spieler + " hat in die Spalte " + _spalte + " eingeworfen (Höhe: " + _zeile + ")");
 		myServer.sendMessage(sp1, MessageGenerator.serverSendInsert(_spieler, _spalte, _zeile, chip));
 		myServer.sendMessage(sp2, MessageGenerator.serverSendInsert(_spieler, _spalte, _zeile, chip));
 		
@@ -358,7 +358,6 @@ public class GameControl
 		beendet = true;
 		myServer.sendMessage(sp1, MessageGenerator.serverSendGameEnd(getUser(_sieger).getNick()));
 		myServer.sendMessage(sp2, MessageGenerator.serverSendGameEnd(getUser(_sieger).getNick()));
-		//System.out.println("Sieger: " + sieger);
 		myServer.sendMessage(sp1, MessageGenerator.serverSendInsertStatus(false));
 		myServer.sendMessage(sp2, MessageGenerator.serverSendInsertStatus(false));
 		info(getUser(_sieger).getNick() + " hat gewonnen");
@@ -388,7 +387,6 @@ public class GameControl
 		beendet = true;
 		myServer.sendMessage(sp1, MessageGenerator.serverSendGameEnd(" "));
 		myServer.sendMessage(sp2, MessageGenerator.serverSendGameEnd(" "));
-		//System.out.println("Unentschieden");
 		myServer.sendMessage(sp1, MessageGenerator.serverSendInsertStatus(false));
 		myServer.sendMessage(sp2, MessageGenerator.serverSendInsertStatus(false));
 		info("Das Spiel endet Unentschieden");
@@ -692,7 +690,6 @@ public class GameControl
 	private void info(String _info)
 	{
 		String info = _info;
-		//System.out.println(info);
 		myServer.sendMessage(sp1, MessageGenerator.serverSendLogMessage(info));
 		myServer.sendMessage(sp2, MessageGenerator.serverSendLogMessage(info));
 	}

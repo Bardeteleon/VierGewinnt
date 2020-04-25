@@ -62,7 +62,6 @@ public class User
 	{
 		if (!invitedBy(u))
 		{
-			//System.out.println("Einladung eingetragen bei "+IP+" ("+_IP+")");
 			invitations.add(new Invitation(u, _spalten, _zeilen, _expChipsZahlenFuerSieg, _explosionZahltAlsZug, _anzahlExpChips));
 		}
 	}

@@ -47,7 +47,7 @@ public abstract class Server implements ConnectionControl
 	 */
 	public void activateConnector()
 	{
-		// System.out.println("Erwarte Verbindungen");
+		System.out.println("Erwarte Verbindungen");
 		myConnector.start();
 	}
 
@@ -56,34 +56,16 @@ public abstract class Server implements ConnectionControl
 	 */
 	public void deactivateConnector()
 	{
-		// System.out.println("Verbindungsannahme deaktiviert");
+		System.out.println("Verbindungsannahme deaktiviert");
 		myConnector.deaktivateConnector();
 	}
 
 	// Wird vom Connector angesteuert
 	public void addNewConnection(Socket _mySocket)
 	{
-//		try
-//		{
-//			System.out.println("Server new Connection - keepAlive=" + _mySocket.getKeepAlive());
-//			_mySocket.setKeepAlive(true);
-//			System.out.println("Server new Connection - keepAlive=" + _mySocket.getKeepAlive());
-//		} catch (SocketException e)
-//		{
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
 		String IP = _mySocket.getInetAddress().toString();
 		IP = IP.substring(1, IP.length());
 
-//		for (int i = 0; i < myConnectionCollection.size(); i++)
-//		{
-//			if (myConnectionCollection.get(i).getIP().equals(IP))
-//			{
-//				System.err.println("Mit diesem Rechner besteht bereits eine Verbindung");
-//				return;
-//			}
-//		}
 		myConnectionCollection.add(new Connection(this, _mySocket));
 		connectionAdded(IP, _mySocket.getPort());
 	}
@@ -137,20 +119,19 @@ public abstract class Server implements ConnectionControl
 		{
 			if (myConnectionCollection.get(i).getIP().equals(_empfaengerIP) && myConnectionCollection.get(i).getPort() == _empfaengerPort)
 			{
-				System.out.println("Send (to " + _empfaengerIP + ":" + _empfaengerPort + "): " + _message);// TODO
-																					// löschen
+				System.out.println("Send (to " + _empfaengerIP + ":" + _empfaengerPort + "): " + _message);
 				myConnectionCollection.get(i).sendMessage(_message);
 				return;
 			}
 		}
-		// System.out.println("Emfänger nicht gefunden");
+		System.out.println("Emfänger nicht gefunden");
 	}
 
 	public void sendToAll(String _message)
 	{
 		for (int i = 0; i < myConnectionCollection.size(); i++)
 		{
-			sendMessage(myConnectionCollection.get(i).getIP(),myConnectionCollection.get(i).getPort(), _message);
+			sendMessage(myConnectionCollection.get(i).getIP(), myConnectionCollection.get(i).getPort(), _message);
 		}
 	}
 

@@ -29,7 +29,7 @@ public class ServerVierGewinnt extends Server
 	// Überschriebene Klasse
 	public void connectionAdded(String _IP, int _port)
 	{
-		System.out.println("(" + _IP + ":" + _port + "): Neue Verbindung hergestellt");
+		System.out.println("Neue Verbindung hergestellt: " + _IP + ":" + _port);
 		myUserControl.newUser(_IP, _port);
 	}
 
@@ -50,12 +50,11 @@ public class ServerVierGewinnt extends Server
 		}
 
 		myUserControl.deleteUser(new User(_IP, _port));
-		System.out.println("(" + _IP + ":" + _port + "): Verbindung unterbrochen");
+		System.out.println("Verbindung unterbrochen: " + _IP + ":" + _port);
 	}
 
 	public void messageReceived(String _absenderIP, int _absenderPort, String _message)
 	{
-		System.out.println("    <---EMPFANGEN VON (" + _absenderIP + "): " + _message);
 		Message dp;
 		dp = MessageParser.parse(_message);
 		User absender = new User(_absenderIP, _absenderPort);
@@ -69,7 +68,6 @@ public class ServerVierGewinnt extends Server
 
 	public void sendToAll(String _output)
 	{
-		// System.out.println("Sende an alle: " + _output);
 		for (int i = 0; i < myUserControl.myUsers.size(); i++)
 		{
 			if (myUserControl.myUsers.get(i).getStatus() != User.KEIN_NICK)
@@ -162,7 +160,7 @@ public class ServerVierGewinnt extends Server
 																											// vorher
 																											// konvertiert!!
 
-						System.out.println("Explosion   spalte: " + spalte + " | zeile: " + zeile);
+						System.out.println("Explosion in Spalte: " + spalte + " | Zeile: " + zeile);
 
 						game.sprengen(spalte, zeile, pAbsender);
 					} else
@@ -279,7 +277,7 @@ public class ServerVierGewinnt extends Server
 						{
 							if (pMessageData.arguments.get(1).equals("true"))
 							{
-								System.out.println("(" + eingeladener.getIP() + ") nimmt die Einladung von (" + einladender.getIP() + ") an");
+								System.out.println("(" + eingeladener.getIP() + ":" + eingeladener.getPort() + ") nimmt die Einladung von (" + einladender.getIP() + ":" + einladender.getPort() + ") an");
 								einladender.removeInvitations();
 								eingeladener.removeInvitations();
 								myUserControl.deleteAllInvitationsBy(einladender);
@@ -292,7 +290,7 @@ public class ServerVierGewinnt extends Server
 							{
 								eingeladener.deleteSingleInvitation(einladender);
 								sendMessage(einladender, MessageGenerator.serverSendLogMessage(eingeladener.getNick() + " lehnt die Einladung ab!"));
-								System.out.println("(" + eingeladener.getIP() + ") lehnt die Einladung von (" + einladender.getIP() + ") ab");
+								System.out.println("(" + eingeladener.getIP() + ":" + eingeladener.getPort() + ") lehnt die Einladung von (" + einladender.getIP() + ":" + einladender.getPort() + ") ab");
 							}
 						} else
 						{
@@ -321,7 +319,7 @@ public class ServerVierGewinnt extends Server
 				{
 					if (myUser.getStatus() == User.KEIN_NICK)
 					{
-						System.out.println("Setze Nick für (" + pAbsender + ") auf '" + pMessageData.arguments.get(0) + "'");
+						System.out.println("Setze Nick für (" + pAbsender.getIP() + ":" + pAbsender.getPort() + ") auf '" + pMessageData.arguments.get(0) + "'");
 						myUser.setNick(pMessageData.arguments.get(0));
 						myUser.setStatus(User.IN_LOBBY);
 					} else

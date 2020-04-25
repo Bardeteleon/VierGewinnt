@@ -69,7 +69,6 @@ public class ClientVierGewinnt extends Client
 	@Override
 	public void messageReceived(String absenderIP, int absenderPort, String message)
 	{
-		System.out.println("Received: " + message);
 		final Message myData = parser.parse(message);
 		/*
 		 * WIRD VOM INPUTLISTENER THREAD AUFGERUFEN; DER KEINE REFERENZ AUF

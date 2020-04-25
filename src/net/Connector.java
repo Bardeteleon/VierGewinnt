@@ -47,7 +47,7 @@ public class Connector extends Thread
 		allowConnection = false;
 		try
 		{
-			myServerSocket.close(); // TODO close() added
+			myServerSocket.close();
 			myServerSocket = null;
 		} catch (IOException e)
 		{

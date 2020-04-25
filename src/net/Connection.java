@@ -37,7 +37,6 @@ public class Connection
 			port = mySocket.getPort();
 			myInputListener.start();
 			connected = true;
-			//System.out.println(IP + ":" + port + " hat eine Verbindung hergestellt");
 		}
 		catch (IOException e)
 		{
@@ -55,7 +54,6 @@ public class Connection
 		if (connected && _message != null)
 		{
 			myPrtStream.println(_message);
-			//System.out.println("Server: " + _message);
 		}
 	}
 	
@@ -63,7 +61,6 @@ public class Connection
 	{
 		if (connected)
 		{
-			//System.out.println("Verbindung zu " + IP + ":" + port + " wurde getrennt");
 			try
 			{
 				connected = false;

@@ -20,9 +20,6 @@ public abstract class Client implements ConnectionControl
 		try
 		{
 			Socket _mySocket = new Socket(_IP, _port);
-//			System.out.println("Client new Connection - keepAlive=" + _mySocket.getKeepAlive());
-//			_mySocket.setKeepAlive(true);
-//			System.out.println("Client new Connection - keepAlive=" + _mySocket.getKeepAlive());
 			
 			if (myConnection != null)
 				close();
@@ -62,7 +59,7 @@ public abstract class Client implements ConnectionControl
 	{
 		if (myConnection != null && myConnection.getConnected())
 		{
-			System.out.println("Send: "+_message);// TODO löschen
+			System.out.println("Send: "+_message);
 			myConnection.sendMessage(_message);
 		}
 	}
