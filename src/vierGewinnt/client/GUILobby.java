@@ -14,6 +14,9 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Vector;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -28,31 +31,37 @@ import javax.swing.JTextPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.text.BadLocationException;
 
 import useful.GUI;
+import vierGewinnt.common.Chat;
 
 public class GUILobby extends JDialog
 {
+	private GUIVierGewinnt parent;
+
+	private GUIConnection guiConnection;
+	private GUIGameConfig guiGameConfig;
+	
 	private JLabel laTitle;
 	private JToolBar tobButtons;
 	private JButton bnConnect, bnSend, bnPlay;
-	protected JTextPane tpOutput;
+	private JTextPane tpOutput;
 	private JTextPane tpInput;
 	private JSplitPane sppInOut;
-	private JTable tbConnections;
 	private JScrollPane spOutput, spInput, spConnections;
+	
+	private JTable tbConnections;
+	private ConnectionTableModel tableModel;
 
-	private Container c;
+	private Container contentPane;
 	private GridBagLayout gbl;
-	protected ConnectionTableModel tableModel;
-	protected GUIConnection guiConnection;
-	protected GUIGameConfig guiGameConfig;
-	private GUIVierGewinnt parent;
 
-	public GUILobby(GUIVierGewinnt parent, String title, boolean model)
+	public GUILobby(GUIVierGewinnt parent, String title)
 	{
-		super(parent, title, model);
+		super(parent, title, false);
 		this.parent = parent;
 		setMinimumSize(new Dimension(250, 210));
 
@@ -77,9 +86,9 @@ public class GUILobby extends JDialog
 		guiGameConfig.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 
 		gbl = new GridBagLayout();
-		c = getContentPane();
-		c.setLayout(gbl);
-		c.setBackground(Color.WHITE);
+		contentPane = getContentPane();
+		contentPane.setLayout(gbl);
+		contentPane.setBackground(Color.WHITE);
 
 		laTitle = new JLabel("Lobby", SwingConstants.CENTER);
 		laTitle.setFont(new Font("SansSerif", Font.BOLD, 20));
@@ -122,6 +131,8 @@ public class GUILobby extends JDialog
 		tbConnections.getColumnModel().getColumn(1).setPreferredWidth(20);
 		tbConnections.getTableHeader().setToolTipText("Nickname mit Whisperstatus");
 		tbConnections.getTableHeader().setReorderingAllowed(false);
+		tbConnections.setCellSelectionEnabled(false);
+		tbConnections.setFocusable(false);
 		spConnections = new JScrollPane(tbConnections);
 		spConnections.setPreferredSize(new Dimension(10, 10));
 
@@ -129,16 +140,16 @@ public class GUILobby extends JDialog
 		bnSend.setFocusPainted(false);
 		bnSend.setBackground(Color.WHITE);
 
-		GUI.addComponent(c, tobButtons, GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(0, 0, 0, 0), 0, 0, 2, 1, 1, 0.05);
-		GUI.addComponent(c, laTitle, GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(0, 0, 0, 0), 0, 1, 2, 1, 1, 0.05);
-		GUI.addComponent(c, sppInOut, GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(5, 5, 5, 5), 0, 2, 1, 2, 0.85, 0.9);
-		GUI.addComponent(c, spConnections, GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(5, 5, 5, 5), 1, 2, 1, 1, 0.15, 0.8);
-		GUI.addComponent(c, bnSend, GridBagConstraints.NONE, GridBagConstraints.CENTER, new Insets(25, 15, 25, 15), 1, 3, 1, 1, 0.15, 0.1);
+		GUI.addComponent(contentPane, tobButtons, GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(0, 0, 0, 0), 0, 0, 2, 1, 1, 0.05);
+		GUI.addComponent(contentPane, laTitle, GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(0, 0, 0, 0), 0, 1, 2, 1, 1, 0.05);
+		GUI.addComponent(contentPane, sppInOut, GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(5, 5, 5, 5), 0, 2, 1, 2, 0.85, 0.9);
+		GUI.addComponent(contentPane, spConnections, GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(5, 5, 5, 5), 1, 2, 1, 1, 0.15, 0.8);
+		GUI.addComponent(contentPane, bnSend, GridBagConstraints.NONE, GridBagConstraints.CENTER, new Insets(25, 15, 25, 15), 1, 3, 1, 1, 0.15, 0.1);
 	}
 
 	private void addActions()
 	{
-		c.addComponentListener(new ComponentAdapter()
+		contentPane.addComponentListener(new ComponentAdapter()
 		{
 			@Override
 			public void componentResized(ComponentEvent arg0)
@@ -164,15 +175,15 @@ public class GUILobby extends JDialog
 				String message = tpInput.getText();
 				if (message.matches("\\s*") || message.equals(""))
 					return;
-				if (parent.client != null && parent.client.myConnection != null && parent.client.myConnection.getConnected())
+				if (parent.getClient() != null && parent.getClient().myConnection != null && parent.getClient().myConnection.getConnected())
 				{
 					if (tableModel.getWhisperNames().size() == 0)
 					{
-						parent.client.sendChatMessage(message);
+						parent.getClient().sendChatMessage(message, parent.getClient().nick);
 						tpInput.setText("");
 					} else
 					{
-						parent.client.sendWhisperMessage(message, tableModel.getWhisperNames());
+						parent.getClient().sendWhisperMessage(message, parent.getClient().nick, tableModel.getWhisperNames());
 						tpInput.setText("");
 					}
 				}
@@ -184,14 +195,14 @@ public class GUILobby extends JDialog
 			@Override
 			public void actionPerformed(ActionEvent arg0)
 			{
-				if (parent.client != null && tableModel.getNames(parent.client.nick).size() > 0)
+				if (parent.getClient() != null && tableModel.getNames(parent.getClient().nick).size() > 0)
 				{
-					if (parent.client.teammate != null)
+					if (parent.getClient().teammate != null)
 					{
 						JOptionPane.showMessageDialog(GUILobby.this, "Sie sind bereits in einem Spiel!", "", JOptionPane.INFORMATION_MESSAGE);
 					} else
 					{
-						guiGameConfig.setNames(tableModel.getNames(parent.client.nick));
+						guiGameConfig.setNames(tableModel.getNames(parent.getClient().nick));
 						guiGameConfig.setVisible(true);
 					}
 				} else
@@ -223,6 +234,91 @@ public class GUILobby extends JDialog
 				}
 			}
 		});
+		
+		tbConnections.getModel().addTableModelListener(new TableModelListener() {
+			
+			@Override
+			public void tableChanged(TableModelEvent e) {
+				if(parent != null)
+					if(tableModel.getWhisperNames().size() > 0)
+					{
+						clearOutputPane();
+						Vector<String> participants = tableModel.getWhisperNames();
+						participants.add(parent.getClient().nick);
+	
+						if(!parent.getClient().myChatHandler.isChat(participants))
+							parent.getClient().myChatHandler.addNewChat(participants);
+						
+						Chat chat = parent.getClient().myChatHandler.getChat(participants);
+						parent.getClient().myChatHandler.setChatsInvisible();
+						chat.setVisible(true);
+						setLobbyChat(chat.getFormattedMessageAll(), GUI.GREENSTYLE);
+	
+					}else
+					{
+						clearOutputPane();
+						Chat chat = parent.getClient().myChatHandler.getChat(parent.getClient().BROADCAST);
+						parent.getClient().myChatHandler.setChatsInvisible();
+						chat.setVisible(true);
+						setLobbyChat(chat.getFormattedMessageAll(), GUI.BLACKSTYLE);
+					}
+			}
+		});;
+	}
+	
+	public void clearOutputPane()
+	{
+		try {
+			tpOutput.getDocument().remove(0, tpOutput.getDocument().getLength());
+		} catch (BadLocationException e1) {
+			e1.printStackTrace();
+		}
 	}
 
+	public void setLobbyChat(String text, String style)
+	{
+		try {
+			tpOutput.getDocument().insertString(0, text, tpOutput.getStyle(style));
+			GUI.insertSmileys(tpOutput.getStyledDocument(), 0);
+		} catch (BadLocationException e1) {
+			e1.printStackTrace();
+		}
+	}
+	
+	public void appendLobbyChat(String text, String type)
+	{
+		try
+		{
+			int docLength = tpOutput.getDocument().getLength();
+			tpOutput.getDocument().insertString(docLength, text, tpOutput.getStyle(type));
+			GUI.insertSmileys(tpOutput.getStyledDocument(), docLength);
+		} catch (BadLocationException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public void setUserTable(List<String> connections, String... filters)
+	{
+		tableModel.setData(connections, filters);
+	}
+	
+	public GUIConnection getGUIConnection()
+	{
+		return guiConnection;
+	}
+	
+	public GUIGameConfig getGUIGameConfig()
+	{
+		return guiGameConfig;
+	}
+	
+	public static void main(String[] args) {
+		GUILobby guiLobby = new GUILobby(null, "Lobby");
+		guiLobby.setMinimumSize(new Dimension(230, 230));
+		guiLobby.setSize(630, 400);
+		guiLobby.setLocationRelativeTo(null);
+		guiLobby.setUserTable(Arrays.asList("Hans", "Peter", "Mueller"));
+		guiLobby.setVisible(true);
+	}
 }

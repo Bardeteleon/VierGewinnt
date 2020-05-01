@@ -1,5 +1,6 @@
 package vierGewinnt.client;
 
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
@@ -7,6 +8,8 @@ import javax.swing.SwingUtilities;
 
 import net.Client;
 import useful.GUI;
+import vierGewinnt.common.Chat;
+import vierGewinnt.common.ChatHandler;
 import vierGewinnt.common.Chip;
 import vierGewinnt.common.Message;
 import vierGewinnt.common.MessageGenerator;
@@ -20,6 +23,9 @@ public class ClientVierGewinnt extends Client
 	protected Player myPlayer = Player.NONE;
 	protected String teammate = null;
 	protected String nick = null;
+	protected ChatHandler myChatHandler;
+	
+	protected final String BROADCAST = "ALL_CHAT_HOPEFULLY_NO_PARTICIPANTS_CHOOSE_THIS_NAME";
 
 	public ClientVierGewinnt(String pIP, int pPort, String pNick, GUIVierGewinnt pGui)
 	{
@@ -34,6 +40,8 @@ public class ClientVierGewinnt extends Client
 		sendMessage(MessageGenerator.clientSendNickNameIntroduction(pNick));
 		nick = pNick;
 		gui = pGui;
+		myChatHandler = new ChatHandler();
+		myChatHandler.addNewChat(BROADCAST);
 	}
 
 	public void playRequest(int column, Chip chip)
@@ -51,20 +59,20 @@ public class ClientVierGewinnt extends Client
 		sendMessage(MessageGenerator.explosion(splate, zeile));
 	}
 
-	public void sendChatMessage(String message)
+	public void sendChatMessage(String message, String nick)
 	{
-		sendMessage(MessageGenerator.sendChatMessage(message));
+		sendMessage(MessageGenerator.sendChatMessage(message, nick));
 	}
 
-	public void sendWhisperMessage(String mess, Vector<String> nicks)
+	public void sendWhisperMessage(String mess, String senderNick, List<String> receiverNicks)
 	{
-		sendMessage(MessageGenerator.sendWhisperMessage(mess, nicks));
+		sendMessage(MessageGenerator.sendWhisperMessage(mess, senderNick, receiverNicks));
 	}
 	
 	@Override
 	public void connectionRemoved()
 	{
-		gui.guiLobby.guiConnection.doGUIDisconnect();
+		gui.getGUILobby().getGUIConnection().doGUIDisconnect();
 	}
 	
 	@Override
@@ -144,9 +152,9 @@ public class ClientVierGewinnt extends Client
 				if(gui.getPlayingFieldModel().getNumberOfBombs() > 0)
 					gui.getStatusBar().setBombInfo(gui.getPlayingFieldModel().getNumberOfBombs());
 				gui.resetChat();
-				gui.guiLobby.setVisible(false);
-				gui.guiLobby.guiConnection.setVisible(false);
-				gui.guiLobby.guiGameConfig.setVisible(false);
+				gui.getGUILobby().setVisible(false);
+				gui.getGUILobby().getGUIConnection().setVisible(false);
+				gui.getGUILobby().getGUIGameConfig().setVisible(false);
 				break;
 				
 			case GAMEEND :
@@ -188,31 +196,48 @@ public class ClientVierGewinnt extends Client
 				break;
 		
 			case USERTABLE:
-				gui.setUserTable(myData.arguments, nick);
+				myChatHandler.getChat(BROADCAST).removeAllParticipants();
+				myChatHandler.getChat(BROADCAST).addParticipants(myData.arguments);
+				gui.getGUILobby().setUserTable(myData.arguments, nick);
 				break;
 		}
 	}
 
 	private void reactionChat(Message myData)
 	{
+		Chat chat;
 		switch(myData.command)
 		{
 			case WHISPER:
+				List<String> participants = myData.arguments.subList(1, myData.arguments.size());
+				if(!myChatHandler.isChat(participants))
+					myChatHandler.addNewChat(participants);
+				
+				chat = myChatHandler.getChat(participants);
+				chat.addMessage(myData.arguments.get(1), myData.arguments.get(0));
+				
+				if(chat.isVisible())
+					gui.getGUILobby().appendLobbyChat(chat.getFormattedMessageLatest(), GUI.GREENSTYLE);
+				else
+					;// notify for new whisper message
+				
 				if (myData.arguments.size() == 3 && ((myData.arguments.get(1).equals(nick) && myData.arguments.get(2).equals(teammate)) || (myData.arguments.get(2).equals(nick) && myData.arguments.get(1).equals(teammate))))
 				{
-					gui.insertGameChatMessage(myData.arguments.get(1) + ": " + myData.arguments.get(0), GUI.BLACKSTYLE);
+					gui.appendGameChat(myChatHandler.getChat(participants).getFormattedMessageLatest(), GUI.GREENSTYLE);
 				} else
 				{
-					String empfaenger = "";
-					for (int i = 2; i < myData.arguments.size(); i++)
-						empfaenger += myData.arguments.get(i) + ",";
-					empfaenger = empfaenger.substring(0, empfaenger.length() - 1);
-					gui.insertChatMessage(myData.arguments.get(1) + "@" + empfaenger + ": " + myData.arguments.get(0), GUI.GREENSTYLE);
+					//notify for new whisper message
 				}
 				break;
 				
 			case ALL:
-				gui.insertChatMessage(myData.arguments.get(0), GUI.BLACKSTYLE);
+				chat = myChatHandler.getChat(BROADCAST);
+				chat.addMessage(myData.arguments.get(1), myData.arguments.get(0));
+				
+				if(chat.isVisible())
+					gui.getGUILobby().appendLobbyChat(myChatHandler.getChat(BROADCAST).getFormattedMessageLatest(), GUI.BLACKSTYLE);
+				else
+					; // notify somehow for new broadcast message
 				break;
 		}
 	}

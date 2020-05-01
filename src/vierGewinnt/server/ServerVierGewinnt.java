@@ -1,23 +1,25 @@
 package vierGewinnt.server;
 
-import java.util.Vector;
+import java.util.List;
 
 import net.Server;
 import vierGewinnt.common.Chip;
 import vierGewinnt.common.Message;
-import vierGewinnt.common.MessageCommand;
 import vierGewinnt.common.MessageGenerator;
 import vierGewinnt.common.MessageParser;
-import vierGewinnt.common.MessageType;
 
 public class ServerVierGewinnt extends Server
 {
 	UserControl myUserControl = new UserControl(this);
 	GameHandler myGameHandler = new GameHandler(this);
+//	ChatHandler myChatHandler = new ChatHandler();
+	
+//	private final String CHAT_ALL = "ALL_CHAT_HOPEFULLY_NO_PARTICIPANTS_CHOOSE_THIS_NAME";
 
 	public ServerVierGewinnt(int _port)
 	{
 		super(_port);
+//		myChatHandler.addNewChat(CHAT_ALL);
 		System.out.println("Der Server wurde gestartet");
 	}
 
@@ -310,33 +312,21 @@ public class ServerVierGewinnt extends Server
 		switch (pMessageData.command)
 		{
 			case WHISPER:
-				String message = pMessageData.arguments.get(0);
-
 				if (pAbsender.getStatus() != User.KEIN_NICK)
 				{
-					Vector<String> emfaenger = new Vector<String>();
-					emfaenger.add(pAbsender.getNick()); // Erstes Argument ist der Sender-Nick
-					for (int i = 1; i < pMessageData.arguments.size(); i++)
-					{
-						emfaenger.add(pMessageData.arguments.get(i)); // Die weiteren Argumente sind die Empfaenger
-					}
-					sendMessage(pAbsender, MessageGenerator.sendWhisperMessage(message, emfaenger));
+					String message = pMessageData.arguments.get(0);
+					String sender = pMessageData.arguments.get(1);
+					List<String> emfaenger = pMessageData.arguments.subList(2, pMessageData.arguments.size());
 					
-					for (int i = 1; i < pMessageData.arguments.size(); i++)
+					for (String nick : pMessageData.arguments.subList(1, pMessageData.arguments.size()))
 					{
-						User myUser = myUserControl.getUserByNick(pMessageData.arguments.get(i));
+						User myUser = myUserControl.getUserByNick(nick);
 						if (myUser != null)
 						{
-							if (!myUser.equals(pAbsender))
-							{
-								sendMessage(myUser, MessageGenerator.sendWhisperMessage(message, emfaenger));
-							} else
-							{
-								System.out.println("messageReaction.Chat: Sender (" + pAbsender.getIP() + ") hat sich selbst als Empfänger angegeben");
-							}
+							sendMessage(myUser, MessageGenerator.sendWhisperMessage(message, sender, emfaenger));
 						} else
 						{
-							System.out.println("messageReaction.Chat: Empfaenger (" + pMessageData.arguments.get(i) + ") nicht gefunden");
+							System.out.println("messageReaction.Chat: Empfaenger (" + nick + ") nicht gefunden");
 						}
 					}
 				} else
@@ -348,7 +338,8 @@ public class ServerVierGewinnt extends Server
 			case ALL:
 				if (pAbsender.getStatus() != User.KEIN_NICK)
 				{
-					sendToAll(MessageGenerator.sendChatMessage(pAbsender.getNick() + ": " + pMessageData.arguments.get(0)));
+//					myChatHandler.getChat(CHAT_ALL).addMessage(pAbsender, pMessageData.arguments.get(0));
+					sendToAll(MessageGenerator.sendChatMessage(pMessageData.arguments.get(0), pAbsender.getNick()));
 				} else
 				{
 					System.out.println("messageReaction.Chat: Sender der Global Message (" + pAbsender + ") hat noch keinen Nick");

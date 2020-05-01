@@ -23,6 +23,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Arrays;
 import java.util.Vector;
 
 import javax.swing.AbstractAction;
@@ -57,25 +58,28 @@ import vierGewinnt.common.Player;
  */
 public class GUIVierGewinnt extends JFrame
 {
+	private ClientVierGewinnt client;
+	
+	private GUILobby guiLobby;
+	private GameStatusBar statusBar;
+	
 	private JToolBar tobButtons;
 	private JButton bnLobby, bnFullScreen, bnHelp, bnPaneVisibility;
-	private JTable tbPlayingField;
 	private JPanel panBuffPlayingField;
 	private JTextPane tpInput, tpChat;
 	private JScrollPane spChat, spInput;
 	private JSplitPane sppInOut;
 	private JDialog diaHelp;
 
-	private Container contenPane;
+	private JTable tbPlayingField;
 	private GameTableModel playingFieldModel;
 	private GameCellRenderer playingFieldRenderer;
-	protected GUILobby guiLobby;
-	private GameStatusBar statusBar;
-	protected ClientVierGewinnt client;
 	
 	private GlassPaneAnimation glassAni;
 	private Explosion expAni;
 	private OnePicAnimation winnerAni, gameOverAni;
+	
+	private Container contenPane;
 
 	public GUIVierGewinnt(String title)
 	{
@@ -88,7 +92,7 @@ public class GUIVierGewinnt extends JFrame
 	{
 		setIconImage(GUI.createImageIcon(this, "bilder/clientIcon.png").getImage());
 
-		guiLobby = new GUILobby(this, "Lobby", false);
+		guiLobby = new GUILobby(this, "Lobby");
 		guiLobby.setMinimumSize(new Dimension(230, 230));
 		guiLobby.setSize(630, 400);
 		guiLobby.setLocationRelativeTo(null);
@@ -184,6 +188,8 @@ public class GUIVierGewinnt extends JFrame
 
 		sppInOut = new JSplitPane(JSplitPane.VERTICAL_SPLIT, spChat, spInput);
 		sppInOut.setOneTouchExpandable(true);
+		sppInOut.setDividerLocation(0.8);
+		sppInOut.setPreferredSize(new Dimension(10, 10)); // needed so that the chat size is set by the layout. Unless it gets too big.
 
 		bnPaneVisibility = new JButton();
 		bnPaneVisibility.setPreferredSize(new Dimension(10, 10));
@@ -223,6 +229,7 @@ public class GUIVierGewinnt extends JFrame
 			public void componentResized(ComponentEvent arg0)
 			{
 				sppInOut.setDividerLocation(0.8);
+				getContentPane().validate();
 			}
 		});
 
@@ -347,9 +354,7 @@ public class GUIVierGewinnt extends JFrame
 						return;
 					if (client.myConnection != null && client.myConnection.getConnected())
 					{
-						Vector<String> mitsp = new Vector<String>();
-						mitsp.add(client.teammate);
-						client.sendWhisperMessage(message, mitsp);
+						client.sendWhisperMessage(message, client.nick, Arrays.asList(client.teammate));
 						tpInput.setText("");
 					}
 
@@ -409,35 +414,22 @@ public class GUIVierGewinnt extends JFrame
 		});
 	}
 
-	private Point getColumnAndRowOfPlayingFieldAt(Point p)
+	private Point getColumnAndRowOfPlayingFieldAt(Point pixelPos)
 	{
 		int widthHeight = tbPlayingField.getWidth() / playingFieldModel.getColumnCount();
-		Point pNew = new Point();
-		pNew.x = p.x / widthHeight;
-		pNew.y = p.y / widthHeight - 1; // -1 wegen Auswahl Zeile
-		return pNew;
+		Point fieldPos = new Point();
+		fieldPos.x = pixelPos.x / widthHeight;
+		fieldPos.y = pixelPos.y / widthHeight - 1; // -1 wegen Auswahl Zeile
+		return fieldPos;
 
 	}
 
-	public void insertChatMessage(String m, String type)
-	{
-		try
-		{
-			int docLength = guiLobby.tpOutput.getDocument().getLength();
-			guiLobby.tpOutput.getDocument().insertString(docLength, m + "\n", guiLobby.tpOutput.getStyle(type));
-			GUI.insertSmileys(guiLobby.tpOutput.getStyledDocument(), docLength);
-		} catch (BadLocationException e)
-		{
-			e.printStackTrace();
-		}
-	}
-
-	public void insertGameChatMessage(String m, String type)
+	public void appendGameChat(String text, String type)
 	{
 		try
 		{
 			int docLength = tpChat.getDocument().getLength();
-			tpChat.getDocument().insertString(docLength, m + "\n", tpChat.getStyle(type));
+			tpChat.getDocument().insertString(docLength, text, tpChat.getStyle(type));
 			GUI.insertSmileys(tpChat.getStyledDocument(), docLength);
 		} catch (BadLocationException e)
 		{
@@ -471,7 +463,7 @@ public class GUIVierGewinnt extends JFrame
 		pFrame.x += column * widthHeight;
 		pFrame.y += (row + 1) * widthHeight;
 
-		playingFieldModel.setIconAt(playingFieldModel.LEER, column, row);
+		playingFieldModel.setIconAt(GameTableModel.LEER, column, row);
 		int wh = tbPlayingField.getWidth() / playingFieldModel.getColumnCount();
 		expAni.setSize(wh * 2, wh * 2);
 		expAni.setPosition(pFrame.x - wh * .5, pFrame.y - wh * .5);
@@ -499,11 +491,6 @@ public class GUIVierGewinnt extends JFrame
 		gameOverAni.reset();
 		glassAni.addAnimation(gameOverAni);
 		glassAni.resumeAfter(1200);
-	}
-
-	public void setUserTable(Vector<String> connections, String... filters)
-	{
-		guiLobby.tableModel.setData(connections, filters);
 	}
 
 	public boolean askForGame(String vonSpieler, String rows, String columns, String _expChipsZahlenFuerSieg, String _explosionZahltAlsZug, String bombs)
@@ -553,7 +540,7 @@ public class GUIVierGewinnt extends JFrame
 	{
 		resetPlayingFieldGUI();
 		resetChat();
-		guiLobby.tpOutput.setText("");
+		getGUILobby().clearOutputPane();
 	}
 
 	public JTable getPlayingField() {
@@ -571,5 +558,20 @@ public class GUIVierGewinnt extends JFrame
 
 	public GameStatusBar getStatusBar() {
 		return statusBar;
+	}
+	
+	public GUILobby getGUILobby()
+	{
+		return guiLobby;
+	}
+	
+	public ClientVierGewinnt getClient()
+	{
+		return client;
+	}
+	
+	public void setClient(ClientVierGewinnt client)
+	{
+		this.client = client;
 	}
 }

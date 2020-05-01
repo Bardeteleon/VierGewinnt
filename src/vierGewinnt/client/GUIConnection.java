@@ -20,14 +20,15 @@ import useful.GUI;
 
 public class GUIConnection extends JDialog
 {
+	private GUIVierGewinnt parent;
+	
 	private JTextField tfIP, tfPort, tfNick;
 	private JLabel laIP, laPort, laNick, laTitle;
 	private JButton bnVerbinden;
 	private JPanel buffR, buffL;
 
-	private Container c;
+	private Container contentPane;
 	private GridBagLayout gbl;
-	private GUIVierGewinnt parent;
 
 	public GUIConnection(GUIVierGewinnt parent, String title, boolean model)
 	{
@@ -41,10 +42,10 @@ public class GUIConnection extends JDialog
 	{
 		setIconImage(GUI.createImageIcon(this, "bilder/clientIcon.png").getImage());
 		
-		c = getContentPane();
+		contentPane = getContentPane();
 		gbl = new GridBagLayout();
-		c.setLayout(gbl);
-		c.setBackground(Color.WHITE);
+		contentPane.setLayout(gbl);
+		contentPane.setBackground(Color.WHITE);
 
 		tfIP = new JTextField();
 		tfIP.setPreferredSize(new Dimension(10, 25));
@@ -82,15 +83,15 @@ public class GUIConnection extends JDialog
 		buffL.setPreferredSize(new Dimension(10, 10));
 		buffL.setBackground(Color.WHITE);
 		
-		GUI.addComponent(c, buffL, GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(0, 0, 0, 0), 0, 0, 1, 3, 0.05, 1);
-		GUI.addComponent(c, buffR, GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(0, 0, 0, 0), 3, 0, 1, 3, 0.05, 1);
-		GUI.addComponent(c, laNick, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST, new Insets(0, 0, 0, 0), 1, 0, 1, 1, 0.45, 1);
-		GUI.addComponent(c, tfNick, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST, new Insets(0, 0, 0, 0), 2, 0, 1, 1, 0.45, 1);
-		GUI.addComponent(c, laIP, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST, new Insets(0, 0, 0, 0), 1, 1, 1, 1, 0.45, 1);
-		GUI.addComponent(c, tfIP, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST, new Insets(0, 0, 0, 0), 2, 1, 1, 1, 0.45, 1);
-		GUI.addComponent(c, laPort, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST, new Insets(0, 0, 0, 0), 1, 2, 1, 1, 0.45, 1);
-		GUI.addComponent(c, tfPort, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST, new Insets(0, 0, 0, 0), 2, 2, 1, 1, 0.45, 1);
-		GUI.addComponent(c, bnVerbinden, GridBagConstraints.NONE, GridBagConstraints.CENTER, new Insets(5, 10, 5, 10), 1, 3, 2, 1, 0.9, 1);
+		GUI.addComponent(contentPane, buffL, GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(0, 0, 0, 0), 0, 0, 1, 3, 0.05, 1);
+		GUI.addComponent(contentPane, buffR, GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(0, 0, 0, 0), 3, 0, 1, 3, 0.05, 1);
+		GUI.addComponent(contentPane, laNick, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST, new Insets(0, 0, 0, 0), 1, 0, 1, 1, 0.45, 1);
+		GUI.addComponent(contentPane, tfNick, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST, new Insets(0, 0, 0, 0), 2, 0, 1, 1, 0.45, 1);
+		GUI.addComponent(contentPane, laIP, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST, new Insets(0, 0, 0, 0), 1, 1, 1, 1, 0.45, 1);
+		GUI.addComponent(contentPane, tfIP, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST, new Insets(0, 0, 0, 0), 2, 1, 1, 1, 0.45, 1);
+		GUI.addComponent(contentPane, laPort, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST, new Insets(0, 0, 0, 0), 1, 2, 1, 1, 0.45, 1);
+		GUI.addComponent(contentPane, tfPort, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST, new Insets(0, 0, 0, 0), 2, 2, 1, 1, 0.45, 1);
+		GUI.addComponent(contentPane, bnVerbinden, GridBagConstraints.NONE, GridBagConstraints.CENTER, new Insets(5, 10, 5, 10), 1, 3, 2, 1, 0.9, 1);
 
 
 	}
@@ -129,9 +130,9 @@ public class GUIConnection extends JDialog
 						return;
 					}
 					
-					parent.client = new ClientVierGewinnt(ip, port, nick, parent);
+					parent.setClient(new ClientVierGewinnt(ip, port, nick, parent));
 					
-					if (parent.client.myConnection != null && parent.client.myConnection.getConnected())
+					if (parent.getClient().myConnection != null && parent.getClient().myConnection.getConnected())
 					{
 						tfIP.setEnabled(false);
 						tfPort.setEnabled(false);
@@ -145,14 +146,8 @@ public class GUIConnection extends JDialog
 				}
 				if (cmd.equals("Trennen"))
 				{
-					parent.client.close();
-
-					tfIP.setEnabled(true);
-					tfPort.setEnabled(true);
-					tfNick.setEnabled(true);
+					doGUIDisconnect();
 					parent.resetFrame();
-					parent.guiLobby.tableModel.setData(null);
-					bnVerbinden.setText("Verbinden");
 				}
 			}
 		});
@@ -160,12 +155,12 @@ public class GUIConnection extends JDialog
 	
 	public void doGUIDisconnect()
 	{
-		parent.client.close();
+		parent.getClient().close();
 
 		tfIP.setEnabled(true);
 		tfPort.setEnabled(true);
 		tfNick.setEnabled(true);
-		parent.guiLobby.tableModel.setData(null);
+		parent.getGUILobby().setUserTable(null);
 		bnVerbinden.setText("Verbinden");
 
 	}

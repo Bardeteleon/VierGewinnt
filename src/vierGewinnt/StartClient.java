@@ -8,6 +8,7 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import useful.GUI;
 import useful.GUI.SplashProgress;
 import vierGewinnt.client.GUIVierGewinnt;
 import vierGewinnt.common.Player;
@@ -34,7 +35,7 @@ public class StartClient {
 						e.printStackTrace();
 					}
 					GUIVierGewinnt wnd = new GUIVierGewinnt("VierGewinnt");
-					wnd.setSize(740, 700);
+					wnd.setSize(600, 700);
 					wnd.setMinimumSize(new Dimension(365, 570));
 					wnd.setLocationRelativeTo(null);
 					wnd.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

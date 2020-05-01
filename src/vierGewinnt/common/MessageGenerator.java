@@ -1,7 +1,22 @@
 package vierGewinnt.common;
 
-import java.util.Vector;
-import static vierGewinnt.common.Message.*;
+import static vierGewinnt.common.Message.ALL;
+import static vierGewinnt.common.Message.CHAT;
+import static vierGewinnt.common.Message.EXPLOSION;
+import static vierGewinnt.common.Message.GAME;
+import static vierGewinnt.common.Message.GAMEEND;
+import static vierGewinnt.common.Message.GAMESTART;
+import static vierGewinnt.common.Message.INSERT;
+import static vierGewinnt.common.Message.INSERTSTATUS;
+import static vierGewinnt.common.Message.INVITATIONANSWER;
+import static vierGewinnt.common.Message.INVITE;
+import static vierGewinnt.common.Message.LOBBY;
+import static vierGewinnt.common.Message.LOG;
+import static vierGewinnt.common.Message.SEP;
+import static vierGewinnt.common.Message.USERTABLE;
+import static vierGewinnt.common.Message.WHISPER;
+
+import java.util.List;
 
 public class MessageGenerator 
 {
@@ -9,14 +24,14 @@ public class MessageGenerator
 	/*
 	 * CHAT
 	 */
-	public static String sendChatMessage(String message)
+	public static String sendChatMessage(String message, String senderNick)
 	{
-		return CHAT + SEP + ALL + SEP + message;
+		return CHAT + SEP + ALL + SEP + message + SEP + senderNick;
 	}
 	
-	public static String sendWhisperMessage(String message, Vector<String> nicks)
+	public static String sendWhisperMessage(String message, String senderNick, List<String> receiverNicks)
 	{
-		return CHAT + SEP + WHISPER + SEP + message + SEP + convertToArgList(nicks);
+		return CHAT + SEP + WHISPER + SEP + message + SEP + senderNick + SEP + convertToArgList(receiverNicks);
 	}
 	
 	/*
@@ -37,7 +52,7 @@ public class MessageGenerator
 		return LOBBY + SEP + INVITATIONANSWER + SEP + nick + SEP + acceptInvitation;
 	}
 	
-	public static String serverSendUserTable(Vector<String> userList)
+	public static String serverSendUserTable(List<String> userList)
 	{
 		return LOBBY + SEP + USERTABLE + SEP + convertToArgList(userList);
 	}
@@ -80,7 +95,7 @@ public class MessageGenerator
 		return GAME + SEP + EXPLOSION + SEP + spalte + SEP + zeile;		
 	}
 	
-	private static String convertToArgList(Vector<String> list)
+	private static String convertToArgList(List<String> list)
 	{
 		String result = "";
 		
