@@ -24,7 +24,7 @@ public class GlassPaneAnimation extends JPanel implements Runnable
 	private boolean relativePositioning = false;
 	private Dimension lastPanelDimension;
 
-	private int resumeAfterMS = 0;
+	private int resumeAfterMS = 1; // 1 because 0 is like wait().. until notified
 	
 	public GlassPaneAnimation()
 	{
@@ -88,7 +88,7 @@ public class GlassPaneAnimation extends JPanel implements Runnable
 						repaint();
 						wait();
 						wait(resumeAfterMS);
-						resumeAfterMS = 0;
+						resumeAfterMS = 1; // 1 because 0 is like wait().. until notified
 					} catch (InterruptedException e)
 					{
 						e.printStackTrace();
@@ -139,8 +139,11 @@ public class GlassPaneAnimation extends JPanel implements Runnable
 	
 	public void resumeAfter(int afterMS)
 	{
-		resumeAfterMS = afterMS;
-		resume();
+		if(paused)
+		{
+			resumeAfterMS = afterMS;
+			resume();
+		}
 	}
 	
 	public synchronized void resume()
