@@ -152,24 +152,27 @@ public class ClientVierGewinnt extends Client
 				if(gui.getPlayingFieldModel().getNumberOfBombs() > 0)
 					gui.getStatusBar().setBombInfo(gui.getPlayingFieldModel().getNumberOfBombs());
 				gui.resetChat();
+				gui.getGUILobby().setInGame();
 				gui.getGUILobby().setVisible(false);
 				gui.getGUILobby().getGUIConnection().setVisible(false);
 				gui.getGUILobby().getGUIGameConfig().setVisible(false);
 				break;
 				
 			case GAMEEND :
-				teammate = null;
-				if (myData.arguments.get(0).equals(" "))
+				if (myData.arguments.get(0).equals(MessageGenerator.GAMEEND_DRAW))
 				{
 					JOptionPane.showMessageDialog(gui, "Das Spiel endet unentschieden!", "Spielende", JOptionPane.INFORMATION_MESSAGE);
-				} else
+				} else if(myData.arguments.get(0).contentEquals(MessageGenerator.GAMEEND_QUITTING))
+				{
+					JOptionPane.showMessageDialog(gui, "Dein Mitspieler hat aufgegeben.", "Spielende", JOptionPane.INFORMATION_MESSAGE);
+				}else
 				{
 					if (myData.arguments.get(0).equals(nick))
 						gui.doWinnerAnimation();
 					else
 						gui.doLooserAnimation();
 				}
-				gui.getStatusBar().clear();
+				gui.resetAfterGame();
 				break;
 				
 			case LOG :

@@ -21,6 +21,9 @@ import java.util.List;
 public class MessageGenerator 
 {
 	
+	public static final String GAMEEND_QUITTING = " Player Quit"; // spaces are important because then this specifier cannot accidently correspond to a nick name
+	public static final String GAMEEND_DRAW = " Game ends with a draw";
+	
 	/*
 	 * CHAT
 	 */
@@ -80,7 +83,7 @@ public class MessageGenerator
 		return GAME + SEP + GAMESTART + SEP + teammate + SEP + zeilen + SEP + spalten + SEP + player + SEP + anzahlExpChips;
 	}
 	
-	public static String serverSendGameEnd(String winner)
+	public static String sendGameEnd(String winner)
 	{
 		return GAME + SEP + GAMEEND + SEP + winner;
 	}

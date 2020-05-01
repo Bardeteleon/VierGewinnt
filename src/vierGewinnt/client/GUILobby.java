@@ -37,6 +37,7 @@ import javax.swing.text.BadLocationException;
 
 import useful.GUI;
 import vierGewinnt.common.Chat;
+import vierGewinnt.common.MessageGenerator;
 
 public class GUILobby extends JDialog
 {
@@ -193,20 +194,31 @@ public class GUILobby extends JDialog
 		bnPlay.addActionListener(new ActionListener()
 		{
 			@Override
-			public void actionPerformed(ActionEvent arg0)
+			public void actionPerformed(ActionEvent event)
 			{
-				if (parent.getClient() != null && tableModel.getNames(parent.getClient().nick).size() > 0)
-				{
-					if (parent.getClient().teammate != null)
+				if(event.getActionCommand().contentEquals("Spielen"))
+				{	
+					if (parent.getClient() != null && tableModel.getNames().size() > 0)
 					{
-						JOptionPane.showMessageDialog(GUILobby.this, "Sie sind bereits in einem Spiel!", "", JOptionPane.INFORMATION_MESSAGE);
+						if (parent.getClient().teammate != null)
+						{
+							JOptionPane.showMessageDialog(GUILobby.this, "Sie sind bereits in einem Spiel!", "", JOptionPane.INFORMATION_MESSAGE);
+						} else
+						{
+							guiGameConfig.setNames(tableModel.getNames());
+							guiGameConfig.setVisible(true);
+						}
 					} else
+						JOptionPane.showMessageDialog(GUILobby.this, "Kein Spieler online.", "", JOptionPane.INFORMATION_MESSAGE);
+				}else if(event.getActionCommand().contentEquals("Spiel verlassen"))
+				{
+					int answer = JOptionPane.showConfirmDialog(null, "Wollen Sie das Spiel wirklich verlassen?\nSie können sich nicht wieder verbinden.", "", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+					if (answer == 0)
 					{
-						guiGameConfig.setNames(tableModel.getNames(parent.getClient().nick));
-						guiGameConfig.setVisible(true);
+						parent.getClient().sendMessage(MessageGenerator.sendGameEnd(MessageGenerator.GAMEEND_QUITTING));
+						parent.resetAfterGame();
 					}
-				} else
-					JOptionPane.showMessageDialog(GUILobby.this, "Kein Spieler online.", "", JOptionPane.INFORMATION_MESSAGE);
+				}
 			}
 		});
 
@@ -301,6 +313,16 @@ public class GUILobby extends JDialog
 	public void setUserTable(List<String> connections, String... filters)
 	{
 		tableModel.setData(connections, filters);
+	}
+	
+	public void setInGame()
+	{
+		bnPlay.setText("Spiel verlassen");
+	}
+	
+	public void resetAfterGame()
+	{
+		bnPlay.setText("Spielen");
 	}
 	
 	public GUIConnection getGUIConnection()

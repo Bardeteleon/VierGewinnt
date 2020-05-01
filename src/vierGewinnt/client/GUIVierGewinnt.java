@@ -542,6 +542,14 @@ public class GUIVierGewinnt extends JFrame
 		resetChat();
 		getGUILobby().clearOutputPane();
 	}
+	
+	public void resetAfterGame()
+	{
+		client.teammate = null;
+		statusBar.clear();
+		getGUILobby().resetAfterGame();
+		playingFieldModel.setChooseChipEnable(false, null);
+	}
 
 	public JTable getPlayingField() {
 		return tbPlayingField;

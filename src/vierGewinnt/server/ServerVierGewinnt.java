@@ -10,8 +10,8 @@ import vierGewinnt.common.MessageParser;
 
 public class ServerVierGewinnt extends Server
 {
-	UserControl myUserControl = new UserControl(this);
-	GameHandler myGameHandler = new GameHandler(this);
+	private UserControl myUserControl = new UserControl(this);
+	private GameHandler myGameHandler = new GameHandler(this);
 //	ChatHandler myChatHandler = new ChatHandler();
 	
 //	private final String CHAT_ALL = "ALL_CHAT_HOPEFULLY_NO_PARTICIPANTS_CHOOSE_THIS_NAME";
@@ -46,7 +46,7 @@ public class ServerVierGewinnt extends Server
 			{
 				sendMessage(gc.getUser1(), MessageGenerator.serverSendLogMessage("Die Verbindung vom Partner wurde unterbrochen"));
 			}
-			spielBeendet(new User(_IP, _port));
+			myGameHandler.endGame(new User(_IP, _port));
 		}
 
 		myUserControl.deleteUser(new User(_IP, _port));
@@ -67,31 +67,6 @@ public class ServerVierGewinnt extends Server
 				sendMessage(myUserControl.myUsers.get(i), _output);
 			}
 		}
-	}
-
-	public void spielBeendet(User einTeilnehmerDesSpiels)
-	{
-		GameControl gc = myGameHandler.getGame(einTeilnehmerDesSpiels);
-		if (gc != null)
-		{
-			System.out.println("Spiel beendet (" + gc.getUser1() + " & " + gc.getUser2() + ")");
-
-			User user1 = gc.getUser1();
-			if (user1 != null)
-			{
-				user1.setStatus(User.IN_LOBBY);
-			}
-			User user2 = gc.getUser2();
-			if (user2 != null)
-			{
-				user2.setStatus(User.IN_LOBBY);
-			}
-		} else
-		{
-			System.out.println("spielBeendet: Game nicht gefunden");
-		}
-		gc = null;
-		myGameHandler.deleteGame(einTeilnehmerDesSpiels);
 	}
 
 	public void messageReceived(String _absenderIP, int _absenderPort, String _message)
@@ -121,7 +96,7 @@ public class ServerVierGewinnt extends Server
 				break;
 	
 			case ERROR:
-				System.out.println("messageReaction: (" + pAbsender + "): Unbekannter Befehl");
+				System.out.println("messageReaction: (" + pMessageData + "): Unbekannter Befehl");
 		}
 	}
 	
@@ -145,7 +120,8 @@ public class ServerVierGewinnt extends Server
 
 				} catch (Exception e)
 				{
-					System.out.println("messageReaction.Insert: EinleseSystem.out.println");
+					System.out.println("messageReaction.Insert: Einlesen Fehler");
+					e.printStackTrace();
 				}
 				break;
 				
@@ -168,7 +144,25 @@ public class ServerVierGewinnt extends Server
 					}
 				} catch (Exception e)
 				{
-					System.out.println("messageReaction.Explosion: EinleseSystem.out.println");
+					System.out.println("messageReaction.Explosion: Einlesen Fehler");
+					e.printStackTrace();
+				}
+				break;
+				
+			case GAMEEND:
+				if(pMessageData.arguments.get(0).contentEquals(MessageGenerator.GAMEEND_QUITTING))
+				{
+					GameControl gc = myGameHandler.endGame(pAbsender);
+					if(gc != null)
+					{
+						if(gc.getUser1().equals(pAbsender))
+							sendMessage(gc.getUser2(), MessageGenerator.sendGameEnd(MessageGenerator.GAMEEND_QUITTING));
+						else
+							sendMessage(gc.getUser1(), MessageGenerator.sendGameEnd(MessageGenerator.GAMEEND_QUITTING));
+					}
+				}else
+				{
+					System.out.println("messageReaction.Gameend: Unknown argument: " + pMessageData.arguments.get(0));
 				}
 				break;
 				
@@ -351,5 +345,14 @@ public class ServerVierGewinnt extends Server
 				break;
 		}
 	}
+	
+	public UserControl getUserControl()
+	{
+		return myUserControl;
+	}
 
+	public GameHandler getGameHandler()
+	{
+		return myGameHandler;
+	}
 }

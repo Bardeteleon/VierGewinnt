@@ -306,12 +306,12 @@ public class GameControl
 	private void spielerHatGewonnen(Player _sieger)
 	{
 		beendet = true;
-		myServer.sendMessage(sp1, MessageGenerator.serverSendGameEnd(getUser(_sieger).getNick()));
-		myServer.sendMessage(sp2, MessageGenerator.serverSendGameEnd(getUser(_sieger).getNick()));
+		myServer.sendMessage(sp1, MessageGenerator.sendGameEnd(getUser(_sieger).getNick()));
+		myServer.sendMessage(sp2, MessageGenerator.sendGameEnd(getUser(_sieger).getNick()));
 		myServer.sendMessage(sp1, MessageGenerator.serverSendInsertStatus(false));
 		myServer.sendMessage(sp2, MessageGenerator.serverSendInsertStatus(false));
 		info(getUser(_sieger).getNick() + " hat gewonnen");
-		myServer.spielBeendet(sp1);
+		myServer.getGameHandler().endGame(sp1);
 	}
 	
 	private void unentschiedenTester()
@@ -335,12 +335,12 @@ public class GameControl
 	private void spielEndetUnentschieden()
 	{
 		beendet = true;
-		myServer.sendMessage(sp1, MessageGenerator.serverSendGameEnd(" "));
-		myServer.sendMessage(sp2, MessageGenerator.serverSendGameEnd(" "));
+		myServer.sendMessage(sp1, MessageGenerator.sendGameEnd(MessageGenerator.GAMEEND_DRAW));
+		myServer.sendMessage(sp2, MessageGenerator.sendGameEnd(MessageGenerator.GAMEEND_DRAW));
 		myServer.sendMessage(sp1, MessageGenerator.serverSendInsertStatus(false));
 		myServer.sendMessage(sp2, MessageGenerator.serverSendInsertStatus(false));
 		info("Das Spiel endet Unentschieden");
-		myServer.spielBeendet(sp1);
+		myServer.getGameHandler().endGame(sp1);
 	}
 	
 	//EndGameChecks
