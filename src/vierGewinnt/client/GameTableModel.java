@@ -150,19 +150,19 @@ public class GameTableModel extends AbstractTableModel
 		int fromRow;
 		int toRow;
 		Player spieler;
-		boolean first;
+		boolean fromChoosingRow;
 		Chip chip;
 		Stopuhr s;
 		long deleteAfter = 10000;
 
-		public Animation(Player spieler, Chip chip, int column, int fromRow, int toRow, boolean first)
+		public Animation(Player spieler, Chip chip, int column, int fromRow, int toRow, boolean fromChoosingRow)
 		{
-			setName("Animation: Column " + column + " fromRow: " + fromRow + " toRow: " + toRow + " Spieler: " + spieler + " ChipType: " + chip + " First: " + first);
+			setName("Animation: Column " + column + " fromRow: " + fromRow + " toRow: " + toRow + " Spieler: " + spieler + " ChipType: " + chip + " First: " + fromChoosingRow);
 			this.column = column;
 			this.fromRow = fromRow;
 			this.toRow = toRow;
 			this.spieler = spieler;
-			this.first = first;
+			this.fromChoosingRow = fromChoosingRow;
 			this.chip = chip;
 			s = new Stopuhr();
 		}
@@ -183,12 +183,14 @@ public class GameTableModel extends AbstractTableModel
 		}
 		private void animate(String pos1, String pos2, String pos3, String oPos2)
 		{
-			if (first)
-			{
-				setIconAt(oPos2, column, -1);
+			if (fromChoosingRow)
+			{	
+				if(playingField[0][column] == null) // prevent overwriting choosing chip
+					setIconAt(oPos2, column, -1);
 				setIconAt(pos1, column, 0);
 				waitingFor(animationDelay);
-				setIconAt(null, column, -1);
+				if(playingField[0][column] != null && playingField[0][column].equals(icons.get(oPos2)))  // prevent overwriting choosing chip
+					setIconAt(null, column, -1);
 				setIconAt(pos2, column, 0);
 				waitingFor(animationDelay);
 			}
@@ -212,7 +214,7 @@ public class GameTableModel extends AbstractTableModel
 		@Override
 		public String toString()
 		{
-			return "Animation: Column " + column + " fromRow: " + fromRow + " toRow: " + toRow + " Spieler: " + spieler + " ChipType: " + chip + " First: " + first;
+			return "Animation: Column " + column + " fromRow: " + fromRow + " toRow: " + toRow + " Spieler: " + spieler + " ChipType: " + chip + " First: " + fromChoosingRow;
 		}
 	}
 
