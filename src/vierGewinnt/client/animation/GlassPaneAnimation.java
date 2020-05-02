@@ -1,51 +1,63 @@
 package vierGewinnt.client.animation;
 
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.util.Vector;
 
+import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 public class GlassPaneAnimation extends JPanel implements Runnable
 {
-	/**
-	 * Zeitspanne für einen Schleifen-Durchlauf in Nanosekunden.
-	 */
-	private long delta = 0;
-	private long last = 0;
-	private long fps = 0;
+	private long delayTimeMS;
+	
+	private long runningTimeNS;
+	
+	private long deltaTimeNS;
+	private long lastTimeNS;
+	private long fps;
 
 	private Thread thread;
-	private Vector<Sprite> actors;
+	
+	private Vector<Sprite> waitingActors;
+	private Vector<Sprite> activeActors;
 	private Vector<Sprite> painter;
 
-	private boolean paused = false;
-	private boolean relativeResizing = false;
-	private boolean relativePositioning = false;
-	private Dimension lastPanelDimension;
+	private boolean paused;
 
-	private int resumeAfterMS = 1; // 1 because 0 is like wait().. until notified
+	private int resumeAfterMS;
 	
 	public GlassPaneAnimation()
 	{
-		actors = new Vector<Sprite>();
+		delayTimeMS = 10;
+		
+		deltaTimeNS = 0;
+		lastTimeNS = System.nanoTime();
+		fps = 0;
+		
+		paused = false;
+		
+		resumeAfterMS = 1; // 1 because 0 is like wait().. until notified
+		
+		waitingActors = new Vector<Sprite>();
+		activeActors = new Vector<Sprite>();
 		painter = new Vector<Sprite>();
+		
 		setOpaque(false);
 
+		runningTimeNS = 0;
+
+		pause();
+		
 		thread = new Thread(this);
 		thread.setDaemon(true);
 		thread.start();
-		pause();
+		
 	}
 
-	protected void paintComponent(Graphics g)
+	protected void paintComponent(Graphics graphics)
 	{
-		super.paintComponent(g);
-
-		if (lastPanelDimension == null)
-			lastPanelDimension = new Dimension(getWidth(), getHeight());
-		if (!lastPanelDimension.equals(getSize()))
-			doRelativeSprites();
+		super.paintComponent(graphics);
 
 		if (!paused)
 		{
@@ -53,10 +65,9 @@ public class GlassPaneAnimation extends JPanel implements Runnable
 			// g.fillRect(0, 0, getWidth(), 30);
 			// g.setColor(Color.RED);
 			// g.drawString("FPS: " + Long.toString(fps), getWidth() / 2, 10);
-			for (Sprite s : painter)
+			for (Sprite sprite : painter)
 			{
-				// System.out.println("Paint Currentpic: "+s.currentpic);
-				s.drawObjects(g);
+				sprite.drawObjects(graphics);
 			}
 		}
 	}
@@ -66,13 +77,18 @@ public class GlassPaneAnimation extends JPanel implements Runnable
 	{
 		while (true)
 		{
-			if (actors.size() == 0)
-				pause();
-
 			computeDelta();
 
-			if (actors.size() <= 0)
+//			System.out.println("Time: " + (runningTimeNS/1e6));
+			
+			activateWaitingActors();
+			
+//			System.out.println(waitingActors);
+//			System.out.println(activeActors);
+			
+			if (noActorsAvailable())
 				pause();
+						
 			if (!paused)
 			{
 				cloneVectors();
@@ -89,6 +105,7 @@ public class GlassPaneAnimation extends JPanel implements Runnable
 						wait();
 						wait(resumeAfterMS);
 						resumeAfterMS = 1; // 1 because 0 is like wait().. until notified
+						lastTimeNS = System.nanoTime();
 					} catch (InterruptedException e)
 					{
 						e.printStackTrace();
@@ -97,7 +114,7 @@ public class GlassPaneAnimation extends JPanel implements Runnable
 			}
 			try
 			{
-				Thread.sleep(10);
+				Thread.sleep(delayTimeMS);
 			} catch (InterruptedException e)
 			{
 				e.printStackTrace();
@@ -105,37 +122,57 @@ public class GlassPaneAnimation extends JPanel implements Runnable
 		}
 	}
 
+	private void computeDelta()
+	{
+		deltaTimeNS = System.nanoTime() - lastTimeNS;
+		lastTimeNS = System.nanoTime();
+		fps = ((long) 1e9) / deltaTimeNS;
+		runningTimeNS += deltaTimeNS;
+	}
+	
+	private void activateWaitingActors()
+	{
+		for(int i = 0; i < waitingActors.size(); i++)
+		{
+			Sprite sprite = waitingActors.get(i);
+			sprite.doWaiting(deltaTimeNS);
+			if(!sprite.isWaiting())
+			{
+				waitingActors.remove(i);
+				i--;
+				activeActors.add(sprite);
+			}
+		}
+	}
+
 	private void updateSprites()
 	{
-		for (int i = 0; i < actors.size(); i++)
+		for (Sprite sprite : activeActors)
 		{
-			Sprite s = actors.get(i);
-			// System.out.println("Update currentpic: "+s.currentpic);
-			s.doLogic(delta);
-
-			if (s.doRemove())
-			{
-				actors.remove(s);
-			}
-
-			s.move(delta);
+			sprite.doLogic(deltaTimeNS);
+			
+			sprite.move(deltaTimeNS);
 
 			// TODO Collisions
 		}
-
+		activeActors.removeIf(sprite -> sprite.doRemove());
 	}
 
 	public void addAnimation(Sprite s)
 	{
-		actors.add(s);
-//		start();
+		waitingActors.add(s);
 	}
 
-	public void removeAniamtion(Sprite s)
+//	public void removeAniamtion(Sprite s)
+//	{
+//		activeActors.remove(s);
+//	}
+	
+	public synchronized void resume()
 	{
-		actors.remove(s);
+		paused = false;
+		notify();
 	}
-
 	
 	public void resumeAfter(int afterMS)
 	{
@@ -145,60 +182,58 @@ public class GlassPaneAnimation extends JPanel implements Runnable
 			resume();
 		}
 	}
-	
-	public synchronized void resume()
-	{
-		paused = false;
-		notify();
-	}
 
 	public void pause()
 	{
 		paused = true;
 	}
 
-	public void setRelativeSpriteResizing(boolean onOff)
-	{
-		relativeResizing = onOff;
-	}
-
-	public void setRelativeSpritePositioning(boolean onOff)
-	{
-		relativePositioning = onOff;
-	}
-
-	private void doRelativeSprites() // TODO Seitenverhältnis beibehalten
-	{
-		if (relativePositioning)
-		{
-			for (Sprite s : painter)
-			{
-				s.x = (s.x / lastPanelDimension.width) * getSize().width;
-				s.y = (s.y / lastPanelDimension.height) * getSize().height;
-			}
-		}
-		if (relativeResizing)
-		{
-			for (Sprite s : painter)
-			{
-				s.width = (s.width / lastPanelDimension.width) * getSize().width;
-				s.height = (s.height / lastPanelDimension.height) * getSize().height;
-			}
-		}
-		lastPanelDimension = getSize();
-	}
-
-	private void computeDelta()
-	{
-
-		delta = System.nanoTime() - last;
-		last = System.nanoTime();
-		fps = ((long) 1e9) / delta;
-
-	}
-
 	private void cloneVectors()
 	{
-		painter = (Vector<Sprite>) actors.clone();
+		painter = (Vector<Sprite>) activeActors.clone();
+	}
+	
+	private boolean noActorsAvailable()
+	{
+		return activeActors.size() == 0 && waitingActors.size() == 0;
+	}
+	
+	public static void main(String[] args) {
+		
+		SwingUtilities.invokeLater(() -> {
+			
+			JFrame frame = new JFrame();
+			frame.setSize(600, 700);
+			frame.setLocationRelativeTo(null);
+			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			
+			GlassPaneAnimation glassAni = new GlassPaneAnimation();
+			frame.setGlassPane(glassAni);
+			frame.getGlassPane().setVisible(true);
+			
+			Explosion expAni = new Explosion(glassAni, Sprite.loadPics(glassAni, "vierGewinnt/client/bilder/ExplosionOne.png", 17), 100);
+			expAni.setRelativePositioning(true);
+			expAni.setRelativeResizing(true);
+			expAni.setPosition(0, 0);
+			
+			Explosion expAni2 = new Explosion(glassAni, Sprite.loadPics(glassAni, "vierGewinnt/client/bilder/ExplosionOne.png", 17), 100);
+			expAni2.setRelativePositioning(true);
+			expAni2.setRelativeResizing(true);
+			expAni2.setPosition(200, 200);
+			expAni2.setInitialWaitingDelayMS(1800);
+			
+			OnePicAnimation winnerAni = new OnePicAnimation(glassAni, Sprite.loadPics(glassAni, "vierGewinnt/client/bilder/gewonnen.jpg", 1), 100, 20);
+			winnerAni.setCentral(true);
+			winnerAni.setWaitingSteps(5);
+			winnerAni.setInitialWaitingDelayMS(4000);
+			
+			frame.setVisible(true);
+			
+			glassAni.addAnimation(expAni);
+			glassAni.addAnimation(expAni2);
+			glassAni.addAnimation(winnerAni);
+			glassAni.resumeAfter(2000);
+			
+		});
 	}
 }

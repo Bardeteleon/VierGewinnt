@@ -110,11 +110,11 @@ public class GUIVierGewinnt extends JFrame
 		glassAni = new GlassPaneAnimation();
 		setGlassPane(glassAni);
 		getGlassPane().setVisible(true);
-		expAni = new Explosion(Sprite.loadPics(this, "vierGewinnt/client/bilder/ExplosionOne.png", 17), 100);
-		winnerAni = new OnePicAnimation(Sprite.loadPics(this, "vierGewinnt/client/bilder/gewonnen.jpg", 1), glassAni, 20, 100);
+		expAni = new Explosion(glassAni, Sprite.loadPics(this, "vierGewinnt/client/bilder/ExplosionOne.png", 17), 100);
+		winnerAni = new OnePicAnimation(glassAni, Sprite.loadPics(this, "vierGewinnt/client/bilder/gewonnen.jpg", 1), 100, 20);
 		winnerAni.setCentral(true);
 		winnerAni.setWaitingSteps(5);
-		gameOverAni = new OnePicAnimation(Sprite.loadPics(this, "vierGewinnt/client/bilder/game-over.jpg", 1), glassAni, 20, 100);
+		gameOverAni = new OnePicAnimation(glassAni, Sprite.loadPics(this, "vierGewinnt/client/bilder/game-over.jpg", 1), 100, 20);
 		gameOverAni.setCentral(true);
 		gameOverAni.setWaitingSteps(5);
 
@@ -482,15 +482,17 @@ public class GUIVierGewinnt extends JFrame
 	public void doWinnerAnimation()
 	{
 		winnerAni.reset();
+		winnerAni.setInitialWaitingDelayMS(1500);
 		glassAni.addAnimation(winnerAni);
-		glassAni.resumeAfter(1200);
+		glassAni.resume();
 	}
 
 	public void doLooserAnimation()
 	{
 		gameOverAni.reset();
+		gameOverAni.setInitialWaitingDelayMS(1500);
 		glassAni.addAnimation(gameOverAni);
-		glassAni.resumeAfter(1200);
+		glassAni.resume();
 	}
 
 	public boolean askForGame(String vonSpieler, String rows, String columns, String _expChipsZahlenFuerSieg, String _explosionZahltAlsZug, String bombs)
@@ -541,12 +543,13 @@ public class GUIVierGewinnt extends JFrame
 		resetPlayingFieldGUI();
 		resetChat();
 		getGUILobby().clearOutputPane();
+		statusBar.clear();
 	}
 	
 	public void resetAfterGame()
 	{
 		client.teammate = null;
-		statusBar.clear();
+		statusBar.clearAfterGame();
 		getGUILobby().resetAfterGame();
 		playingFieldModel.setChooseChipEnable(false, null);
 	}

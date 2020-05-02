@@ -1,5 +1,6 @@
 package vierGewinnt.client.animation;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -11,95 +12,142 @@ import javax.swing.JComponent;
 
 public abstract class Sprite extends Rectangle2D.Double implements Drawable, Movable
 {
-
-	private static final long serialVersionUID = 1L;
-
-	/**
-	 * Pause zwischen den einzelnen Bildern in Millisekunden.
-	 */
-	long delay;
-	long animation = 0;
 	JComponent parent;
-	BufferedImage[] pics;
-	int currentpic = -1;
+	
+	long initialWaitingDelayMS;
+	long initialWaitingTimeMS;
+	
+	long animationDelayMS; // Pause zwischen den einzelnen Bildern in Millisekunden.
+	long animationTimeMS;
+	BufferedImage[] animationPics;
+	int animationCurrentPic;
+	int animationLoopFrom;
+	int animationLoopTo;
 
-	/**
-	 * Horizontale Geschwindigkeit in Pixel pro Sekunde.
-	 */
-	protected double dx;
-	/**
-	 * Vertikale Geschwindigkeit in Pixel pro Sekunde.
-	 */
-	protected double dy;
-
-	int loop_from;
-	int loop_to;
+	protected double dx; // Horizontale Geschwindigkeit in Pixel pro Sekunde.
+	protected double dy; // Vertikale Geschwindigkeit in Pixel pro Sekunde.
 
 	boolean remove;
 
-	public Sprite(BufferedImage[] i, double x, double y, long delay, JComponent p)
+	Dimension lastParentSize;
+	boolean doRelativeResizing;
+	boolean doRelativePositioning;
+
+	public Sprite(BufferedImage[] pics, long delay, JComponent parent)
 	{
-		pics = i;
-		this.x = x;
-		this.y = y;
-		this.delay = delay;
+		this.x = 0;
+		this.y = 0;
 		this.width = pics[0].getWidth();
 		this.height = pics[0].getHeight();
-		parent = p;
-		loop_from = 0;
-		loop_to = pics.length - 1;
+		
+		this.parent = parent;
+		
+		this.initialWaitingDelayMS = 0;
+		this.initialWaitingTimeMS = 0;
+		
+		this.animationPics = pics;
+		this.animationDelayMS = delay;
+		this.animationLoopFrom = 0;
+		this.animationLoopTo = pics.length - 1;
+		this.animationTimeMS = 0;
+		this.animationCurrentPic = 0;
+
+		this.lastParentSize = null;
+		this.doRelativeResizing = false;
+		this.doRelativePositioning = false;
 	}
 
-	public void drawObjects(Graphics g)
+	public void drawObjects(Graphics graphics)
 	{
-		if (currentpic >= 0)
-			g.drawImage(pics[currentpic], (int) x, (int) y, (int) width, (int) height, null);
+		if(lastParentSize == null)
+			lastParentSize = parent.getSize();
+		
+		if(!lastParentSize.equals(parent.getSize()))
+			computeRelativeSprite();
+			
+		if (!isWaiting())
+			graphics.drawImage(animationPics[animationCurrentPic], (int) x, (int) y, (int) width, (int) height, null);
+	}
+	
+	// in the beginning a sprite can wait a certain time until it gets active
+	// in the transition between waiting and active, doWaiting and doLogic are executed both (depends on GlasPaneAni impl)
+	public void doWaiting(long deltaTimePassedNS)
+	{
+		initialWaitingTimeMS += (deltaTimePassedNS / 1e6);
+	}
+	
+	public boolean isWaiting()
+	{
+		return initialWaitingTimeMS < initialWaitingDelayMS;
 	}
 
-	public void doLogic(long delta)
+	// Run after every calculation delay of sprite handler
+	public void doLogic(long deltaTimePassedNS)
 	{
-
-		animation += (delta / 1000000);
-		if (animation > getDelay())
+		animationTimeMS += (deltaTimePassedNS / 1e6);
+		if (animationTimeMS > animationDelayMS)
 		{
-			animation = 0;
+			animationTimeMS = 0;
 			computeAnimation();
 		}
-
 	}
 
+	// Run after every animationDelay
 	public void computeAnimation()
 	{
+//		System.out.println("Compute animation " + animationCurrentPic);
+		
+		animationCurrentPic++;
 
-		currentpic++;
-
-		if (currentpic > getLoopTo())
+		if (animationCurrentPic > animationLoopTo)
 		{
-			currentpic = getLoopFrom();
+			animationCurrentPic = animationLoopFrom;
 		}
-
 	}
 
 	public void setLoop(int from, int to)
 	{
-		loop_from = from;
-		loop_to = to;
-		currentpic = from;
+		animationLoopFrom = from;
+		animationLoopTo = to;
+		animationCurrentPic = from;
 	}
 
-	public void move(long delta)
+	public void move(long deltaTimePassedNS)
 	{
-
 		if (dx != 0)
 		{
-			x += dx * (delta / 1e9);
+			x += dx * (deltaTimePassedNS / 1e9);
 		}
 
 		if (dy != 0)
 		{
-			y += dy * (delta / 1e9);
+			y += dy * (deltaTimePassedNS / 1e9);
 		}
+	}
+	
+	private void computeRelativeSprite() // TODO Seitenverhältnis beibehalten
+	{
+		if (doRelativePositioning)
+		{
+			x = x * parent.getSize().width / lastParentSize.width;
+			y = y * parent.getSize().height / lastParentSize.height;
+		}
+		if (doRelativeResizing)
+		{
+			width = width * parent.getSize().width / lastParentSize.width;
+			height = height * parent.getSize().height / lastParentSize.height;
+		}
+		lastParentSize = parent.getSize();
+	}
 
+	public void setRelativeResizing(boolean onOff)
+	{
+		doRelativeResizing = onOff;
+	}
+
+	public void setRelativePositioning(boolean onOff)
+	{
+		doRelativePositioning = onOff;
 	}
 
 	public abstract boolean collidedWith(Sprite s);
@@ -136,10 +184,17 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 		this.y = e;
 	}
 	
+	public void setInitialWaitingDelayMS(long delay)
+	{
+		this.initialWaitingDelayMS = delay;
+	}
+	
 	public void reset()
 	{
-		currentpic = -1;
+		animationCurrentPic = 0;
 		remove = false;
+		initialWaitingTimeMS = 0;
+		animationTimeMS = 0;
 	}
 
 	public static BufferedImage[] loadPics(Object parent, String path, int pics)
@@ -166,15 +221,15 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 	}
 
 	public long getDelay() {
-		return delay;
+		return animationDelayMS;
 	}
 
 	public int getLoopTo() {
-		return loop_to;
+		return animationLoopTo;
 	}
 
 	public int getLoopFrom() {
-		return loop_from;
+		return animationLoopFrom;
 	}
 
 	public boolean doRemove() {

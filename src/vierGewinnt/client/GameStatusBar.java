@@ -199,7 +199,11 @@ public class GameStatusBar extends JPanel{
 		lbPlayer2Color.setIcon(null);
 	}
 	
-	
-	
-	
+	public void clearAfterGame()
+	{
+		lbWhosTurnIsIt.setText(" ");
+		lbTurnTimeRemaining.setText(" ");
+		lbGameTime.setText(" ");
+		lbBombInfo.setText(" ");
+	}
 }

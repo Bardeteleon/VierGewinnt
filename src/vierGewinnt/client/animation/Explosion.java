@@ -2,31 +2,32 @@ package vierGewinnt.client.animation;
 
 import java.awt.image.BufferedImage;
 
+import javax.swing.JComponent;
+
 public class Explosion extends Sprite
 {
-	int last = 0;
+	int lastPic = 0;
 	
-	public Explosion(BufferedImage[] images, long delay)
+	public Explosion(JComponent parent, BufferedImage[] images, long delay)
 	{
-		super(images, 0, 0, delay, null);
+		super(images, delay, parent);
 	}
 	
 	@Override
 	public void doLogic(long delta)
 	{
 		super.doLogic(delta);
-		if(currentpic == 0 && last != 0)
+		if(animationCurrentPic == 0 && lastPic > 0)
 		{
-			currentpic = -1;
 			remove = true;
 		}
-		last = currentpic;
+		lastPic = animationCurrentPic;
 	}
 	
 	public void reset()
 	{
 		super.reset();
-		last = 0;
+		lastPic = 0;
 	}
 
 	@Override

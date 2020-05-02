@@ -8,14 +8,14 @@ import javax.swing.JComponent;
 public class OnePicAnimation extends Sprite
 {
 	boolean central;
-	int steps;
-	int currentStep = 0;
-	int waitingSteps;
+	int stepsTotal;
+	int stepCurrent = 1;
+	int stepsHoldingInTheEnd;
 
-	public OnePicAnimation(BufferedImage[] i, JComponent parent, int steps, long delay)
+	public OnePicAnimation(JComponent parent, BufferedImage[] pics, long delay, int steps)
 	{
-		super(i, 0, 0, delay, parent);
-		this.steps = steps;
+		super(pics, delay, parent);
+		this.stepsTotal = steps;
 	}
 
 	@Override
@@ -33,23 +33,28 @@ public class OnePicAnimation extends Sprite
 	public void doLogic(long delta)
 	{
 		super.doLogic(delta);
-		if (currentStep <= steps - waitingSteps)
+		// logic can be in computeAnimation() right?
+		if (stepCurrent <= stepsTotal - stepsHoldingInTheEnd)
 		{
-			double heightByFullWidth = parent.getWidth() * (height / width);
-			double widthByFullHeight = parent.getHeight() * (width / height);
-			if (heightByFullWidth <= parent.getHeight())
+			if (height / width <= parent.getHeight() / parent.getWidth())
 			{
-				int newWidth = currentStep * (parent.getWidth() / (steps - waitingSteps));
-				height = newWidth * (height / width);
+				int newWidth = stepCurrent * (parent.getWidth() / (stepsTotal - stepsHoldingInTheEnd));
+				height = newWidth * (height / width); // keep size ratio
 				width = newWidth;
-			} else if (widthByFullHeight <= parent.getWidth())
+			} else if (width / height <= parent.getWidth() / parent.getHeight())
 			{
-				int newHeight = currentStep * (parent.getHeight() / (steps - waitingSteps));
-				width = newHeight * (width / height);
+				int newHeight = stepCurrent * (parent.getHeight() / (stepsTotal - stepsHoldingInTheEnd));
+				width = newHeight * (width / height); // keep size ratio
 				height = newHeight;
 
 			} else
+			{
 				System.out.println("OnePicAni doLogic Error");
+				System.out.println("Parent width: " + parent.getWidth());
+				System.out.println("Parent height: " + parent.getHeight());
+				System.out.println("Sprite width: " + width);
+				System.out.println("Sprite height: " + height);
+			}
 		}
 	}
 
@@ -57,9 +62,9 @@ public class OnePicAnimation extends Sprite
 	public void computeAnimation()
 	{
 		super.computeAnimation();
-		if (currentStep <= steps)
+		if (stepCurrent <= stepsTotal)
 		{
-			currentStep++;
+			stepCurrent++;
 		} else
 			remove = true;
 	}
@@ -67,13 +72,13 @@ public class OnePicAnimation extends Sprite
 	public void reset()
 	{
 		super.reset();
-		currentStep = 0;
+		stepCurrent = 1;
 	}
 
 	public void setWaitingSteps(int steps)
 	{
-		if (waitingSteps <= this.steps)
-			waitingSteps = steps;
+		if (stepsHoldingInTheEnd <= this.stepsTotal)
+			stepsHoldingInTheEnd = steps;
 		else
 			throw new IllegalArgumentException("waitingSteps > steps");
 
