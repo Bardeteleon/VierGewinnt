@@ -26,7 +26,7 @@ public class ClientVierGewinnt extends Client
 	protected ChatHandler myChatHandler;
 	protected TurnTimer turnTimer;
 	
-	protected final String BROADCAST = "ALL_CHAT_HOPEFULLY_NO_PARTICIPANTS_CHOOSE_THIS_NAME";
+	protected final String BROADCAST = "Chat name used for all users online";
 
 	public ClientVierGewinnt(String pIP, int pPort, String pNick, GUIVierGewinnt pGui)
 	{
@@ -43,6 +43,7 @@ public class ClientVierGewinnt extends Client
 		gui = pGui;
 		myChatHandler = new ChatHandler();
 		myChatHandler.addNewChat(BROADCAST);
+		myChatHandler.getChat(BROADCAST).addParticipant(MessageGenerator.CHAT_SERVER);
 	}
 
 	public void playRequest(int column, Chip chip)
@@ -212,6 +213,7 @@ public class ClientVierGewinnt extends Client
 			case USERTABLE:
 				myChatHandler.getChat(BROADCAST).removeAllParticipants();
 				myChatHandler.getChat(BROADCAST).addParticipants(myData.arguments);
+				myChatHandler.getChat(BROADCAST).addParticipant(MessageGenerator.CHAT_SERVER);
 				gui.getGUILobby().setUserTable(myData.arguments, nick);
 				break;
 		}

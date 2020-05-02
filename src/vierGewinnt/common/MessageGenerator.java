@@ -24,6 +24,8 @@ public class MessageGenerator
 	public static final String GAMEEND_QUITTING = " Player Quit"; // spaces are important because then this specifier cannot accidently correspond to a nick name
 	public static final String GAMEEND_DRAW = " Game ends with a draw";
 	
+	public static final String CHAT_SERVER = " Server ";
+	
 	/*
 	 * CHAT
 	 */

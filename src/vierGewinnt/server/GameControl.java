@@ -22,6 +22,8 @@ public class GameControl
 	
 	private User sp1, sp2;
 	
+	private int turnCount;
+	
 	public GameControl(ServerVierGewinnt _myServer, int _spalten, int _zeilen, int _turnTime, User _sp1, User _sp2, boolean _expChipsZahlenFuerSieg, boolean _explosionZahltAlsZug, int _anzahlExpChips)
 	{
 		myServer = _myServer;
@@ -55,6 +57,8 @@ public class GameControl
 		beendet = true;
 		
 		turnTime = _turnTime;
+		
+		turnCount = 0;
 		
 		anzahlFelderFuerSieg = 4; //VIER Gewinnt eben
 		
@@ -313,6 +317,8 @@ public class GameControl
 		myServer.sendMessage(sp2, MessageGenerator.serverSendInsertStatus(false));
 		myServer.sendMessage(sp1, MessageGenerator.sendGameEnd(getUser(_sieger).getNick()));
 		myServer.sendMessage(sp2, MessageGenerator.sendGameEnd(getUser(_sieger).getNick()));
+		int turnsToWinn = Math.round(turnCount/2.0f);
+		myServer.sendToAll(MessageGenerator.sendChatMessage(getUser(_sieger).getNick() + " hat gegen " + getOpponent(_sieger).getNick() + " gewonnen! (Züge: " + turnsToWinn + ", Feld: " + zeilen + " x " + spalten + ")", MessageGenerator.CHAT_SERVER));
 		info(getUser(_sieger).getNick() + " hat gewonnen");
 		myServer.getGameHandler().endGame(sp1);
 	}
@@ -342,6 +348,7 @@ public class GameControl
 		myServer.sendMessage(sp2, MessageGenerator.serverSendInsertStatus(false));
 		myServer.sendMessage(sp1, MessageGenerator.sendGameEnd(MessageGenerator.GAMEEND_DRAW));
 		myServer.sendMessage(sp2, MessageGenerator.sendGameEnd(MessageGenerator.GAMEEND_DRAW));
+		myServer.sendToAll(MessageGenerator.sendChatMessage("Das Spiel " + sp1.getNick() + " gegen " + sp2.getNick() + " endet unentschieden.", MessageGenerator.CHAT_SERVER));
 		info("Das Spiel endet Unentschieden");
 		myServer.getGameHandler().endGame(sp1);
 	}
@@ -604,6 +611,7 @@ public class GameControl
 	
 	private void spielerwechsel()
 	{
+		turnCount++;
 		amZug = getNichtAmZug();
 		info(getUserAmZug().getNick() + " ist am Zug");
 		myServer.sendMessage(getUserAmZug(), MessageGenerator.serverSendInsertStatus(true));
@@ -652,6 +660,16 @@ public class GameControl
 			return sp1;
 		else if(sp2.getPlayer() == spieler)
 			return sp2;
+		else
+			return null;
+	}
+	
+	private User getOpponent(Player spieler)
+	{
+		if(sp1.getPlayer() == spieler)
+			return sp2;
+		else if(sp2.getPlayer() == spieler)
+			return sp1;
 		else
 			return null;
 	}
