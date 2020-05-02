@@ -12,6 +12,7 @@ public class GameControl
 	Feld[][] spielfeld;
 	int spalten; //in Feldern
 	int zeilen;
+	int turnTime;
 	int anzahlFelderFuerSieg;
 	Player amZug;
 	boolean beendet;
@@ -21,7 +22,7 @@ public class GameControl
 	
 	private User sp1, sp2;
 	
-	public GameControl(ServerVierGewinnt _myServer, int _spalten, int _zeilen, User _sp1, User _sp2, boolean _expChipsZahlenFuerSieg, boolean _explosionZahltAlsZug, int _anzahlExpChips)
+	public GameControl(ServerVierGewinnt _myServer, int _spalten, int _zeilen, int _turnTime, User _sp1, User _sp2, boolean _expChipsZahlenFuerSieg, boolean _explosionZahltAlsZug, int _anzahlExpChips)
 	{
 		myServer = _myServer;
 		//EVTL Abfrage: spalten und zeilen müssen größer sein, als anzahlFelderFuerSieg!!!
@@ -53,6 +54,8 @@ public class GameControl
 		
 		beendet = true;
 		
+		turnTime = _turnTime;
+		
 		anzahlFelderFuerSieg = 4; //VIER Gewinnt eben
 		
 		sp1 = _sp1;
@@ -76,8 +79,8 @@ public class GameControl
 		sp1.setPlayer(Player.RED);
 		sp2.setPlayer(Player.YELLOW);
 
-		myServer.sendMessage(getUserAmZug(), MessageGenerator.serverSendGameStart(getUserNichtAmZug().getNick(), spalten, zeilen, getAmZug(), getUserAmZug().getExplosiveCount()));
-		myServer.sendMessage(getUserNichtAmZug(), MessageGenerator.serverSendGameStart(getUserAmZug().getNick(), spalten, zeilen, getNichtAmZug(), getUserNichtAmZug().getExplosiveCount()));
+		myServer.sendMessage(getUserAmZug(), MessageGenerator.serverSendGameStart(getUserNichtAmZug().getNick(), spalten, zeilen, turnTime, getAmZug(), getUserAmZug().getExplosiveCount()));
+		myServer.sendMessage(getUserNichtAmZug(), MessageGenerator.serverSendGameStart(getUserAmZug().getNick(), spalten, zeilen, turnTime, getNichtAmZug(), getUserNichtAmZug().getExplosiveCount()));
 
 		myServer.sendMessage(getUserAmZug(), MessageGenerator.serverSendInsertStatus(true));
 		myServer.sendMessage(getUserNichtAmZug(), MessageGenerator.serverSendInsertStatus(false));
@@ -306,10 +309,10 @@ public class GameControl
 	private void spielerHatGewonnen(Player _sieger)
 	{
 		beendet = true;
-		myServer.sendMessage(sp1, MessageGenerator.sendGameEnd(getUser(_sieger).getNick()));
-		myServer.sendMessage(sp2, MessageGenerator.sendGameEnd(getUser(_sieger).getNick()));
 		myServer.sendMessage(sp1, MessageGenerator.serverSendInsertStatus(false));
 		myServer.sendMessage(sp2, MessageGenerator.serverSendInsertStatus(false));
+		myServer.sendMessage(sp1, MessageGenerator.sendGameEnd(getUser(_sieger).getNick()));
+		myServer.sendMessage(sp2, MessageGenerator.sendGameEnd(getUser(_sieger).getNick()));
 		info(getUser(_sieger).getNick() + " hat gewonnen");
 		myServer.getGameHandler().endGame(sp1);
 	}
@@ -335,10 +338,10 @@ public class GameControl
 	private void spielEndetUnentschieden()
 	{
 		beendet = true;
-		myServer.sendMessage(sp1, MessageGenerator.sendGameEnd(MessageGenerator.GAMEEND_DRAW));
-		myServer.sendMessage(sp2, MessageGenerator.sendGameEnd(MessageGenerator.GAMEEND_DRAW));
 		myServer.sendMessage(sp1, MessageGenerator.serverSendInsertStatus(false));
 		myServer.sendMessage(sp2, MessageGenerator.serverSendInsertStatus(false));
+		myServer.sendMessage(sp1, MessageGenerator.sendGameEnd(MessageGenerator.GAMEEND_DRAW));
+		myServer.sendMessage(sp2, MessageGenerator.sendGameEnd(MessageGenerator.GAMEEND_DRAW));
 		info("Das Spiel endet Unentschieden");
 		myServer.getGameHandler().endGame(sp1);
 	}

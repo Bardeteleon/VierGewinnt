@@ -14,9 +14,9 @@ public class GameHandler
 		myServer = _myServer;
 	}
 	
-	public void newGame(User _sp1, User _sp2, int _spalten, int _zeilen, boolean _expChipsZahlenFuerSieg, boolean _explosionZahltAlsZug, int _anzahlExpChips)
+	public void newGame(User _sp1, User _sp2, int _spalten, int _zeilen, int _turnTime, boolean _expChipsZahlenFuerSieg, boolean _explosionZahltAlsZug, int _anzahlExpChips)
 	{
-		myGames.add(new GameControl(myServer, _spalten, _zeilen, _sp1, _sp2, _expChipsZahlenFuerSieg, _explosionZahltAlsZug, _anzahlExpChips));
+		myGames.add(new GameControl(myServer, _spalten, _zeilen, _turnTime, _sp1, _sp2, _expChipsZahlenFuerSieg, _explosionZahltAlsZug, _anzahlExpChips));
 	}
 	
 	public void einwurf(int _spalte, User _spieler, Chip _chipType)

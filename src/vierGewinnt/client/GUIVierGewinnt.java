@@ -320,10 +320,7 @@ public class GUIVierGewinnt extends JFrame
 			@Override
 			public void actionPerformed(ActionEvent arg0)
 			{
-				if (playingFieldModel.isChooseChipEnable() && client != null && client.myConnection != null && client.myConnection.getConnected())
-				{
-					client.playRequest(playingFieldModel.getChoosingChipPos(), playingFieldModel.getChoosingChipType());
-				}
+				tryInsert();
 			}
 		});
 
@@ -450,6 +447,14 @@ public class GUIVierGewinnt extends JFrame
 		else
 			playingFieldModel.setChipAt(spieler, chipType, x, y);
 	}
+	
+	public void tryInsert()
+	{
+		if (playingFieldModel.isChooseChipEnable() && client != null && client.myConnection != null && client.myConnection.getConnected())
+		{
+			client.playRequest(playingFieldModel.getChoosingChipPos(), playingFieldModel.getChoosingChipType());
+		}
+	}
 
 	public void doSmallExplosion(int x, int y)
 	{
@@ -495,7 +500,7 @@ public class GUIVierGewinnt extends JFrame
 		glassAni.resume();
 	}
 
-	public boolean askForGame(String vonSpieler, String rows, String columns, String _expChipsZahlenFuerSieg, String _explosionZahltAlsZug, String bombs)
+	public boolean askForGame(String vonSpieler, String rows, String columns, String turnTime, String _expChipsZahlenFuerSieg, String _explosionZahltAlsZug, String bombs)
 	{
 		String expMod1 = "", expMod2 = "";
 		if (Integer.parseInt(bombs) > 0)
@@ -509,7 +514,7 @@ public class GUIVierGewinnt extends JFrame
 			else
 				expMod2 = "\n-> Bombenexplosion zählt NICHT als Zug";
 		}
-		int answer = JOptionPane.showConfirmDialog(this, "Wollen Sie mit " + vonSpieler + " VierGewinnt spielen?\nSpielfeldgröße: " + rows + " Zeilen / " + columns + " Spalten\nAnzahl Bomben: " + bombs + expMod1 + expMod2, "Einladung", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+		int answer = JOptionPane.showConfirmDialog(this, "Wollen Sie mit " + vonSpieler + " VierGewinnt spielen?\nSpielfeldgröße: " + rows + " Zeilen / " + columns + " Spalten\nZugzeit: " + turnTime + "s\nAnzahl Bomben: " + bombs + expMod1 + expMod2, "Einladung", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 		if (answer == 1 || answer == -1)
 			return false;
 		else

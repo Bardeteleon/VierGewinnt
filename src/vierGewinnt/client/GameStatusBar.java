@@ -87,13 +87,13 @@ public class GameStatusBar extends JPanel{
 		
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.CENTER;
-		gbc.fill = GridBagConstraints.BOTH;
+		gbc.fill = GridBagConstraints.NONE;
 		gbc.insets = new Insets(0, 0, 0, 0);
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		gbc.gridwidth = 1;
 		gbc.gridheight = 1;
-		gbc.weightx = 0.25;
+		gbc.weightx = 0.33;
 		gbc.weighty = 0;
 		gbc.ipadx = 0;
 		gbc.ipady = 0;
@@ -101,41 +101,41 @@ public class GameStatusBar extends JPanel{
 		
 		gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.CENTER;
-		gbc.fill = GridBagConstraints.BOTH;
-		gbc.insets = new Insets(0, 0, 0, 0);
-		gbc.gridx = 3;
-		gbc.gridy = 0;
-		gbc.gridwidth = 1;
-		gbc.gridheight = 1;
-		gbc.weightx = 0.25;
-		gbc.weighty = 0;
-		gbc.ipadx = 0;
-		gbc.ipady = 0;
-		pnLowerBar.add(lbBombInfo, gbc);
-		
-		gbc = new GridBagConstraints();
-		gbc.anchor = GridBagConstraints.CENTER;
-		gbc.fill = GridBagConstraints.BOTH;
+		gbc.fill = GridBagConstraints.NONE;
 		gbc.insets = new Insets(0, 0, 0, 0);
 		gbc.gridx = 2;
 		gbc.gridy = 0;
 		gbc.gridwidth = 1;
 		gbc.gridheight = 1;
-		gbc.weightx = 0.25;
+		gbc.weightx = 0.33;
 		gbc.weighty = 0;
 		gbc.ipadx = 0;
 		gbc.ipady = 0;
-		pnLowerBar.add(lbGameTime, gbc);
+		pnLowerBar.add(lbBombInfo, gbc);
+		
+//		gbc = new GridBagConstraints();
+//		gbc.anchor = GridBagConstraints.CENTER;
+//		gbc.fill = GridBagConstraints.BOTH;
+//		gbc.insets = new Insets(0, 0, 0, 0);
+//		gbc.gridx = 2;
+//		gbc.gridy = 0;
+//		gbc.gridwidth = 1;
+//		gbc.gridheight = 1;
+//		gbc.weightx = 0.25;
+//		gbc.weighty = 0;
+//		gbc.ipadx = 0;
+//		gbc.ipady = 0;
+//		pnLowerBar.add(lbGameTime, gbc);
 		
 		gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.CENTER;
-		gbc.fill = GridBagConstraints.BOTH;
+		gbc.fill = GridBagConstraints.NONE;
 		gbc.insets = new Insets(0, 0, 0, 0);
-		gbc.gridx = 1;
+		gbc.gridx = 3;
 		gbc.gridy = 0;
 		gbc.gridwidth = 1;
 		gbc.gridheight = 1;
-		gbc.weightx = 0.25;
+		gbc.weightx = 0.33;
 		gbc.weighty = 0;
 		gbc.ipadx = 0;
 		gbc.ipady = 0;

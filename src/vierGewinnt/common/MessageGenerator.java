@@ -45,9 +45,9 @@ public class MessageGenerator
 		return LOBBY + SEP + USERTABLE + SEP + nick;
 	}
 	
-	public static String sendInvitation(String nick, int rows, int columns, boolean expChipsZahlenFuerSieg, boolean explosionZahltAlsZug, int anzahlExpChips)
+	public static String sendInvitation(String nick, int rows, int columns, int turnTime, boolean expChipsZahlenFuerSieg, boolean explosionZahltAlsZug, int anzahlExpChips)
 	{
-		return LOBBY + SEP + INVITE + SEP + nick + SEP + rows + SEP + columns + SEP + expChipsZahlenFuerSieg + SEP + explosionZahltAlsZug + SEP + anzahlExpChips;
+		return LOBBY + SEP + INVITE + SEP + nick + SEP + rows + SEP + columns + SEP + turnTime + SEP + expChipsZahlenFuerSieg + SEP + explosionZahltAlsZug + SEP + anzahlExpChips;
 	}
 	
 	public static String clientSendInvitationAnswer(String nick, boolean acceptInvitation)
@@ -78,9 +78,9 @@ public class MessageGenerator
 		return GAME + SEP + INSERTSTATUS + SEP + insert;
 	}
 	
-	public static String serverSendGameStart(String teammate, int spalten, int zeilen, Player player, int anzahlExpChips)
+	public static String serverSendGameStart(String teammate, int spalten, int zeilen, int turnTime, Player player, int anzahlExpChips)
 	{
-		return GAME + SEP + GAMESTART + SEP + teammate + SEP + zeilen + SEP + spalten + SEP + player + SEP + anzahlExpChips;
+		return GAME + SEP + GAMESTART + SEP + teammate + SEP + zeilen + SEP + spalten + SEP + turnTime + SEP + player + SEP + anzahlExpChips;
 	}
 	
 	public static String sendGameEnd(String winner)

@@ -188,17 +188,19 @@ public class ServerVierGewinnt extends Server
 							{
 								int spalten;
 								int zeilen;
+								int turnTime;
 								boolean expChipsZahlenFuerSieg;
 								boolean explosionZahltAlsZug;
 								int anzahlExpChips;
 
 								try
 								{
-									spalten = Integer.parseInt(pMessageData.arguments.get(2));
 									zeilen = Integer.parseInt(pMessageData.arguments.get(1));
-									expChipsZahlenFuerSieg = Boolean.parseBoolean(pMessageData.arguments.get(3));
-									explosionZahltAlsZug = Boolean.parseBoolean(pMessageData.arguments.get(4));
-									anzahlExpChips = Integer.parseInt(pMessageData.arguments.get(5));
+									spalten = Integer.parseInt(pMessageData.arguments.get(2));
+									turnTime = Integer.parseInt(pMessageData.arguments.get(3));
+									expChipsZahlenFuerSieg = Boolean.parseBoolean(pMessageData.arguments.get(4));
+									explosionZahltAlsZug = Boolean.parseBoolean(pMessageData.arguments.get(5));
+									anzahlExpChips = Integer.parseInt(pMessageData.arguments.get(6));
 								} catch (Exception e)
 								{
 									System.out.println("Eingabeproblem");
@@ -212,10 +214,10 @@ public class ServerVierGewinnt extends Server
 										anzahlExpChips = 0;
 									}
 									System.out.println("Einladung gesendet: (Einladender: " + pAbsender + " | Eingeladener: " + eingeladen + " | Spielfeld: " + spalten + "x" + zeilen
-											+ " | expChipsZahlenFuerSieg: " + expChipsZahlenFuerSieg + " | explosionZahltAlsZug: " + explosionZahltAlsZug + " | anzahlExpChips: " + anzahlExpChips
+											+ " | Zugzeit: " + turnTime + " | expChipsZahlenFuerSieg: " + expChipsZahlenFuerSieg + " | explosionZahltAlsZug: " + explosionZahltAlsZug + " | anzahlExpChips: " + anzahlExpChips
 											+ ")");
-									eingeladen.newInvitation(pAbsender, spalten, zeilen, expChipsZahlenFuerSieg, explosionZahltAlsZug, anzahlExpChips);
-									String nachricht = MessageGenerator.sendInvitation(pAbsender.getNick(), zeilen, spalten, expChipsZahlenFuerSieg, explosionZahltAlsZug, anzahlExpChips);
+									eingeladen.newInvitation(pAbsender, spalten, zeilen, turnTime, expChipsZahlenFuerSieg, explosionZahltAlsZug, anzahlExpChips);
+									String nachricht = MessageGenerator.sendInvitation(pAbsender.getNick(), zeilen, spalten, turnTime, expChipsZahlenFuerSieg, explosionZahltAlsZug, anzahlExpChips);
 									sendMessage(eingeladen, nachricht);
 								} else
 								{
@@ -260,7 +262,7 @@ public class ServerVierGewinnt extends Server
 								myUserControl.deleteAllInvitationsBy(eingeladener);
 								einladender.setStatus(User.IN_GAME);
 								eingeladener.setStatus(User.IN_GAME);
-								myGameHandler.newGame(einladender, eingeladener, inv.getSpalten(), inv.getZeilen(), inv.getExpChipsZahlenFuerSieg(), inv.getExplosionZahltAlsZug(),
+								myGameHandler.newGame(einladender, eingeladener, inv.getSpalten(), inv.getZeilen(), inv.getTurnTime(), inv.getExpChipsZahlenFuerSieg(), inv.getExplosionZahltAlsZug(),
 										inv.getAnzahlExpChips());
 							} else if (pMessageData.arguments.get(1).equals("false"))
 							{

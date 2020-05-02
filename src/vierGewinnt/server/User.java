@@ -93,11 +93,11 @@ public class User
 		this.explosiveCount--;
 	}
 	
-	public void newInvitation(User u, int _spalten, int _zeilen, boolean _expChipsZahlenFuerSieg, boolean _explosionZahltAlsZug, int _anzahlExpChips)
+	public void newInvitation(User u, int _spalten, int _zeilen, int _turnTime, boolean _expChipsZahlenFuerSieg, boolean _explosionZahltAlsZug, int _anzahlExpChips)
 	{
 		if (!invitedBy(u))
 		{
-			invitations.add(new Invitation(u, _spalten, _zeilen, _expChipsZahlenFuerSieg, _explosionZahltAlsZug, _anzahlExpChips));
+			invitations.add(new Invitation(u, _spalten, _zeilen, _turnTime, _expChipsZahlenFuerSieg, _explosionZahltAlsZug, _anzahlExpChips));
 		}
 	}
 	

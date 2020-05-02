@@ -24,6 +24,7 @@ public class ClientVierGewinnt extends Client
 	protected String teammate = null;
 	protected String nick = null;
 	protected ChatHandler myChatHandler;
+	protected TurnTimer turnTimer;
 	
 	protected final String BROADCAST = "ALL_CHAT_HOPEFULLY_NO_PARTICIPANTS_CHOOSE_THIS_NAME";
 
@@ -47,11 +48,12 @@ public class ClientVierGewinnt extends Client
 	public void playRequest(int column, Chip chip)
 	{
 		sendMessage(MessageGenerator.clientSendInsert(column, chip));
+		turnTimer.stop();
 	}
 
-	public void gameRequest(String teammate, int rows, int columns, boolean expChipsZaehlenFuerSieg, boolean expChipZaehltAlsZug, int bombs)
+	public void gameRequest(String teammate, int rows, int columns, int turnTime, boolean expChipsZaehlenFuerSieg, boolean expChipZaehltAlsZug, int bombs)
 	{
-		sendMessage(MessageGenerator.sendInvitation(teammate, rows, columns, expChipsZaehlenFuerSieg, expChipZaehltAlsZug, bombs));
+		sendMessage(MessageGenerator.sendInvitation(teammate, rows, columns, turnTime, expChipsZaehlenFuerSieg, expChipZaehltAlsZug, bombs));
 	}
 
 	public void explosionRequest(int splate, int zeile)
@@ -123,6 +125,8 @@ public class ClientVierGewinnt extends Client
 											   Integer.parseInt(myData.arguments.get(2)));
 				if(chip == Chip.EXPLOSIVE)
 					gui.getStatusBar().setBombInfo(gui.getPlayingFieldModel().getNumberOfBombs());
+				
+				turnTimer.stop();
 				break;
 				
 			case INSERTSTATUS :
@@ -132,21 +136,24 @@ public class ClientVierGewinnt extends Client
 					gui.setChooseChip(true, myPlayer);
 					gui.getPlayingField().requestFocus();
 					gui.getStatusBar().setYourTurn();
+					turnTimer.start();
 				} else
 				{
 					gui.setChooseChip(false, myPlayer);
 					if(teammate != null)
 						gui.getStatusBar().setOpponentsTurn(teammate);
+					turnTimer.start();
 				}
 				break;
 				
 			case GAMESTART :
 				teammate = myData.arguments.get(0);
-				myPlayer = Player.valueOf(myData.arguments.get(3));
+				myPlayer = Player.valueOf(myData.arguments.get(4));
+				turnTimer = new TurnTimer(Integer.parseInt(myData.arguments.get(3)), gui);
 				gui.getPlayingFieldModel().stopAnimationHandler();
 				gui.setPlayingFieldModel(new GameTableModel(Integer.parseInt(myData.arguments.get(2)), 
 															Integer.parseInt(myData.arguments.get(1)), 
-															Integer.parseInt(myData.arguments.get(4)), 
+															Integer.parseInt(myData.arguments.get(5)), 
 															myPlayer));
 				gui.getStatusBar().setPlayers(nick, myPlayer, teammate);
 				if(gui.getPlayingFieldModel().getNumberOfBombs() > 0)
@@ -172,6 +179,7 @@ public class ClientVierGewinnt extends Client
 					else
 						gui.doLooserAnimation();
 				}
+				turnTimer.stop();
 				gui.resetAfterGame();
 				break;
 				
@@ -190,12 +198,15 @@ public class ClientVierGewinnt extends Client
 		{
 			case INVITE:
 				sendMessage(MessageGenerator.clientSendInvitationAnswer(myData.arguments.get(0), 
-																		gui.askForGame(myData.arguments.get(0), 
-																		myData.arguments.get(1), 
-																		myData.arguments.get(2), 
-																		myData.arguments.get(3),
-																		myData.arguments.get(4),
-																		myData.arguments.get(5))));
+																		gui.askForGame(
+																				myData.arguments.get(0), 
+																				myData.arguments.get(1), 
+																				myData.arguments.get(2), 
+																				myData.arguments.get(3),
+																				myData.arguments.get(4),
+																				myData.arguments.get(5),
+																				myData.arguments.get(6))
+																		));
 				break;
 		
 			case USERTABLE:

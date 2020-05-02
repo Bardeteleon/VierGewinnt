@@ -22,23 +22,20 @@ import javax.swing.JTextField;
 import javax.swing.UIManager;
 
 import useful.GUI;
-import useful.Stopuhr;
 
 public class GUIGameConfig extends JDialog
 {
 	private GUIVierGewinnt parent;
 	
-	private JComboBox cbNames, cbRows, cbColumns;
-	private JLabel laNames, laDimension, laRows, laColumns, laBombConfig, laBombCount;
+	private JComboBox cbNames, cbRows, cbColumns, cbTurnTime, cbBombs;
+	private JLabel laNames, laGeneralSettings, laRows, laColumns, laTurnTime, laBombConfig, laBombCount, laBombPlayCount, laBombChipCount;
 	private JPanel panBuffName, panBuffSettings, panBuffBombConfig;
 	private JCheckBox chbBombPlayCount, chbBombChipCount;
 	private JButton bnGameRequest;
-	private JTextField tfBombs;
 
 	private Container contentPane;
 	private GridBagLayout gbl;
 	private Font font;
-	private Vector<Integer> values;
 
 	public GUIGameConfig(GUIVierGewinnt parent)
 	{
@@ -59,13 +56,14 @@ public class GUIGameConfig extends JDialog
 		cbNames.repaint();
 	}
 	
-	private void fillValues(int from, int to)
+	private Vector<Integer> getValues(int from, int to)
 	{
-		values = new Vector<Integer>();
+		Vector<Integer> values = new Vector<Integer>();
 		for (int i = from; i <= to; i++)
 		{
 			values.add(i);
 		}
+		return values;
 	}
 
 	private void initComponents()
@@ -76,28 +74,33 @@ public class GUIGameConfig extends JDialog
 		contentPane.setBackground(Color.WHITE);
 		font = new Font("Sans Serif", Font.BOLD, 16);
 		
-		cbNames = new JComboBox();
+		cbNames = new JComboBox<String>();
 
-		fillValues(4, 20);
-		cbRows = new JComboBox(values);
+		cbRows = new JComboBox<Integer>(getValues(4, 20));
 		cbRows.setSelectedIndex(2);
 
-		cbColumns = new JComboBox(values);
+		cbColumns = new JComboBox<Integer>(getValues(4, 20));
 		cbColumns.setSelectedIndex(3);
+		
+		cbTurnTime = new JComboBox<Integer>(new Integer[] {3, 5, 8, 10, 15, 20, 30});
+		cbTurnTime.setSelectedIndex(5);
+		
+		cbBombs = new JComboBox<Integer>(getValues(0, 10));
+		cbBombs.setSelectedIndex(0);
 		
 		laNames = new JLabel("Mit wem möchten Sie spielen?");
 		laNames.setFont(font);
 		laNames.setHorizontalAlignment(JLabel.CENTER);
-		laNames.setPreferredSize(new Dimension(100, 100));	
+		laNames.setPreferredSize(new Dimension(10, 20));	
 		laNames.setOpaque(true);
 		laNames.setBackground(Color.WHITE);
 		
-		laDimension = new JLabel("Wie groß soll ihr Spielfeld sein?");
-		laDimension.setFont(font);
-		laDimension.setHorizontalAlignment(JLabel.CENTER);
-		laDimension.setPreferredSize(new Dimension(10, 10));
-		laDimension.setOpaque(true);
-		laDimension.setBackground(Color.WHITE);
+		laGeneralSettings = new JLabel("Allgemein");
+		laGeneralSettings.setFont(font);
+		laGeneralSettings.setHorizontalAlignment(JLabel.CENTER);
+		laGeneralSettings.setPreferredSize(new Dimension(10, 20));
+		laGeneralSettings.setOpaque(true);
+		laGeneralSettings.setBackground(Color.WHITE);
 		
 		laRows = new JLabel("Zeilen:");
 		laRows.setPreferredSize(new Dimension(10, 10));
@@ -109,10 +112,15 @@ public class GUIGameConfig extends JDialog
 		laColumns.setOpaque(true);
 		laColumns.setBackground(Color.WHITE);
 		
+		laTurnTime = new JLabel("Max. Zugzeit (in Sek.):");
+		laTurnTime.setPreferredSize(new Dimension(10, 10));
+		laTurnTime.setOpaque(true);
+		laTurnTime.setBackground(Color.WHITE);
+		
 		laBombConfig = new JLabel("Bombenkonfiguration");
 		laBombConfig.setFont(font);
 		laBombConfig.setHorizontalAlignment(JLabel.CENTER);
-		laBombConfig.setPreferredSize(new Dimension(10,10));
+		laBombConfig.setPreferredSize(new Dimension(10, 20));
 		laBombConfig.setOpaque(true);
 		laBombConfig.setBackground(Color.WHITE);
 		
@@ -121,52 +129,63 @@ public class GUIGameConfig extends JDialog
 		laBombCount.setOpaque(true);
 		laBombCount.setBackground(Color.WHITE);
 		
+		laBombChipCount = new JLabel("Bombenchip zählt zum Sieg:");
+		laBombChipCount.setPreferredSize(new Dimension(10,10));
+		laBombChipCount.setOpaque(true);
+		laBombChipCount.setBackground(Color.WHITE);
+				
+		laBombPlayCount = new JLabel("Explosion zählt als Zug:");
+		laBombPlayCount.setPreferredSize(new Dimension(10,10));
+		laBombPlayCount.setOpaque(true);
+		laBombPlayCount.setBackground(Color.WHITE);
+		
 		bnGameRequest = new JButton("Anfrage senden");
 		bnGameRequest.setFocusPainted(false);
 		bnGameRequest.setBackground(Color.WHITE);
 		
-		tfBombs = new JTextField("0");
-		tfBombs.setPreferredSize(new Dimension(10,10));
-		
-		chbBombChipCount = new JCheckBox("Bombenchip zählt zum Sieg");
-		chbBombChipCount.setPreferredSize(new Dimension(10,10));
+		chbBombChipCount = new JCheckBox();
+//		chbBombChipCount.setPreferredSize(new Dimension(10,10));
 		chbBombChipCount.setBackground(Color.WHITE);
 		
-		chbBombPlayCount = new JCheckBox("Explosion zählt als Zug");
+		chbBombPlayCount = new JCheckBox();
 		chbBombPlayCount.setSelected(true);
-		chbBombPlayCount.setPreferredSize(new Dimension(10,10));
+//		chbBombPlayCount.setPreferredSize(new Dimension(10,10));
 		chbBombPlayCount.setBackground(Color.WHITE);
 		
 		gbl = new GridBagLayout();
 		panBuffName = new JPanel(gbl);
 		panBuffName.setBorder(BorderFactory.createRaisedBevelBorder());
 		panBuffName.setBackground(Color.WHITE);
-		GUI.addComponent(panBuffName, laNames, GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(5,5,5,5), 0, 0, 1, 1, 1, 1.2);
+		GUI.addComponent(panBuffName, laNames, GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(5,5,5,5), 0, 0, 1, 1, 1, 1);
 		GUI.addComponent(panBuffName, cbNames, GridBagConstraints.NONE, GridBagConstraints.CENTER, new Insets(5,5,5,5), 0, 1, 1, 1, 1, 1);
 		
 		panBuffSettings = new JPanel(gbl);
 		panBuffSettings.setBorder(BorderFactory.createLoweredBevelBorder());
 		panBuffSettings.setBackground(Color.WHITE);
-		GUI.addComponent(panBuffSettings, laDimension, GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(5, 5, 5, 5), 0, 0, 2, 1, 1, 4);
-		GUI.addComponent(panBuffSettings, laRows, GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(5,5,5,5), 0, 1, 1, 1, 0.4, 1);
-		GUI.addComponent(panBuffSettings, cbRows, GridBagConstraints.NONE, GridBagConstraints.CENTER, new Insets(5,5,5,5), 1, 1, 1, 1, 0.6, 1);
-		GUI.addComponent(panBuffSettings, laColumns, GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(5,5,5,5), 0, 2, 1, 1, 0.4, 1);
-		GUI.addComponent(panBuffSettings, cbColumns, GridBagConstraints.NONE, GridBagConstraints.CENTER, new Insets(5,5,5,5), 1, 2, 1, 1, 0.6, 1);
+		GUI.addComponent(panBuffSettings, laGeneralSettings, GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(5,5,5,5), 	 0, 0, 2, 1, 1,   1);
+		GUI.addComponent(panBuffSettings, laRows,			 GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(5,5,5,5), 	 0, 1, 1, 1, 0.6, 1);
+		GUI.addComponent(panBuffSettings, cbRows, 			 GridBagConstraints.NONE, GridBagConstraints.CENTER, new Insets(5,5,5,5), 	 1, 1, 1, 1, 0.4, 1);
+		GUI.addComponent(panBuffSettings, laColumns,		 GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(5,5,5,5), 	 0, 2, 1, 1, 0.6, 1);
+		GUI.addComponent(panBuffSettings, cbColumns, 		 GridBagConstraints.NONE, GridBagConstraints.CENTER, new Insets(5,5,5,5), 	 1, 2, 1, 1, 0.4, 1);
+		GUI.addComponent(panBuffSettings, laTurnTime, 		 GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(5,5,5,5), 	 0, 3, 1, 1, 0.6, 1);
+		GUI.addComponent(panBuffSettings, cbTurnTime, 		 GridBagConstraints.NONE, GridBagConstraints.CENTER, new Insets(5,5,5,5), 	 1, 3, 1, 1, 0.4, 1);
 
 		panBuffBombConfig = new JPanel(gbl);
 		panBuffBombConfig.setBorder(BorderFactory.createLoweredBevelBorder());
 		panBuffBombConfig.setBackground(Color.WHITE);
-		GUI.addComponent(panBuffBombConfig, laBombConfig, GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(5,5,5,5), 0, 0, 2, 1, 1, 1);
-		GUI.addComponent(panBuffBombConfig, laBombCount, GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(5,5,5,5), 0, 1, 1, 1, 1, 1);
-		GUI.addComponent(panBuffBombConfig, tfBombs, GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(5,5,5,5), 1, 1, 1, 1, 1, 1);
-		GUI.addComponent(panBuffBombConfig, chbBombChipCount, GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(5,5,5,5), 0, 2, 2, 1, 1, 1);
-		GUI.addComponent(panBuffBombConfig, chbBombPlayCount, GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(5,5,5,5), 0, 3, 2, 1, 1, 1);
+		GUI.addComponent(panBuffBombConfig, laBombConfig, 		GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(5,5,5,5), 0, 0, 2, 1, 1, 1);
+		GUI.addComponent(panBuffBombConfig, laBombCount, 		GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(5,5,5,5), 0, 1, 1, 1, 0.6, 1);
+		GUI.addComponent(panBuffBombConfig, cbBombs, 			GridBagConstraints.NONE, GridBagConstraints.CENTER, new Insets(5,5,5,5), 1, 1, 1, 1, 0.4, 1);
+		GUI.addComponent(panBuffBombConfig, laBombChipCount, 	GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(5,5,5,5), 0, 2, 1, 1, 0.6, 1);
+		GUI.addComponent(panBuffBombConfig, chbBombChipCount, 	GridBagConstraints.NONE, GridBagConstraints.CENTER, new Insets(5,5,5,5), 1, 2, 1, 1, 0.4, 1);
+		GUI.addComponent(panBuffBombConfig, laBombPlayCount, 	GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(5,5,5,5), 0, 3, 1, 1, 0.6, 1);
+		GUI.addComponent(panBuffBombConfig, chbBombPlayCount, 	GridBagConstraints.NONE, GridBagConstraints.CENTER, new Insets(5,5,5,5), 1, 3, 1, 1, 0.4, 1);
 		
 		contentPane.setLayout(gbl);
 		GUI.addComponent(contentPane, panBuffName, GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(30,30,5,30), 0, 0, 1, 1, 1, 0.2);
 		GUI.addComponent(contentPane, panBuffSettings, GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(0,30,5,30), 0, 1, 1, 1, 1, 0.35);
 		GUI.addComponent(contentPane, panBuffBombConfig, GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(0,30,5,30), 0, 2, 1, 1, 1, 0.35);
-		GUI.addComponent(contentPane, bnGameRequest, GridBagConstraints.NONE, GridBagConstraints.CENTER, new Insets(0,0,30,0), 0, 3, 1, 1, 1, 0.1);
+		GUI.addComponent(contentPane, bnGameRequest, GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(5,60,10,60), 0, 3, 1, 1, 1, 0.1);
 
 	}
 
@@ -177,15 +196,14 @@ public class GUIGameConfig extends JDialog
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				int bombs;
-				try{
-					bombs = Integer.parseInt(tfBombs.getText());
-				}catch(NumberFormatException ex)
-				{
-					tfBombs.setText("Format Error!");
-					return;
-				}
-				parent.getClient().gameRequest((String)cbNames.getSelectedItem(), Integer.parseInt(cbRows.getSelectedItem().toString()),Integer.parseInt(cbColumns.getSelectedItem().toString()),chbBombChipCount.isSelected(),chbBombPlayCount.isSelected(),bombs);
+				parent.getClient().gameRequest(
+						(String)cbNames.getSelectedItem(), 
+						(int)cbRows.getSelectedItem(),
+						(int)cbColumns.getSelectedItem(),
+						(int)cbTurnTime.getSelectedItem(),
+						chbBombChipCount.isSelected(),
+						chbBombPlayCount.isSelected(),
+						(int)cbBombs.getSelectedItem());
 				setVisible(false);
 			}
 		});
@@ -193,7 +211,6 @@ public class GUIGameConfig extends JDialog
 	
 	public static void main(String[] args)
 	{
-		Stopuhr s = new Stopuhr();
 		try
 		{
 			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
@@ -205,9 +222,9 @@ public class GUIGameConfig extends JDialog
 		Vector<String> name = new Vector<String>();
 		name.add("Hans");
 		f.setNames(name);
-		f.setSize(380, 440);
-		f.pack();
-		System.out.println("packed "+s.getTime());
+		f.setSize(380, 490);
+		f.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+//		f.pack();
 		f.setVisible(true);
 	}
 }

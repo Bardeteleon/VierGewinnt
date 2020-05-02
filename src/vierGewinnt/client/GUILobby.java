@@ -216,6 +216,7 @@ public class GUILobby extends JDialog
 					if (answer == 0)
 					{
 						parent.getClient().sendMessage(MessageGenerator.sendGameEnd(MessageGenerator.GAMEEND_QUITTING));
+						parent.getClient().turnTimer.stop();
 						parent.resetAfterGame();
 					}
 				}
