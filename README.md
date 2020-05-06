@@ -16,8 +16,8 @@ Lobby:
 
 # Download
 
-* [Server](https://drive.google.com/open?id=1wq8R0fUvuiIuk4aJh-q7-I7gNSXijGeN)
-* [Client](https://drive.google.com/open?id=1L4ru5OLp0w68C70L38bai2BT_hH87sQV)
+* [Server](https://bit.ly/2WcS2YR)
+* [Client](https://bit.ly/3cb9mD1)
 
 # Setup
 
