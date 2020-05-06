@@ -4,20 +4,20 @@ This application lets you play Connect4 (German: VierGewinnt) with your friends.
 
 Game Field:
 
-![game field](https://github.com/Bardeteleon/VierGewinnt/tree/master/img/game_field.png "Game Field")
+<img src="/img/game_field.png" width="450">
 
 Game Config:
 
-![game config](https://github.com/Bardeteleon/VierGewinnt/tree/master/img/game_config.png "Game Config")
+<img src="/img/game_config.png" width="250">
 
 Lobby:
 
-![lobby](https://github.com/Bardeteleon/VierGewinnt/tree/master/img/lobby.png "Lobby")
+<img src="/img/lobby.png" width="450">
 
 # Download
 
-* [Server]()
-* [Client]()
+* [Server](https://drive.google.com/open?id=1wq8R0fUvuiIuk4aJh-q7-I7gNSXijGeN)
+* [Client](https://drive.google.com/open?id=1L4ru5OLp0w68C70L38bai2BT_hH87sQV)
 
 # Setup
 
