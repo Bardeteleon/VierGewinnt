@@ -16,6 +16,8 @@ Lobby:
 
 # Download
 
+The application is implemented in Java and distributed through runnable .jar files. You need a Java Runtime Environment (8 or higher) to run the following programs:
+
 * [Server](https://bit.ly/2WcS2YR)
 * [Client](https://bit.ly/3cb9mD1)
 
