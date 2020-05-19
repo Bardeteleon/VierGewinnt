@@ -40,7 +40,7 @@ public class GUIConnection extends JDialog
 
 	private void initComponents()
 	{
-		setIconImage(GUI.createImageIcon(this, "bilder/clientIcon.png").getImage());
+		setIconImage(GUI.createImageIcon("images/client/clientIcon.png").getImage());
 		
 		contentPane = getContentPane();
 		gbl = new GridBagLayout();

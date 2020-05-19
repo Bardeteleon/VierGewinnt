@@ -51,24 +51,24 @@ public class GameTableModel extends AbstractTableModel
 		this.ownColor = ownColor;
 
 		icons = new HashMap<String, ImageIcon>();
-		icons.put(LEER, GUI.createImageIcon(this, "bilder/VAR1/leer.jpg"));
-		icons.put(RED_O_1, GUI.createImageIcon(this, "bilder/VAR1/o_red.jpg"));
-		icons.put(RED_O_2, GUI.createImageIcon(this, "bilder/VAR1/o_red_pos1.jpg"));
-		icons.put(RED_O_B, GUI.createImageIcon(this, "bilder/VAR1/o_B_red.jpg"));
-		icons.put(RED_B, GUI.createImageIcon(this, "bilder/VAR1/B_red.jpg"));
-		icons.put(RED_1, GUI.createImageIcon(this, "bilder/VAR1/red_pos1.jpg"));
-		icons.put(RED_2, GUI.createImageIcon(this, "bilder/VAR1/red_pos2.jpg"));
-		icons.put(RED_3, GUI.createImageIcon(this, "bilder/VAR1/red_pos3.jpg"));
-		icons.put(YEL_O_1, GUI.createImageIcon(this, "bilder/VAR1/o_yel.jpg"));
-		icons.put(YEL_O_2, GUI.createImageIcon(this, "bilder/VAR1/o_yel_pos1.jpg"));
-		icons.put(YEL_O_B, GUI.createImageIcon(this, "bilder/VAR1/o_B_yel.jpg"));
-		icons.put(YEL_B, GUI.createImageIcon(this, "bilder/VAR1/B_yel.jpg"));
-		icons.put(YEL_1, GUI.createImageIcon(this, "bilder/VAR1/yel_pos1.jpg"));
-		icons.put(YEL_2, GUI.createImageIcon(this, "bilder/VAR1/yel_pos2.jpg"));
-		icons.put(YEL_3, GUI.createImageIcon(this, "bilder/VAR1/yel_pos3.jpg"));
+		icons.put(LEER, GUI.createImageIcon("images/client/VAR1/leer.jpg"));
+		icons.put(RED_O_1, GUI.createImageIcon("images/client/VAR1/o_red.jpg"));
+		icons.put(RED_O_2, GUI.createImageIcon("images/client/VAR1/o_red_pos1.jpg"));
+		icons.put(RED_O_B, GUI.createImageIcon("images/client/VAR1/o_B_red.jpg"));
+		icons.put(RED_B, GUI.createImageIcon("images/client/VAR1/B_red.jpg"));
+		icons.put(RED_1, GUI.createImageIcon("images/client/VAR1/red_pos1.jpg"));
+		icons.put(RED_2, GUI.createImageIcon("images/client/VAR1/red_pos2.jpg"));
+		icons.put(RED_3, GUI.createImageIcon("images/client/VAR1/red_pos3.jpg"));
+		icons.put(YEL_O_1, GUI.createImageIcon("images/client/VAR1/o_yel.jpg"));
+		icons.put(YEL_O_2, GUI.createImageIcon("images/client/VAR1/o_yel_pos1.jpg"));
+		icons.put(YEL_O_B, GUI.createImageIcon("images/client/VAR1/o_B_yel.jpg"));
+		icons.put(YEL_B, GUI.createImageIcon("images/client/VAR1/B_yel.jpg"));
+		icons.put(YEL_1, GUI.createImageIcon("images/client/VAR1/yel_pos1.jpg"));
+		icons.put(YEL_2, GUI.createImageIcon("images/client/VAR1/yel_pos2.jpg"));
+		icons.put(YEL_3, GUI.createImageIcon("images/client/VAR1/yel_pos3.jpg"));
 
 		playingField = new ImageIcon[row + 1][column]; // row+1 -> eine Zeile
-														// zum wählen
+														// zum wï¿½hlen
 		clearPlayingField();
 		clearChoosingField();
 
@@ -417,9 +417,9 @@ public class GameTableModel extends AbstractTableModel
 
 	private void update()
 	{
-		// wird eigentlich schon vom EDT ausgeführt, aber setChipAnimatedAt ruft
+		// wird eigentlich schon vom EDT ausgefï¿½hrt, aber setChipAnimatedAt ruft
 		// diese Methode von externen Thread aus auf, deswegen Update Methode
-		// vom EDT ausführen lassen
+		// vom EDT ausfï¿½hren lassen
 		SwingUtilities.invokeLater(new Runnable()
 		{
 			@Override
