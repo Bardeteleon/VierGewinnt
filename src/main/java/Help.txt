@@ -1,0 +1,29 @@
+VierGewinnt Hilfe
+
+1.Verbindungsaufbau
+2.Chat
+3.Neues Spiel starten
+4.Steuerung
+
+
+1. Um eine Verbindung aufzubauen klicken Sie im Hauptfenster auf "Lobby" und dort auf "Verbinden". 
+Es öffnet sich ein Dialog, in dem Sie einen Nickname, die IP auf dem ein VierGewinnt Server läuft 
+und dessen Port eingeben können.Nach einem Klick auf den "Verbinden" Button wird eine Verbindung 
+aufgebaut und Sie können nun mit allen Spielern in der Lobby Chatten.
+
+2. Der Chat in der Lobby dient dazu sich mit den einzelnen Spielern auszutauschen, dabei werden 
+Nachrichten an alle Spieler die online sind gesendet. Um Nachrichten an spezielle User zu senden, 
+muss die Whisperfunktion benutzt werden, indem Sie an die jeweiligen Namen in der Liste rechts 
+ein Häkchen machen und dann ganz normal eine Nachricht in das untere Eingabefeld tippen und senden.
+
+3. Um ein Spiel zu starten klicken Sie in der "Lobby" auf den Button "Spielen". In dem Dialog 
+wählen Sie zunächst Ihren Gegenspieler, dann die Größe des Spielfeldes und als letztes die 
+Bombenkonfiguration. Mit Bomben wird das Spiel sehr interessant, da man BombenChips nach belieben
+zerstören kann, wodurch die dort drüber liegenden Chips um eins nach unten rutschen. Damit ergeben
+sich taktisch sehr viele neue Möglichkeiten. Wenn nun eine Anfrage gesendet wurde und der 
+Gegenspieler diese angenommen hat, beginnt das Spiel.
+
+4. Wenn Sie an der Reihe sind steuern Sie den Chip oben in der Auswahlzeile mit den Pfeiltasten 
+(links, rechts). Um einen Chip einzuwerfen betätigen Sie Bitten die Pfeiltaste nach unten und 
+um eine Bomb auszuwählen die Pfeiltaste nach oben. Um eine eigene Bombe, die eingeworfen wurde,
+explodieren zu lassen genügt ein Doppelklick auf die entsprechende Bombe.

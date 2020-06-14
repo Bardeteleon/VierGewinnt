@@ -2,5 +2,10 @@
 .gradle
 
 # Ignore Gradle build output directory
-build
-/bin/
+build/
+bin/
+bin2/
+dist1/
+dist2/
+
+*.exe
