@@ -54,7 +54,7 @@ import vierGewinnt.common.Player;
 /*
  * Vereinheitlichung x-y-koordinaten und Row-Column-System
  * Dokumentation
- * Fehler Methode für Log.txt
+ * Fehler Methode fï¿½r Log.txt
  */
 public class GUIVierGewinnt extends JFrame
 {
@@ -90,7 +90,7 @@ public class GUIVierGewinnt extends JFrame
 
 	private void initComponents()
 	{
-		setIconImage(GUI.createImageIcon(this, "bilder/clientIcon.png").getImage());
+		setIconImage(GUI.createImageIcon("images/client/clientIcon.png").getImage());
 
 		guiLobby = new GUILobby(this, "Lobby");
 		guiLobby.setMinimumSize(new Dimension(230, 230));
@@ -110,11 +110,11 @@ public class GUIVierGewinnt extends JFrame
 		glassAni = new GlassPaneAnimation();
 		setGlassPane(glassAni);
 		getGlassPane().setVisible(true);
-		expAni = new Explosion(glassAni, Sprite.loadPics(this, "vierGewinnt/client/bilder/ExplosionOne.png", 17), 100);
-		winnerAni = new OnePicAnimation(glassAni, Sprite.loadPics(this, "vierGewinnt/client/bilder/gewonnen.jpg", 1), 100, 20);
+		expAni = new Explosion(glassAni, Sprite.loadPics(this, "images/client/ExplosionOne.png", 17), 100);
+		winnerAni = new OnePicAnimation(glassAni, Sprite.loadPics(this, "images/client/gewonnen.jpg", 1), 100, 20);
 		winnerAni.setCentral(true);
 		winnerAni.setWaitingSteps(5);
-		gameOverAni = new OnePicAnimation(glassAni, Sprite.loadPics(this, "vierGewinnt/client/bilder/game-over.jpg", 1), 100, 20);
+		gameOverAni = new OnePicAnimation(glassAni, Sprite.loadPics(this, "images/client/game-over.jpg", 1), 100, 20);
 		gameOverAni.setCentral(true);
 		gameOverAni.setWaitingSteps(5);
 
@@ -165,7 +165,7 @@ public class GUIVierGewinnt extends JFrame
 			}
 		};
 		tpChat.setEditable(false);
-		tpChat.setStyledDocument(GUI.getStyledDoc(this));
+		tpChat.setStyledDocument(GUI.getStyledDoc());
 		tpInput = new JTextPane()
 		{
 			@Override
@@ -181,7 +181,7 @@ public class GUIVierGewinnt extends JFrame
 			}
 		};
 		tpInput.setFont(new Font("SansSerif", Font.PLAIN, 14));
-		tpInput.setStyledDocument(GUI.getStyledDoc(this));
+		tpInput.setStyledDocument(GUI.getStyledDoc());
 
 		spChat = new JScrollPane(tpChat);
 		spInput = new JScrollPane(tpInput);
@@ -506,15 +506,15 @@ public class GUIVierGewinnt extends JFrame
 		if (Integer.parseInt(bombs) > 0)
 		{
 			if (Boolean.parseBoolean(_expChipsZahlenFuerSieg))
-				expMod1 = "\n-> Bombenchip zählt zum Sieg";
+				expMod1 = "\n-> Bombenchip zï¿½hlt zum Sieg";
 			else
-				expMod1 = "\n-> Bombenchip zählt NICHT zum Sieg";
+				expMod1 = "\n-> Bombenchip zï¿½hlt NICHT zum Sieg";
 			if (Boolean.parseBoolean(_explosionZahltAlsZug))
-				expMod2 = "\n-> Bombenexplosion zählt als Zug";
+				expMod2 = "\n-> Bombenexplosion zï¿½hlt als Zug";
 			else
-				expMod2 = "\n-> Bombenexplosion zählt NICHT als Zug";
+				expMod2 = "\n-> Bombenexplosion zï¿½hlt NICHT als Zug";
 		}
-		int answer = JOptionPane.showConfirmDialog(this, "Wollen Sie mit " + vonSpieler + " VierGewinnt spielen?\nSpielfeldgröße: " + rows + " Zeilen / " + columns + " Spalten\nZugzeit: " + turnTime + "s\nAnzahl Bomben: " + bombs + expMod1 + expMod2, "Einladung", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+		int answer = JOptionPane.showConfirmDialog(this, "Wollen Sie mit " + vonSpieler + " VierGewinnt spielen?\nSpielfeldgrï¿½ï¿½e: " + rows + " Zeilen / " + columns + " Spalten\nZugzeit: " + turnTime + "s\nAnzahl Bomben: " + bombs + expMod1 + expMod2, "Einladung", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 		if (answer == 1 || answer == -1)
 			return false;
 		else

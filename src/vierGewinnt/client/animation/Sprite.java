@@ -10,6 +10,8 @@ import java.net.URL;
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 
+import useful.IO;
+
 public abstract class Sprite extends Rectangle2D.Double implements Drawable, Movable
 {
 	JComponent parent;
@@ -125,7 +127,7 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 		}
 	}
 	
-	private void computeRelativeSprite() // TODO Seitenverhältnis beibehalten
+	private void computeRelativeSprite() // TODO Seitenverhï¿½ltnis beibehalten
 	{
 		if (doRelativePositioning)
 		{
@@ -203,7 +205,7 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 		BufferedImage[] anim = new BufferedImage[pics];
 		BufferedImage source = null;
 
-		URL pic_url = parent.getClass().getClassLoader().getResource(path);
+		URL pic_url = IO.getResourceURL(path);
 
 		try
 		{

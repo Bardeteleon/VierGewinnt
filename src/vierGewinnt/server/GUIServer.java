@@ -20,6 +20,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import useful.GUI;
+import useful.IO;
 
 public class GUIServer extends JFrame
 {
@@ -36,7 +37,7 @@ public class GUIServer extends JFrame
 		super("Vier Gewinnt");
 		setLayout(new BorderLayout());
 		setMinimumSize(new Dimension(200, 240));
-		setIconImage(GUI.createImageIcon(this, "serverIcon.png").getImage());
+		setIconImage(GUI.createImageIcon("images/server/serverIcon.png").getImage());
 
 		addWindowListener(new WindowAdapter()
 		{
@@ -44,7 +45,7 @@ public class GUIServer extends JFrame
 			@Override
 			public void windowClosing(WindowEvent e)
 			{
-				int answer = JOptionPane.showConfirmDialog(null, "Wollen Sie den Server wirklich schließen?", "", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+				int answer = JOptionPane.showConfirmDialog(null, "Wollen Sie den Server wirklich schlieï¿½en?", "", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 				if (answer == 0)
 				{
 					if (!bnServer.getActionCommand().equals("Starten"))
@@ -55,10 +56,10 @@ public class GUIServer extends JFrame
 		});
 		c = getContentPane();
 
-		URL urlStart = this.getClass().getResource("Start.png");
+		URL urlStart = IO.getResourceURL("images/server/Start.png");
 		if (urlStart != null)
 			icStart = new ImageIcon(new ImageIcon(urlStart).getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH));
-		URL urlStop = this.getClass().getResource("Stop.png");
+		URL urlStop = IO.getResourceURL("images/server/Stop.png");
 		if (urlStop != null)
 			icStop = new ImageIcon(new ImageIcon(urlStop).getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH));
 

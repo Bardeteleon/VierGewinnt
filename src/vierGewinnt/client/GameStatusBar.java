@@ -2,13 +2,10 @@ package vierGewinnt.client;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
-import java.awt.image.ComponentSampleModel;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -16,8 +13,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
-
-import com.sun.xml.internal.ws.api.Component;
 
 import useful.GUI;
 import vierGewinnt.common.Player;
@@ -67,8 +62,8 @@ public class GameStatusBar extends JPanel{
 		lbPlayer2Color = new JLabel();
 		lbPlayer2Color.setHorizontalAlignment(SwingConstants.CENTER);
 		
-		iconRed = GUI.createImageIcon(this, "bilder/VAR1/o_red.jpg");
-		iconYellow = GUI.createImageIcon(this, "bilder/VAR1/o_yel.jpg");
+		iconRed = GUI.createImageIcon("images/client/VAR1/o_red.jpg");
+		iconYellow = GUI.createImageIcon("images/client/VAR1/o_yel.jpg");
 		
 		JPanel pnWrapWhosPlaying = new JPanel();
 		pnWrapWhosPlaying.setBackground(Color.WHITE);

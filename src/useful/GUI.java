@@ -58,9 +58,9 @@ public class GUI
 		cont.add(c, gbc);
 	}
 
-	public static ImageIcon createImageIcon(Object parent, String path)
+	public static ImageIcon createImageIcon(String path)
 	{
-		URL imgURL = parent.getClass().getResource(path);
+		URL imgURL = IO.getResourceURL(path);
 		if (imgURL != null)
 		{
 			return new ImageIcon(imgURL);
@@ -73,7 +73,7 @@ public class GUI
 
 	public static JDialog getHelpDialog(Object parent, String file)
 	{
-		JTextArea area = new JTextArea(loadTextFile(parent, file));
+		JTextArea area = new JTextArea(loadTextFile(file));
 
 		area.setFont(new Font("Sans Serif", Font.PLAIN, 14));
 		area.setEditable(false);
@@ -97,9 +97,15 @@ public class GUI
 		return dia;
 	}
 
-	public static String loadTextFile(Object parent, String file)
+	public static String loadTextFile(String file)
 	{
-		InputStream stream = parent.getClass().getResourceAsStream(file);
+		InputStream stream = null;
+		try {
+			stream = IO.getResourceURL(file).openStream();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
 		char[] data = null;
 		if (stream != null)
 		{
@@ -150,7 +156,7 @@ public class GUI
 		}
 	}
 
-	public static DefaultStyledDocument getStyledDoc(Object parent)
+	public static DefaultStyledDocument getStyledDoc()
 	{
 		Style def = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
 		StyleConstants.setFontFamily(def, "SansSerif");
@@ -170,19 +176,19 @@ public class GUI
 
 		ImageIcon sm;
 
-		sm = new ImageIcon(GUI.createImageIcon(parent, "bilder/Smileys/Smiley1.png").getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH));
+		sm = new ImageIcon(GUI.createImageIcon("images/client/Smileys/Smiley1.png").getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH));
 		s = doc.addStyle(LOUGHSMILEY, def);
 		StyleConstants.setIcon(s, sm);
 
-		sm = new ImageIcon(GUI.createImageIcon(parent, "bilder/Smileys/Smiley2.png").getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH));
+		sm = new ImageIcon(GUI.createImageIcon("images/client/Smileys/Smiley2.png").getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH));
 		s = doc.addStyle(SADSMILEY, def);
 		StyleConstants.setIcon(s, sm);
 
-		sm = new ImageIcon(GUI.createImageIcon(parent, "bilder/Smileys/Smiley3.png").getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH));
+		sm = new ImageIcon(GUI.createImageIcon("images/client/Smileys/Smiley3.png").getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH));
 		s = doc.addStyle(GRINSMILEY, def);
 		StyleConstants.setIcon(s, sm);
 
-		sm = new ImageIcon(GUI.createImageIcon(parent, "bilder/Smileys/Smiley4.png").getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH));
+		sm = new ImageIcon(GUI.createImageIcon("images/client/Smileys/Smiley4.png").getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH));
 		s = doc.addStyle(TOUNGESMILEY, def);
 		StyleConstants.setIcon(s, sm);
 

@@ -68,7 +68,7 @@ public class GUIGameConfig extends JDialog
 
 	private void initComponents()
 	{
-		setIconImage(GUI.createImageIcon(this, "bilder/clientIcon.png").getImage());
+		setIconImage(GUI.createImageIcon("images/client/clientIcon.png").getImage());
 
 		contentPane = getContentPane();
 		contentPane.setBackground(Color.WHITE);
@@ -88,7 +88,7 @@ public class GUIGameConfig extends JDialog
 		cbBombs = new JComboBox<Integer>(getValues(0, 10));
 		cbBombs.setSelectedIndex(0);
 		
-		laNames = new JLabel("Mit wem möchten Sie spielen?");
+		laNames = new JLabel("Mit wem mï¿½chten Sie spielen?");
 		laNames.setFont(font);
 		laNames.setHorizontalAlignment(JLabel.CENTER);
 		laNames.setPreferredSize(new Dimension(10, 20));	
@@ -129,12 +129,12 @@ public class GUIGameConfig extends JDialog
 		laBombCount.setOpaque(true);
 		laBombCount.setBackground(Color.WHITE);
 		
-		laBombChipCount = new JLabel("Bombenchip zählt zum Sieg:");
+		laBombChipCount = new JLabel("Bombenchip zï¿½hlt zum Sieg:");
 		laBombChipCount.setPreferredSize(new Dimension(10,10));
 		laBombChipCount.setOpaque(true);
 		laBombChipCount.setBackground(Color.WHITE);
 				
-		laBombPlayCount = new JLabel("Explosion zählt als Zug:");
+		laBombPlayCount = new JLabel("Explosion zï¿½hlt als Zug:");
 		laBombPlayCount.setPreferredSize(new Dimension(10,10));
 		laBombPlayCount.setOpaque(true);
 		laBombPlayCount.setBackground(Color.WHITE);

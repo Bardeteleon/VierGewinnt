@@ -72,7 +72,7 @@ public class GUILobby extends JDialog
 
 	private void initComponents()
 	{
-		setIconImage(GUI.createImageIcon(this, "bilder/clientIcon.png").getImage());
+		setIconImage(GUI.createImageIcon("images/client/clientIcon.png").getImage());
 
 		guiConnection = new GUIConnection(parent, "Verbinden", true);
 		guiConnection.setResizable(false);
@@ -116,12 +116,12 @@ public class GUILobby extends JDialog
 
 		tpOutput = new JTextPane();
 		tpOutput.setEditable(false);
-		tpOutput.setStyledDocument(GUI.getStyledDoc(this));
+		tpOutput.setStyledDocument(GUI.getStyledDoc());
 		spOutput = new JScrollPane(tpOutput);
 
 		tpInput = new JTextPane();
 		tpInput.setFont(new Font("SansSerif", Font.PLAIN, 14));
-		tpInput.setStyledDocument(GUI.getStyledDoc(this));
+		tpInput.setStyledDocument(GUI.getStyledDoc());
 		spInput = new JScrollPane(tpInput);
 
 		sppInOut = new JSplitPane(JSplitPane.VERTICAL_SPLIT, spOutput, spInput);
@@ -212,7 +212,7 @@ public class GUILobby extends JDialog
 						JOptionPane.showMessageDialog(GUILobby.this, "Kein Spieler online.", "", JOptionPane.INFORMATION_MESSAGE);
 				}else if(event.getActionCommand().contentEquals("Spiel verlassen"))
 				{
-					int answer = JOptionPane.showConfirmDialog(null, "Wollen Sie das Spiel wirklich verlassen?\nSie können sich nicht wieder verbinden.", "", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+					int answer = JOptionPane.showConfirmDialog(null, "Wollen Sie das Spiel wirklich verlassen?\nSie kï¿½nnen sich nicht wieder verbinden.", "", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 					if (answer == 0)
 					{
 						parent.getClient().sendMessage(MessageGenerator.sendGameEnd(MessageGenerator.GAMEEND_QUITTING));
