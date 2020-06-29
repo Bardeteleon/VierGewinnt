@@ -16,7 +16,7 @@ Lobby:
 
 # Download
 
-Windows (deployed with jlink/jpackage):
+Windows:
 
 * [Client](https://bit.ly/3i96aLB)
 * [Server](https://bit.ly/387Qnb6)
