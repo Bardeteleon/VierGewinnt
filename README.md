@@ -14,18 +14,6 @@ Lobby:
 
 <img src="/img/lobby.png" width="450">
 
-# Download
-
-Windows:
-
-* [Client](https://bit.ly/3i96aLB)
-* [Server](https://bit.ly/387Qnb6)
-
-The application is implemented in Java and also distributed through runnable .jar files. You need a Java Runtime Environment (8 or higher) to run the following programs:
-
-* [Client](https://bit.ly/3cb9mD1)
-* [Server](https://bit.ly/2WcS2YR)
-
 # Setup
 
 The game is implemented as a Server-Client application. Thus there need to be one server where the clients can connect to.
