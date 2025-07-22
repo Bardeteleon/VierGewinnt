@@ -1,0 +1,1 @@
+java --module-path build --module vier.gewinnt/main.StartClient

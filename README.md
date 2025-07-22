@@ -4,15 +4,15 @@ This application lets you play Connect4 (German: VierGewinnt) with your friends.
 
 Game Field:
 
-<img src="/img/game_field.png" width="450">
+<img vier.gewinnt="/img/game_field.png" width="450">
 
 Game Config:
 
-<img src="/img/game_config.png" width="250">
+<img vier.gewinnt="/img/game_config.png" width="250">
 
 Lobby:
 
-<img src="/img/lobby.png" width="450">
+<img vier.gewinnt="/img/lobby.png" width="450">
 
 # Setup
 
@@ -52,9 +52,9 @@ Hint: The game chat is equal to the whipser chat
 ## How to build and deploy
 
 0. Go to VierGewinnt directory
-1. Run: javac -d bin --module-path src $(find src -name "*.java")
-2. Copy: src/images (and src/Help.txt) to bin/images (and bin/Help.txt)
-3. Run: jlink --module-path "bin;$JAVA_HOME/jmods" --add-modules vierGewinnt --launcher VierGewinnt=vierGewinnt/vierGewinnt.StartClient --output dist --strip-debug --compress 2 --no-header-files --no-man-pages
-4. Run: jpackage -n VierGewinnt --type app-image -m vierGewinnt/vierGewinnt.StartClient --runtime-image dist
+1. Run: javac -d bin --module-path vier.gewinnt $(find vier.gewinnt -name "*.java")
+2. Copy: vier.gewinnt/images (and vier.gewinnt/Help.txt) to bin/images (and bin/Help.txt)
+3. Run: jlink --module-path "bin;$JAVA_HOME/jmods" --add-modules vier.gewinnt --launcher VierGewinnt=vier.gewinnt/core.StartClient --output dist --strip-debug --compress 2 --no-header-files --no-man-pages
+4. Run: jpackage -n VierGewinnt --type app-image -m vier.gewinnt/core.StartClient --runtime-image dist
 
 

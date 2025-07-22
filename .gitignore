@@ -1,5 +1,2 @@
-/bin
-/dist
-/distServer
-/VierGewinnt
-/VierGewinntServer
+/build
+/deploy
