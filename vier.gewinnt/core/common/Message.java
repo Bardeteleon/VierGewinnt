@@ -25,7 +25,7 @@ public class Message
 	protected static final String WHISPER = "WHISPER";
 	protected static final String ALL = "ALL";
 	
-	protected static final String SEP = "�";
+	protected static final String SEP = "§";
 	
 	public MessageType type;
 	public MessageCommand command;

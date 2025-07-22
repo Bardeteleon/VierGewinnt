@@ -33,7 +33,7 @@ public class ClientVierGewinnt extends Client
 		newConnection(pIP, pPort);
 		try
 		{
-			Thread.sleep(1000);//TODO Problem eventl eleganter l�sen?
+			Thread.sleep(1000); //TODO Problem eventl eleganter loesen?
 		} catch (InterruptedException e)
 		{
 			e.printStackTrace();

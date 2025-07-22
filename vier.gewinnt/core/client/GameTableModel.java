@@ -68,7 +68,7 @@ public class GameTableModel extends AbstractTableModel
 		icons.put(YEL_3, GUI.createImageIcon("images/client/VAR1/yel_pos3.jpg"));
 
 		playingField = new ImageIcon[row + 1][column]; // row+1 -> eine Zeile
-														// zum w�hlen
+														// zum waehlen
 		clearPlayingField();
 		clearChoosingField();
 
@@ -417,9 +417,9 @@ public class GameTableModel extends AbstractTableModel
 
 	private void update()
 	{
-		// wird eigentlich schon vom EDT ausgef�hrt, aber setChipAnimatedAt ruft
+		// wird eigentlich schon vom EDT ausgefuehrt, aber setChipAnimatedAt ruft
 		// diese Methode von externen Thread aus auf, deswegen Update Methode
-		// vom EDT ausf�hren lassen
+		// vom EDT ausfuehren lassen
 		SwingUtilities.invokeLater(new Runnable()
 		{
 			@Override

@@ -2,8 +2,8 @@ package useful;
 
 /**
  * Eine Stopuhr speichert die aktuelle Zeit beim Starten in Millisekunden genau
- * ab und merkt sich die Differenz zum Start beim Stoppen. Zudem können
- * Zwischenstände ausgegeben werden.
+ * ab und merkt sich die Differenz zum Start beim Stoppen. Zudem koennen
+ * Zwischenstaende ausgegeben werden.
  * 
  * */
 

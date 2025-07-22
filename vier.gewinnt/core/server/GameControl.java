@@ -27,7 +27,7 @@ public class GameControl
 	public GameControl(ServerVierGewinnt _myServer, int _spalten, int _zeilen, int _turnTime, User _sp1, User _sp2, boolean _expChipsZahlenFuerSieg, boolean _explosionZahltAlsZug, int _anzahlExpChips)
 	{
 		myServer = _myServer;
-		//EVTL Abfrage: spalten und zeilen m�ssen gr��er sein, als anzahlFelderFuerSieg!!!
+		//EVTL Abfrage: spalten und zeilen muessen groesser sein, als anzahlFelderFuerSieg!!!
 		if (_spalten < anzahlFelderFuerSieg)
 		{
 			spalten = anzahlFelderFuerSieg;
@@ -76,7 +76,7 @@ public class GameControl
 	
 	private void neuesSpiel()
 	{
-		System.out.println("Spiel beginnt (" + sp1 + " & " + sp2 + " | Spielfeldgr��e: " + spalten + "x" + zeilen + " | expChipsZahlenFuerSieg: " + ruleExplosiveChipsZaehlenFuerSieg + " | explosionZahltAlsZug: " + ruleExplosionZaehltAlsZug + " | anzahlExpChips: " + sp1.getExplosiveCount() + ")");
+		System.out.println("Spiel beginnt (" + sp1 + " & " + sp2 + " | Spielfeldgroesse: " + spalten + "x" + zeilen + " | expChipsZahlenFuerSieg: " + ruleExplosiveChipsZaehlenFuerSieg + " | explosionZahltAlsZug: " + ruleExplosionZaehltAlsZug + " | anzahlExpChips: " + sp1.getExplosiveCount() + ")");
 		
 		anfangsspielerAuslosen();
 		
@@ -113,7 +113,7 @@ public class GameControl
 							}
 							else
 							{
-								System.out.println("ERROR: Das Feld geh�rt nicht zu diesem Spieler");
+								System.out.println("ERROR: Das Feld gehoert nicht zu diesem Spieler");
 							}
 						}
 						else
@@ -123,12 +123,12 @@ public class GameControl
 					}
 					else
 					{
-						System.out.println("ERROR: Angegebene Zeile liegt au�erhalb das g�ltigen Bereichs");
+						System.out.println("ERROR: Angegebene Zeile liegt ausserhalb des gueltigen Bereichs");
 					}
 				}
 				else
 				{
-					System.out.println("ERROR: Angegebene Spalte liegt au�erhalb das g�ltigen Bereichs");
+					System.out.println("ERROR: Angegebene Spalte liegt ausserhalb des gueltigen Bereichs");
 				}
 			}
 			else
@@ -167,7 +167,7 @@ public class GameControl
 		}
 		
 		//Anzeigen beim Spieler aktualisieren
-		/*NICHT N�TIG: CLIENT AKTUALISIER SICH SELBST
+		/*NICHT NOETIG: CLIENT AKTUALISIER SICH SELBST
 		for (int i = _zeile ; i < zeilen ; i++)
 		{
 			myServer.sendMessage(IPs[1], MessageGenerator.serverSendInsert(spielfeld[_spalte][i].getSpieler(), _spalte, i, spielfeld[_spalte][i].getType()));
@@ -259,7 +259,7 @@ public class GameControl
 								}
 								else
 								{
-									System.out.println("ERROR: Ung�ltiger Chiptype");
+									System.out.println("ERROR: Ungueltiger Chiptype");
 								}
 								break;
 							}
@@ -272,7 +272,7 @@ public class GameControl
 				}
 				else
 				{
-					System.out.println("ERROR: Angegebene spalte liegt au�erhalb des verf�gbaren Bereiches");
+					System.out.println("ERROR: Angegebene spalte liegt ausserhalb des verfuegbaren Bereiches");
 				}
 			}
 			else
@@ -289,7 +289,7 @@ public class GameControl
 	
 	private void einwurfGetaetigt(int _spalte, int _zeile, Player _spieler, Chip chip)
 	{
-		System.out.println("Spieler " + _spieler + " hat in die Spalte " + _spalte + " eingeworfen (H�he: " + _zeile + ")");
+		System.out.println("Spieler " + _spieler + " hat in die Spalte " + _spalte + " eingeworfen (Hoehe: " + _zeile + ")");
 		myServer.sendMessage(sp1, MessageGenerator.serverSendInsert(_spieler, _spalte, _zeile, chip));
 		myServer.sendMessage(sp2, MessageGenerator.serverSendInsert(_spieler, _spalte, _zeile, chip));
 		
@@ -318,7 +318,7 @@ public class GameControl
 		myServer.sendMessage(sp1, MessageGenerator.sendGameEnd(getUser(_sieger).getNick()));
 		myServer.sendMessage(sp2, MessageGenerator.sendGameEnd(getUser(_sieger).getNick()));
 		int turnsToWinn = Math.round(turnCount/2.0f);
-		myServer.sendToAll(MessageGenerator.sendChatMessage(getUser(_sieger).getNick() + " hat gegen " + getOpponent(_sieger).getNick() + " gewonnen! (Z�ge: " + turnsToWinn + ", Feld: " + zeilen + " x " + spalten + ")", MessageGenerator.CHAT_SERVER));
+		myServer.sendToAll(MessageGenerator.sendChatMessage(getUser(_sieger).getNick() + " hat gegen " + getOpponent(_sieger).getNick() + " gewonnen! (Zuege: " + turnsToWinn + ", Feld: " + zeilen + " x " + spalten + ")", MessageGenerator.CHAT_SERVER));
 		info(getUser(_sieger).getNick() + " hat gewonnen");
 		myServer.getGameHandler().endGame(sp1);
 	}

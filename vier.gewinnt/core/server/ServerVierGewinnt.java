@@ -221,7 +221,7 @@ public class ServerVierGewinnt extends Server
 									sendMessage(eingeladen, nachricht);
 								} else
 								{
-									System.out.println("messageReaction.Invite: Zeilen und/oder Spaltenangeaben nicht im g�ltigen Bereich");
+									System.out.println("messageReaction.Invite: Zeilen und/oder Spaltenangeaben nicht im gueltigen Bereich");
 								}
 
 							} else
@@ -287,7 +287,7 @@ public class ServerVierGewinnt extends Server
 			case USERTABLE:
 				if (pAbsender.getStatus() == User.KEIN_NICK)
 				{
-					System.out.println("Setze Nick f�r (" + pAbsender.getIP() + ":" + pAbsender.getPort() + ") auf '" + pMessageData.arguments.get(0) + "'");
+					System.out.println("Setze Nick fuer (" + pAbsender.getIP() + ":" + pAbsender.getPort() + ") auf '" + pMessageData.arguments.get(0) + "'");
 					pAbsender.setNick(pMessageData.arguments.get(0));
 					pAbsender.setStatus(User.IN_LOBBY);
 				} else

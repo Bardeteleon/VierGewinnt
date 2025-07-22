@@ -212,7 +212,7 @@ public class GUILobby extends JDialog
 						JOptionPane.showMessageDialog(GUILobby.this, "Kein Spieler online.", "", JOptionPane.INFORMATION_MESSAGE);
 				}else if(event.getActionCommand().contentEquals("Spiel verlassen"))
 				{
-					int answer = JOptionPane.showConfirmDialog(null, "Wollen Sie das Spiel wirklich verlassen?\nSie k�nnen sich nicht wieder verbinden.", "", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+					int answer = JOptionPane.showConfirmDialog(null, "Wollen Sie das Spiel wirklich verlassen?\nSie koennen sich nicht wieder verbinden.", "", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 					if (answer == 0)
 					{
 						parent.getClient().sendMessage(MessageGenerator.sendGameEnd(MessageGenerator.GAMEEND_QUITTING));

@@ -52,7 +52,7 @@ public abstract class Client implements ConnectionControl
 	}
 	
 	/**
-	 * Sendet die angegebene Nachricht an den angegebenen Empf‰nger.
+	 * Sendet die angegebene Nachricht an den angegebenen Empfaenger.
 	 * @param _message
 	 */
 	public void sendMessage(String _message)
@@ -81,7 +81,7 @@ public abstract class Client implements ConnectionControl
 	public abstract void messageReceived(String _absaenderIP, int _absenderPort, String _message);
 
 	
-	public void removeConnectionByConnection(String useless, int notNecessary) //NICHT von extern aufrufen!!! Wird ausschlieﬂlich von der Connection verwendet 
+	public void removeConnectionByConnection(String useless, int notNecessary) //NICHT von extern aufrufen!!! Wird ausschliesslich von der Connection verwendet 
 	{
 		myConnection = null;
 		connectionRemoved();

@@ -11,7 +11,7 @@ import java.util.Vector;
  * - removeConnection(String)
  * - sendMessage(String, String)
  * 
- * METHODEN ZUM ‹BERSCHREIBEN:
+ * METHODEN ZUM UEBERSCHREIBEN:
  * - connectionAdded(String)
  * - connectionRemoved(String)
  * - messageReceived(String, String)
@@ -93,7 +93,7 @@ public abstract class Server implements ConnectionControl
 		}
 	}
 
-	// NICHT von extern aufrufen!!! Wird ausschlieﬂlich von der Connection
+	// NICHT von extern aufrufen!!! Wird ausschliesslich von der Connection
 	// verwendet
 	public void removeConnectionByConnection(String _IP, int _clientPort)
 	{
@@ -124,7 +124,7 @@ public abstract class Server implements ConnectionControl
 				return;
 			}
 		}
-		System.out.println("Emf‰nger nicht gefunden");
+		System.out.println("Emfaenger nicht gefunden");
 	}
 
 	public void sendToAll(String _message)

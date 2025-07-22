@@ -107,7 +107,7 @@ public class UserControl
 		for (int i = 0 ; i < myUsers.size() ; i++)
 		{
 			myUsers.get(i).deleteSingleInvitation(u);
-			//WICHTIG: Nachricht an den entsprechenden User, dass die Invitation nicht l�nger Besand hat!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			//WICHTIG: Nachricht an den entsprechenden User, dass die Invitation nicht laenger Besand hat!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		}
 	}
 	

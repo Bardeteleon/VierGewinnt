@@ -45,7 +45,7 @@ public class GUIServer extends JFrame
 			@Override
 			public void windowClosing(WindowEvent e)
 			{
-				int answer = JOptionPane.showConfirmDialog(null, "Wollen Sie den Server wirklich schlie�en?", "", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+				int answer = JOptionPane.showConfirmDialog(null, "Wollen Sie den Server wirklich schliessen?", "", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 				if (answer == 0)
 				{
 					if (!bnServer.getActionCommand().equals("Starten"))

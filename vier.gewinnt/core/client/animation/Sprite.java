@@ -127,7 +127,7 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 		}
 	}
 	
-	private void computeRelativeSprite() // TODO Seitenverh�ltnis beibehalten
+	private void computeRelativeSprite() // TODO Seitenverhaeltnis beibehalten
 	{
 		if (doRelativePositioning)
 		{

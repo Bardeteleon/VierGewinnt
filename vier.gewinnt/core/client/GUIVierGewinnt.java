@@ -54,7 +54,7 @@ import core.common.Player;
 /*
  * Vereinheitlichung x-y-koordinaten und Row-Column-System
  * Dokumentation
- * Fehler Methode f�r Log.txt
+ * Fehler Methode fuer Log.txt
  */
 public class GUIVierGewinnt extends JFrame
 {
@@ -506,15 +506,15 @@ public class GUIVierGewinnt extends JFrame
 		if (Integer.parseInt(bombs) > 0)
 		{
 			if (Boolean.parseBoolean(_expChipsZahlenFuerSieg))
-				expMod1 = "\n-> Bombenchip z�hlt zum Sieg";
+				expMod1 = "\n-> Bombenchip zaehlt zum Sieg";
 			else
-				expMod1 = "\n-> Bombenchip z�hlt NICHT zum Sieg";
+				expMod1 = "\n-> Bombenchip zaehlt NICHT zum Sieg";
 			if (Boolean.parseBoolean(_explosionZahltAlsZug))
-				expMod2 = "\n-> Bombenexplosion z�hlt als Zug";
+				expMod2 = "\n-> Bombenexplosion zaehlt als Zug";
 			else
-				expMod2 = "\n-> Bombenexplosion z�hlt NICHT als Zug";
+				expMod2 = "\n-> Bombenexplosion zaehlt NICHT als Zug";
 		}
-		int answer = JOptionPane.showConfirmDialog(this, "Wollen Sie mit " + vonSpieler + " VierGewinnt spielen?\nSpielfeldgr��e: " + rows + " Zeilen / " + columns + " Spalten\nZugzeit: " + turnTime + "s\nAnzahl Bomben: " + bombs + expMod1 + expMod2, "Einladung", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+		int answer = JOptionPane.showConfirmDialog(this, "Wollen Sie mit " + vonSpieler + " VierGewinnt spielen?\nSpielfeldgroesse: " + rows + " Zeilen / " + columns + " Spalten\nZugzeit: " + turnTime + "s\nAnzahl Bomben: " + bombs + expMod1 + expMod2, "Einladung", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 		if (answer == 1 || answer == -1)
 			return false;
 		else

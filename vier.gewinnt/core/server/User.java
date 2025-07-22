@@ -39,7 +39,7 @@ public class User
 		{
 			nick = _nick;
 			status = IN_LOBBY;
-			//WICHTIG: �bergeordnete Klassen m�ssen den User in die Lobby versetzen!!!
+			//WICHTIG: Uebergeordnete Klassen muessen den User in die Lobby versetzen!!!
 		}
 	}
 	
