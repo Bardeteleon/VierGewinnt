@@ -48,13 +48,3 @@ The game is implemented as a Server-Client application. Thus there need to be on
     * Explosion: Double click on your bomb in the field when its your turn
   
 Hint: The game chat is equal to the whipser chat
-
-## How to build and deploy
-
-0. Go to VierGewinnt directory
-1. Run: javac -d bin --module-path vier.gewinnt $(find vier.gewinnt -name "*.java")
-2. Copy: vier.gewinnt/images (and vier.gewinnt/Help.txt) to bin/images (and bin/Help.txt)
-3. Run: jlink --module-path "bin;$JAVA_HOME/jmods" --add-modules vier.gewinnt --launcher VierGewinnt=vier.gewinnt/core.StartClient --output dist --strip-debug --compress 2 --no-header-files --no-man-pages
-4. Run: jpackage -n VierGewinnt --type app-image -m vier.gewinnt/core.StartClient --runtime-image dist
-
-
