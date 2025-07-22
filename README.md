@@ -4,15 +4,15 @@ This application lets you play Connect4 (German: VierGewinnt) with your friends.
 
 Game Field:
 
-<img vier.gewinnt="/img/game_field.png" width="450">
+<img src="./img/game_field.png" width="450">
 
 Game Config:
 
-<img vier.gewinnt="/img/game_config.png" width="250">
+<img src="./img/game_config.png" width="250">
 
 Lobby:
 
-<img vier.gewinnt="/img/lobby.png" width="450">
+<img src="./img/lobby.png" width="450">
 
 # Setup
 
